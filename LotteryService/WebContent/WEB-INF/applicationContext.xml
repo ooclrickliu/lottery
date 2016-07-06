@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+               http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+               http://www.springframework.org/schema/context
+               http://www.springframework.org/schema/context/spring-context-4.0.xsd
+               http://www.springframework.org/schema/tx
+               http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+               http://www.springframework.org/schema/aop
+               http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+               http://www.springframework.org/schema/mvc
+               http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+               ">
+	<context:component-scan base-package="cn.wisdom.lottery.payment" />
+
+	<mvc:annotation-driven />
+	
+	<aop:aspectj-autoproxy />
+	
+	<context:property-placeholder location="classpath:redis.properties,classpath:memcache.properties" />
+
+	<!-- DAO -->
+	<import resource="classpath:config-dao.xml" />
+
+	<!-- Interceptor -->
+	<!-- <mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/*/**" />
+			<mvc:exclude-mapping path="/user/login" />
+			<mvc:exclude-mapping path="/orders/callback/*" />
+			<bean class="cn.wisdom.lottery.payment.api.interceptor.PlatformAccessInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors> -->
+</beans>

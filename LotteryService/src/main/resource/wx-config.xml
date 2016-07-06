@@ -1,0 +1,10 @@
+<xml>
+    <appId>wxac2e00d9598e2b68</appId>
+    <secret>61d2f70d3e782355f28417e21f032a81</secret>
+    <token>wisdom</token>
+    <aesKey>公众号EncodingAESKey</aesKey>
+    <accessToken></accessToken>
+    <expiresTime></expiresTime>
+    <openId>olz_hvsELAlrfI_0715gnh8un04Q</openId>
+    <oauth2redirectUri>网页授权获取用户信息回调地址</oauth2redirectUri>
+</xml>
