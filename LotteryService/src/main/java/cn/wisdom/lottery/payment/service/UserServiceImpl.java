@@ -10,6 +10,8 @@ package cn.wisdom.lottery.payment.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.chanjar.weixin.mp.bean.result.WxMpUser;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -333,5 +335,23 @@ public class UserServiceImpl implements UserService
         userAccessTokenManager.cleanExpiredUserToken();
         logger.info("<Manual trigger> Check expire user token task complete!");
     }
+
+	@Override
+	public void createUser(String openId) throws ServiceException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateUserInfo(WxMpUser wxMpUser) throws ServiceException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public User getUserByOpenId(String openId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

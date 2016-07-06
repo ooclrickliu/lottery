@@ -11,9 +11,9 @@ import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import cn.wisdom.lottery.payment.common.log.Logger;
 import cn.wisdom.lottery.payment.common.log.LoggerFactory;
 
-public class LotteryLogHandler implements WxMpMessageHandler {
+public class WxMpLogHandler implements WxMpMessageHandler {
 
-	private Logger logger = LoggerFactory.getLogger(LotteryLogHandler.class.getName());
+	private Logger logger = LoggerFactory.getLogger(WxMpLogHandler.class.getName());
 	
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,

@@ -52,6 +52,8 @@ public class PlatformAccessInterceptor extends HandlerInterceptorAdapter
     private static final String TOKEN = "token";
 
     private static final String CLIENT_TYPE = "clientType";
+    
+    private static final String OPENID = "openId";
 
     @Autowired
     private UserService userService;
@@ -72,48 +74,60 @@ public class PlatformAccessInterceptor extends HandlerInterceptorAdapter
             Object handler) throws Exception
     {
         super.preHandle(request, response, handler);
+        
+        String openId = HttpUtils.getParamValue(request, OPENID);
+        User user = userService.getUserByOpenId(openId);
+        
+        if (user == null) {
+        	// 场景：非关注用户访问需授权页面
+			// a. 重定向到OAuth2.0授权页面?
+        	
+        	// b. 直接保存openid为新用户? 有openid吗?
+		}
+        else {
+        	initSessionContext(user);
+		}
 
-        String accessToken = null;
-        String clientType = HttpUtils.getParamValue(request, CLIENT_TYPE);
-
-        if (AppClientType.isMobile(clientType))
-        {
-            accessToken = HttpUtils.getParamValue(request, TOKEN);
-            if (StringUtils.isBlank(accessToken))
-            {
-                throw new ServiceException(ServiceErrorCode.INVALID_ACCESS,
-                        "Please specify a valid token!");
-            }
-
-            User user = null; //userProxy.getUserByToken(accessToken);
-            initSessionContext(user);
-        }
-        else if (AppClientType.isWeb(clientType))
-        {
-            accessToken = HttpUtils.getParamValue(request, CookieUtil.KEY_ACCESS_TOKEN);
-            if (StringUtils.isBlank(accessToken))
-            {
-                writeResponse(response, ServiceErrorCode.NOT_LOGIN);
-                return false;
-            }
-
-            User user = userService.getUserByAccessToken(accessToken);
-            initSessionContext(user);
-
-            if (!checkPermission(request))
-            {
-                writeResponse(response, ServiceErrorCode.NO_PERMISSION);
-                return false;
-            }
-
-            CookieUtil.addCookie(response, CookieUtil.KEY_ACCESS_TOKEN, accessToken,
-                    appProperties.getCookieAccessTokenAge());
-        }
-        else
-        {
-            throw new ServiceException(ServiceErrorCode.INVALID_ACCESS,
-                    "Please specify a correct clientType arg: ios | android | web!");
-        }
+//        String accessToken = null;
+//        String clientType = HttpUtils.getParamValue(request, CLIENT_TYPE);
+//
+//        if (AppClientType.isMobile(clientType))
+//        {
+//            accessToken = HttpUtils.getParamValue(request, TOKEN);
+//            if (StringUtils.isBlank(accessToken))
+//            {
+//                throw new ServiceException(ServiceErrorCode.INVALID_ACCESS,
+//                        "Please specify a valid token!");
+//            }
+//
+//            initSessionContext(user);
+//        }
+//        else if (AppClientType.isWeb(clientType))
+//        {
+//            accessToken = HttpUtils.getParamValue(request, CookieUtil.KEY_ACCESS_TOKEN);
+//            if (StringUtils.isBlank(accessToken))
+//            {
+//                writeResponse(response, ServiceErrorCode.NOT_LOGIN);
+//                return false;
+//            }
+//
+//            User user = userService.getUserByAccessToken(accessToken);
+//            initSessionContext(user);
+//
+//            if (!checkPermission(request))
+//            {
+//                writeResponse(response, ServiceErrorCode.NO_PERMISSION);
+//                return false;
+//            }
+//
+//            CookieUtil.addCookie(response, CookieUtil.KEY_ACCESS_TOKEN, accessToken,
+//                    appProperties.getCookieAccessTokenAge());
+//        }
+//        else
+//        {
+//            throw new ServiceException(ServiceErrorCode.INVALID_ACCESS,
+//                    "Please specify a correct clientType arg: ios | android | web!");
+//        }
 
         return true;
     }

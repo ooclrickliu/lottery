@@ -9,6 +9,7 @@ package cn.wisdom.lottery.payment.service;
 
 import java.util.List;
 
+import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import cn.wisdom.lottery.payment.dao.vo.PermissionGrant;
 import cn.wisdom.lottery.payment.dao.vo.User;
 import cn.wisdom.lottery.payment.service.exception.ServiceException;
@@ -23,7 +24,32 @@ import cn.wisdom.lottery.payment.service.exception.ServiceException;
  */
 public interface UserService
 {
+	/**
+	 * 保存新关注用户
+	 * 
+	 * @param openId
+	 * @throws ServiceException
+	 */
+	void createUser(String openId) throws ServiceException;
+	
+	/**
+	 * 更新用户基本信息
+	 * 
+	 * @param wxMpUser
+	 * @throws ServiceException
+	 */
+	void updateUserInfo(WxMpUser wxMpUser) throws ServiceException;
 
+	/**
+	 * 查询用户
+	 * 
+	 * @param openId
+	 * @return
+	 */
+	User getUserByOpenId(String openId);
+	
+	/////////////////////////////////////////////
+	
     /**
      * check email format and unique.
      * 
@@ -96,5 +122,6 @@ public interface UserService
     List<PermissionGrant> getPermissionByUserId(int userId) throws ServiceException;
     
     void cleanExpiredUserToken() throws ServiceException;
+
     
 }

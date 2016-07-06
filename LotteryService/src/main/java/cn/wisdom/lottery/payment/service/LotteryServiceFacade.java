@@ -19,6 +19,8 @@ public interface LotteryServiceFacade {
 
 	LotteryOpenData getLatestOpenInfo(LotteryType lotteryType) throws ServiceException;
 
+	void onPaidSuccess(String userId, String orderNo) throws ServiceException;
+	
 	Lottery getLottery(String orderNo) throws ServiceException;
 
 	void fetchTicket(String orderNo) throws ServiceException;

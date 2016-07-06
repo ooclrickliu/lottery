@@ -9,7 +9,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 
-public class LotteryTextHandler  implements WxMpMessageHandler {
+public class WxMpTextHandler implements WxMpMessageHandler {
 
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,

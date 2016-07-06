@@ -17,6 +17,7 @@ import cn.wisdom.lottery.payment.dao.constant.BusinessType;
 import cn.wisdom.lottery.payment.dao.constant.LotteryType;
 import cn.wisdom.lottery.payment.dao.vo.Lottery;
 import cn.wisdom.lottery.payment.dao.vo.LotteryNumber;
+import cn.wisdom.lottery.payment.dao.vo.User;
 import cn.wisdom.lottery.payment.service.LotteryServiceFacade;
 import cn.wisdom.lottery.payment.service.context.SessionContext;
 import cn.wisdom.lottery.payment.service.exception.ServiceException;
@@ -84,9 +85,15 @@ public class LotteryController {
 		return new LotteryJsonDocument(lottery);
 	}
 
-	public JsonDocument pay() {
-		//TODO
-		return null;
+    @RequestMapping(method = RequestMethod.POST, value = "/order/paid")
+    @ResponseBody
+	public JsonDocument onOrderPaid(@RequestParam String orderNo) throws ServiceException {
+
+		User user = SessionContext.getCurrentUser();
+		
+		lotteryServiceFacade.onPaidSuccess("" + user.getId(), orderNo);
+		
+		return LotteryJsonDocument.SUCCESS;
 	}
 
     @RequestMapping(method = RequestMethod.GET, value = "/order/detail")
@@ -116,7 +123,7 @@ public class LotteryController {
 		return new LotteryJsonDocument();
 	}
 
-    @RequestMapping(method = RequestMethod.POST, value = "/query")
+    @RequestMapping(method = RequestMethod.GET, value = "/query")
     @ResponseBody
 	public JsonDocument queryLottery(@RequestParam String lotteryType, 
 			@RequestParam int period) throws ServiceException {

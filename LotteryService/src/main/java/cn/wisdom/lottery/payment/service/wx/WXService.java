@@ -13,8 +13,9 @@ import me.chanjar.weixin.mp.api.WxMpServiceImpl;
 
 import org.springframework.stereotype.Service;
 
-import cn.wisdom.lottery.payment.service.wx.message.LotteryLogHandler;
-import cn.wisdom.lottery.payment.service.wx.message.LotteryTextHandler;
+import cn.wisdom.lottery.payment.service.wx.message.WxMpEventHandler;
+import cn.wisdom.lottery.payment.service.wx.message.WxMpLogHandler;
+import cn.wisdom.lottery.payment.service.wx.message.WxMpTextHandler;
 
 @Service
 public class WXService {
@@ -36,14 +37,15 @@ public class WXService {
 		wxMpService = new WxMpServiceImpl();
 		wxMpService.setWxMpConfigStorage(config);
 
-		WxMpMessageHandler logHandler = new LotteryLogHandler();
-		WxMpMessageHandler textHandler = new LotteryTextHandler();
+		WxMpMessageHandler logHandler = new WxMpLogHandler();
+		WxMpMessageHandler textHandler = new WxMpTextHandler();
+		WxMpMessageHandler eventHandler = new WxMpEventHandler();
 
 		wxMpMessageRouter = new WxMpMessageRouter(wxMpService);
 		wxMpMessageRouter.rule().handler(logHandler).next()
 				// .rule().msgType(WxConsts.XML_MSG_TEXT).matcher(guessNumberHandler).handler(guessNumberHandler).end()
-				.rule().msgType(WxConsts.XML_MSG_TEXT).async(false)
-				.content("哈哈").handler(textHandler).end()
+				.rule().msgType(WxConsts.XML_MSG_TEXT).async(false).handler(textHandler).end()
+				.rule().msgType(WxConsts.XML_MSG_EVENT).async(false).handler(eventHandler).end()
 		// .rule().async(false).content("图片").handler(imageHandler).end()
 		// .rule().async(false).content("oauth").handler(oauth2handler).end()
 		;

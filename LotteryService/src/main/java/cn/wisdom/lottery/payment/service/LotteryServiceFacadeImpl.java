@@ -50,6 +50,12 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade {
 	}
 
 	@Override
+	public void onPaidSuccess(String userId, String orderNo)
+			throws ServiceException {
+		lotteryService.onPaidSuccess(userId, orderNo);
+	}
+
+	@Override
 	public void fetchTicket(String orderNo) throws ServiceException {
 		long userId = SessionContext.getCurrentUser().getId();
 		lotteryService.fetchTicket(orderNo, userId);
