@@ -1,0 +1,31 @@
+*{
+    margin: 0px;
+    padding: 0px
+}
+
+input{
+    padding: 2px 5px 2px 5px;
+}
+
+.minwidth{
+    min-width: 250px;
+}
+
+table{
+    margin-left: 20px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+th {
+    background-color: skyblue;
+    text-align: center;
+    min-width: 180px;
+    color: #245269;
+}
+
+td {
+    text-align: center;
+    min-width: 180px;
+}
+

@@ -1,0 +1,198 @@
+<div class="hbox hbox-auto-xs hbox-auto-sm" ng-controller="AccountQueryController as vm">
+    <div class="col">
+        <div class="wrapper-s b-b clearfix">
+            <div class="pull-left m-t-sm m-b-sm">
+                <span class="padder b-l b-l-2x b-l-info">财务对账(支付宝)</span>
+            </div>
+            <div class="m-t-sm m-b-sm pull-left">
+                <span class=" h4 font-bold">{{vm.selectDate | date: 'yyyy年MM月dd日'}}</span>
+            </div>
+            <div class="m-l-sm pull-left">
+                <a class="block" ng-click="vm.getPrevDay()" title="上一天"><i class="fa fa-chevron-up"></i></a>
+                <a class="block" ng-click="vm.getNextDay()" title="下一天"><i class="fa fa-chevron-down"></i></a>
+            </div>
+            <form class="input-group w-xl pull-right m-r-md m-t-xxs">
+                <input type="date" class="form-control rounded "
+                       ng-model="vm.selectDate">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-success rounded"
+                            ng-click="vm.queryAccountPage(vm.selectDate)">搜索
+                    </button>
+                </span>
+            </form>
+        </div>
+        <div class="wrapper-xs clearfix">
+            <div style="margin-bottom: -21px" ng-if="vm.accountPage">
+                <h4 class="text-center">支付宝流水</h4>
+                <table class="table table-bordered">
+                    <thead class="bg-light lt" ng-if="vm.accountPage.accountLogList.length > 0">
+                    <tr>
+                        <!--<th><a href="">账务序列号</a></th>-->
+                        <th width="20%"><a href="">订单号</a></th>
+                        <th width="10%" class="text-center"><a href="">业务类型</a></th>
+                        <th width="8%" class="text-center"><a href="">收入(+)</a></th>
+                        <th width="8%" class="text-center"><a href="">支出(-)</a></th>
+
+                        <!--<th><a href="">买家账号</a></th>-->
+                        <!--<th><a href="">货币</a></th>-->
+                        <!--<th><a href="">商品</a></th>-->
+
+                        <!--<th><a href="">费率</a></th>-->
+                        <!--<th><a href="">总费用</a></th>-->
+                        <th width="8%" class="text-center"><a href="">余额</a></th>
+                        <!--<th><a href="">累计退款金额</a></th>-->
+                        <!--<th><a href="">交易服务费</a></th>-->
+                        <!--<th><a href="">交易服务费率</a></th>-->
+                        <!--<th><a href="">签约产品</a></th>-->
+
+                        <!--<th><a href="">子业务类型</a></th>-->
+
+
+                        <th width="25%" class="text-center"><a href="">支付宝交易号</a></th>
+
+                        <th width="21%" class="text-center"><a href="">交易时间</a></th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+            <div id="tableAccount" style="height: 262px;overflow-y: auto">
+                <table class="table table-bordered">
+                    <tbody>
+                    <tr class=" {{accountLog.merchantOutOrderNo == vm.selectOrderNo ? 'bg-info':''}}"
+                        ng-repeat="accountLog in vm.accountPage.accountLogList | orderBy: 'transDate'"
+                        ng-class="{true:'', false:'text-danger'}[vm.checkAliData(accountLog)]"
+                        ng-click="vm.changeSelection(accountLog.merchantOutOrderNo)">
+                        <!--<td>{{accountLog.iwAccountLogId}}</td>-->
+                        <td width="20%">{{accountLog.merchantOutOrderNo}}</td>
+                        <td width="10%" class="text-center">{{accountLog.subTransCodeMsg | limitTo: 4}}</td>
+                        <td width="8%" class="text-center">{{accountLog.income}}</td>
+                        <td width="8%" class="text-center">{{accountLog.outcome}}</td>
+
+                        <!--<td>{{accountLog.buyerAccount}}</td>-->
+                        <!--<td>{{accountLog.currency}}</td>-->
+                        <!--<td>{{accountLog.goodsTitle}}</td>-->
+
+                        <!--<td>{{accountLog.rate}}</td>-->
+                        <!--<td>{{accountLog.totalFee}}</td>-->
+                        <td width="8%" class="text-center">{{accountLog.balance}}</td>
+                        <!--<td>{{accountLog.tradeRefundAmount}}</td>-->
+                        <!--<td>{{accountLog.serviceFee}}</td>-->
+                        <!--<td>{{accountLog.serviceFeeRatio}}</td>-->
+                        <!--<td>{{accountLog.signProductName}}</td>-->
+                        <!--<td>{{accountLog.transCodeMsg}}</td>-->
+
+
+                        <td width="25%" class="text-center">{{accountLog.tradeNo}}</td>
+
+                        <td width="21%" class="text-center">{{accountLog.transDate}}</td>
+                    </tr>
+                    <tr ng-show="!vm.accountPage.accountLogList || vm.accountPage.accountLogList.length <= 0">
+                        <td colspan="8" class="text-lg text-center" ng-bind-html="vm.loadingHint | to_trusted"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-bottom: -21px" ng-if="vm.orders">
+                <h4 class="text-center">Doorbell系统流水</h4>
+                <table class="table table-bordered">
+                    <thead class="bg-light lt" ng-if="vm.orders.length > 0">
+                    <tr>
+                        <th width="20%"><a href="">订单号</a></th>
+                        <th width="10%" class="text-center"><a href="">操作</a></th>
+                        <th width="24%" class="text-center"><a href="">费用</a></th>
+                        <th width="25%" class="text-center"><a href="">支付宝交易号</a></th>
+                        <th width="21%" class="text-center"><a href="">交易时间</a></th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+            <div id="tableOrder" style="height: 262px;overflow-y: auto">
+                <table class="table table-bordered">
+                    <tbody>
+                    <tr class="{{order.orderNo == vm.selectOrderNo ? 'bg-info':''}}"
+                        ng-repeat="order in vm.orders | orderBy: 'createTime'"
+                        ng-click="vm.changeSelection(order.orderNo)"
+                        ng-class="{true:'', false:'text-danger'}[vm.checkDoorbellData(order)]">
+                        <td width="20%" ng-if="!order.isError">{{order.orderNo}}</td>
+                        <td width="20%" ng-if="order.isError">
+                            <a href="" class="text-danger text-decorline"
+                               data-toggle="modal"
+                               data-target="#orderModal" ng-click="vm.viewDetail(order.orderNo)">{{order.orderNo}}</a>
+                        </td>
+                        <td width="10%" class="text-center">{{order.title}}</td>
+                        <td width="24%" class="text-center">{{order.totalFee}}</td>
+                        <td width="25%" class="text-center">{{order.tradeNo}}</td>
+                        <td width="21%" class="text-center">{{order.createTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                    </tr>
+                    <tr ng-show="vm.orders.length <= 0">
+                        <td colspan="8" class="text-lg text-center" ng-bind-html="vm.loadingHint | to_trusted"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal fade" id="orderModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">订单 <span class="font-bold">{{vm.selectOrderNo}}</span> 流水</h5>
+                    </div>
+                    <div class="modal-body clearfix">
+                        <h4 class="text-center">支付宝流水</h4>
+                        <table class="table table-bordered">
+                            <thead class="bg-light lt">
+                            <tr>
+                                <th width="20%"><a href="">订单号</a></th>
+                                <th width="10%" class="text-center"><a href="">业务类型</a></th>
+                                <th width="8%" class="text-center"><a href="">收入(+)</a></th>
+                                <th width="8%" class="text-center"><a href="">支出(-)</a></th>
+                                <th width="8%" class="text-center"><a href="">余额</a></th>
+                                <th width="25%" class="text-center"><a href="">支付宝交易号</a></th>
+                                <th width="21%" class="text-center"><a href="">交易时间</a></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="accountLog in vm.selectAccountPage.accountLogList">
+                                <td width="20%">{{accountLog.merchantOutOrderNo}}</td>
+                                <td width="10%" class="text-center">{{accountLog.subTransCodeMsg | limitTo: 4}}</td>
+                                <td width="8%" class="text-center">{{accountLog.income}}</td>
+                                <td width="8%" class="text-center">{{accountLog.outcome}}</td>
+                                <td width="8%" class="text-center">{{accountLog.balance}}</td>
+                                <td width="25%" class="text-center">{{accountLog.tradeNo}}</td>
+                                <td width="21%" class="text-center">{{accountLog.transDate}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="text-center">Doorbell系统流水</h4>
+                        <table class="table table-bordered">
+                            <thead class="bg-light lt">
+                            <tr>
+                                <th width="20%"><a href="">订单号</a></th>
+                                <th width="10%" class="text-center"><a href="">操作</a></th>
+                                <th width="24%" class="text-center"><a href="">费用</a></th>
+                                <th width="25%" class="text-center"><a href="">支付宝交易号</a></th>
+                                <th width="21%" class="text-center"><a href="">交易时间</a></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="order in vm.selectOrderDetails">
+                                <td width="20%">{{order.orderNo}}</td>
+                                <td width="10%" class="text-center">{{order.title}}</td>
+                                <td width="24%" class="text-center">{{order.totalFee}}</td>
+                                <td width="25%" class="text-center">{{order.tradeNo}}</td>
+                                <td width="21%" class="text-center">{{order.createTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            关 闭
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

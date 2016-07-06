@@ -1,0 +1,140 @@
+﻿[
+  {
+    "category": "会员",
+    "description": "获取设备当前套餐信息",
+    "method": "GET",
+    "url": "/profile/current",
+    "parameters": [],
+    "show":["id"]
+  },
+  {
+    "category": "订单",
+    "description": "创建订单",
+    "method": "POST",
+    "url": "/orders/create",
+    "parameters": [
+      {
+        "name": "space",
+        "description": "订购的空间大小"
+      },
+      {
+        "name": "flow",
+        "description": "订购的流量大小"
+      },
+      {
+        "name": "month",
+        "description": "订购几个月"
+      },
+      {
+        "name": "activateType",
+        "description": "激活时间"
+      }
+    ],
+    "show":["orderNo"]
+  },
+  {
+    "category": "订单",
+    "description": "获取未支付订单",
+    "method": "GET",
+    "url": "/orders/listUnpaid",
+    "parameters": [
+
+    ],
+    "show":["orderNo"]
+  },
+  {
+    "category": "订单",
+    "description": "支付订单",
+    "method": "POST",
+    "url": "/orders/callback/paid",
+    "parameters": [
+      {
+        "name": "orderNo",
+        "description": "订单号"
+      }
+    ],
+    "show":[]
+  },
+  {
+    "category": "会员",
+    "description": "退订VIP",
+    "method": "POST",
+    "url": "/profile/cancel",
+    "parameters": [
+      {
+        "name": "profileId",
+        "description": "用户概要记录ID"
+      }
+    ],
+    "show":[]
+  },
+  {
+    "category": "退款",
+    "description": "按订单号获取退款申请列表",
+    "method": "GET",
+    "url": "/refund/request/getByOrderNo",
+    "parameters": [
+      {
+        "name": "orderNo",
+        "description": "订单号"
+      }
+    ],
+    "show":["id"]
+  },
+  {
+    "category": "会员",
+    "description": "取消退订VIP",
+    "method": "POST",
+    "url": "/profile/revokeCancel",
+    "parameters": [
+      {
+        "name": "profileId",
+        "description": "用户概要记录ID"
+      }
+    ],
+    "show":[]
+  },
+  {
+    "category": "会员",
+    "description": "退订成功",
+    "method": "POST",
+    "url": "/orders/callback/refund",
+    "parameters": [
+      {
+        "name": "refundRequestIds",
+        "description": "退订申请ID列表"
+      }
+    ],
+    "show":[]
+  },
+  {
+    "category": "交易",
+    "description": "交易记录",
+    "method": "GET",
+    "url": "/actions/list",
+    "parameters": [
+
+    ],
+    "show":["id"]
+  },
+  {
+    "category": "交易",
+    "description": "交易详情",
+    "method": "GET",
+    "url": "/actions/detail",
+    "parameters": [
+      {
+        "name": "actionId",
+        "description": "操作号"
+      }
+    ],
+    "show":[]
+  },
+  {
+    "category": "资源",
+    "description": "价格策略",
+    "method": "GET",
+    "url": "/resources/price",
+    "show":[]
+  }
+]

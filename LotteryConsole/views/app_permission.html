@@ -1,0 +1,102 @@
+<!-- hbox layout -->
+<div class="hbox hbox-auto-xs hbox-auto-sm bg-white " ng-init="
+  app.settings.asideFixed = true;
+  app.settings.asideDock = false;
+  app.settings.container = false;
+  app.settings.hideAside = false;
+  app.settings.hideFooter = true;
+  " ng-controller="PermissionController">
+
+  <!-- column -->
+  <div class="col w-lg b-r">
+    <div class="vbox">
+      <div class="progress-m"></div>
+      <div class="row-row">
+        <div class="cell scrollable hover">
+          <div class="cell-inner">
+            <div class="m-t-n-xxs">
+              <div class="list-group list-group-lg no-radius no-border no-bg m-b-none">
+                <a ng-repeat="userItem in usersList | filter:query"
+                   class="h-list-item list-group-item m-l"
+                   ng-class="{'select m-l-none': userItem.selected }"
+                   ng-click="selectItem(userItem)">
+                  <span class=" col-md-10 block text-ellipsis m-l-n text-md"
+                        ng-class="{'m-l-none': userItem.selected }">
+                    {{ userItem.permissionName }}
+                    <span ng-hide="userItem.permissionName">NULL</span>
+                  </span>
+                </a>
+              </div>
+            </div>
+            <div class="text-center pos-abt w-full" style="top:50%;" ng-hide="(usersList | filter:query).length">暂无用户
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /column -->
+
+  <!-- column -->
+  <div class="col bg-white-only">
+    <div class="" ng-hide="createAdmin">
+      <div class="panel panel-default no-border">
+      </div>
+      <div class="panel panel-default no-border">
+        <div class="panel-body">
+          <table class="table m-b-none m-l-xxl w-modify">
+            <thead class="">
+            <tr>
+              <th class="w-sm">用户名</th>
+              <th class="w-sm">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="instanceInfo in permissionUserList track by $index">
+              <td class="text-limit w-md">{{instanceInfo.userName}}</td>
+              <td>
+                <div class="btn-group w-sm">
+                  <label class="btn btn-xs btn-default {{(instanceInfo.state == 'GRANTED') ? 'btn-info active':'btn-default'}}"
+                         ng-model="radioModel"
+                         btn-radio="UNGRANT"
+                         data-toggle="modal"
+                         data-target="#deleteModal"
+                         ng-click="showDeletePerUser(instanceInfo)">
+                    <i class="{{(instanceInfo.state == 'GRANTED') ? 'fa fa-check  text-active':'btn-default'}}"></i>
+                    收回
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <tr ng-hide="permissionUserList.length">
+              <td class="text-limit w-md">暂无用户</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="deleteModal" tabindex="-1" ng-if="deleteModalUser.state !='GRANTED'">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">收回用户权限</h5>
+        </div>
+        <div class="modal-body clearfix">
+          <div class="col-lg-1">
+            <span class="text-2x fa fa-question-circle text-warning-dker"></span>
+          </div>
+          <div class="col-lg-11">
+            <span >确定收回&nbsp;{{deleteModalUser.userName}}&nbsp;用户权限？</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger" data-dismiss="modal" ng-click="changePermissionsState(deleteModalUser,userItem)">确定</button>
+          <button class="btn btn-default" data-dismiss="modal">取 消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /column -->
+</div><!-- /hbox layout -->

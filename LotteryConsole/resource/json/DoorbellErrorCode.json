@@ -1,0 +1,227 @@
+[
+	{
+		"name": "NotLogin",
+		"description": "当前处于未登录状态",
+		"type": "user"
+	},
+	{
+		"name": "NoPermission",
+		"description": "无访问权限",
+		"type": "user"
+	},
+	{
+		"name": "InvalidAccess",
+		"description": "非法访问(用户登录信息为空，未登录)",
+		"type": "user"
+	},
+	{
+		"name": "UserNameIsExist",
+		"description": "用户名已存在",
+		"type": "user"
+	},
+	{
+		"name": "UserNotExist",
+		"description": "用户不存在",
+		"type": "user"
+	},
+	{
+		"name": "WrongPassword",
+		"description": "输入的密码错误",
+		"type": "user"
+	},
+	{
+		"name": "InvalidPassword",
+		"description": "密码格式不正确",
+		"type": "user"
+	},
+	{
+		"name": "CanNotDeleteSA",
+		"description": "无法删除超级管理员",
+		"type": "user"
+	},
+	{
+		"name": "GetUserFailed",
+		"description": "获取用户失败",
+		"type": "user"
+	},
+	{
+		"name": "CheckUserNameFailed",
+		"description": "检查用户名失败",
+		"type": "user"
+	},
+	{
+		"name": "ChangePasswordFailed",
+		"description": "密码修改失败",
+		"type": "user"
+	},
+	{
+		"name": "ListUserFailed",
+		"description": "获取用户列表失败",
+		"type": "user"
+	},
+	{
+		"name": "CreateUserFailed",
+		"description": "创建用户失败",
+		"type": "user"
+	},
+	{
+		"name": "DeleteUserFailed",
+		"description": "删除用户失败",
+		"type": "user"
+	},
+	{
+		"name": "NewAndOldPasswordIsSame",
+		"description": "新密码和原密码不能一样",
+		"type": "user"
+	},
+	{
+		"name": "GetUserByTokenFailed",
+		"description": "通过UserToken获取用户信息失败",
+		"type": "user"
+	},
+	{
+		"name": "GenerateUserTokenFailed",
+		"description": "生成UserToken失败",
+		"type": "user"
+	},	
+	{
+		"name": "InvalideUserTokenFailed",
+		"description": "将UserToken置为无效时系统抛出异常",
+		"type": "user"
+	},
+	{
+		"name": "CleanExpiredTokenFailed",
+		"description": "清除过期的UserToken失败",
+		"type": "user"
+	},
+	{
+		"name": "NullDeviceId",
+		"description": "设备ID号为空",
+		"type": "order"
+	},
+	{
+		"name": "NullSpaceFlow",
+		"description": "空间和流量不能全部为零",
+		"type": "order"
+	},
+	{
+		"name": "NullMonth",
+		"description": "订购月数不能为空",
+		"type": "order"
+	},	
+	{
+		"name": "GrantPermissionFailed",
+		"description": "授予权限失败",
+		"type": "permission"
+	},
+	{
+		"name": "RevokePermissionFailed",
+		"description": "回收权限失败",
+		"type": "permission"
+	},
+	{
+		"name": "ListPermissionFailed",
+		"description": "获取权限列表失败",
+		"type": "permission"
+	},
+	{
+		"name": "ProductNotExist",
+		"description": "商品不存在",
+		"type": "resource"
+	},
+	{
+		"name": "ProductExist",
+		"description": "商品已存在",
+		"type": "resource"
+	},
+	{
+		"name": "CreateProductFailed",
+		"description": "创建商品失败",
+		"type": "resource"
+	},
+	{
+		"name": "DeleteProductFailed ",
+		"description": "删除商品失败",
+		"type": "resource"
+	},
+	{
+		"name": "ModifyProductFailed",
+		"description": "修改商品信息失败",
+		"type": "resource"
+	},
+	{
+		"name": "LoadAllProductFailed",
+		"description": "加载所有的商品失败",
+		"type": "resource"
+	},
+	{
+		"name": "InvalidTimeUnit",
+		"description": "错误的时间单位(时间单位：MONTH)",
+		"type": "resource"
+	},	
+	{
+		"name": "InvalidResourceType",
+		"description": "错误的资源类型(资源类型：SPACE、FLOW)",
+		"type": "resource"
+	},
+	{
+		"name": "AddProfileFailed ",
+		"description": "添加服务套餐信息失败",
+		"type": "profile"
+	},			
+	{
+		"name": "GetProfileFailed",
+		"description": "获取服务套餐失败",
+		"type": "profile"
+	},		
+	{
+		"name": "CancelProfileFailed",
+		"description": "退订服务套餐失败",
+		"type": "profile"
+	},
+	{
+		"name": "ListDeviceFailed",
+		"description": "获取设备列表失败",
+		"type": "profile"
+	},	
+	{
+		"name": "GetDeviceStatusFailed",
+		"description": "获取设备状态失败",
+		"type": "profile"
+	},			
+	{
+		"name": "CannotCancel",
+		"description": "服务套餐不可退订",
+		"type": "profile"
+	},		
+	{
+		"name": "NoCancelRequest",
+		"description": "没有可取消的退订请求",
+		"type": "profile"
+	},
+	{
+		"name": "GetRemoteUserByTokenFailed",
+		"description": "通过token获取DoorBell注册用户失败",
+		"type": "profile"
+	},
+	{
+		"name": "GetRemoteUserNameFailed",
+		"description": "获取DoorBell用户名失败",
+		"type": "profile"
+	},
+	{
+		"name": "ListActionsFailed",
+		"description": "获取交易记录失败",
+		"type": "action"
+	},	
+	{
+		"name": "SystemUnexpected",
+		"description": "服务器错误",
+		"type": "system"
+	},			
+	{
+		"name": "TransferRefundPageFaile",
+		"description": "无法传输退款处理页面",
+		"type": "refund"
+	}	
+]

@@ -1,0 +1,238 @@
+<div class="hbox hbox-auto-xs hbox-auto-sm" ng-controller="deviceDetailController">
+    <div class="bg-auto">
+        <div class="wrapper-s b-b clearfix">
+            <div class="pull-left m-t-sm m-b-sm">
+                <span class="padder"> 设备服务套餐 </span>
+            </div>
+            <div class="pull-left m-t-sm m-b-sm">
+                <span class="padder b-l b-l-2x b-l-info" > </span>
+            </div>
+            <div class="f_Left row" style="width: 1000px">
+                <div class="col-sm-2">
+                    <label class="m-l-md w-xms m-t-sm m-b-xs font-bold f_Left" style="width:200px" >设备号: {{ ServerDeviceItem.deviceId}}</label>
+
+                </div>
+                <div class="col-sm-4">
+                    <label class="m-l-xs m-t-sm m-b-xs font-bold f_Left"  style="width: 200px">设备名: {{ ServerDeviceItem.deviceName}} </label>
+
+                </div>
+            </div>
+            <div class="pull-left" style="margin-left: 134px;">
+                <a class="btn btn-sm btn-default m-t-xs w-xxs text-success" href="javascript:history.go(-1)">
+                    返回
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="" style="margin: 0 50px">
+        <div class="">
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner">
+                        <div class="wrapper">
+                            <div class="panel b-a">
+                                <div class="panel-heading bg-light lter">
+                                    <a class="m-b-sm font-bold text-md">服务套餐信息</a>
+                                </div>
+                                <div class="panel-body">
+                                    <div ng-if="ServerDeviceItem.items['SIGNUP']">
+                                        <p class="m-b-sm font-bold">基础套餐</p>
+
+                                        <table class="table table-bordered">
+                                            <thead>
+                                            <tr>
+                                                <th>存储空间</th>
+                                                <th>有效时间</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="profile in ServerDeviceItem.items['SIGNUP']">
+                                                <td>{{profile.space >= 9999999999 ? '无限' : profile.space/1048576}} G/月</td>
+                                                <td>{{profile.startTime}} 到 {{profile.expireTime}}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div ng-if="ServerDeviceItem.items['PURCHASE']">
+                                        <p class="m-b-sm font-bold">升级服务:</p>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                            <tr>
+                                                <th>订单号</th>
+                                                <th>有效时间</th>
+                                                <!--<th>访问时长</th>-->
+                                                <th>存储空间</th>
+                                                <th>剩余天数</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="profile in ServerDeviceItem.items['PURCHASE']">
+                                                <td>
+                                                    <a class="text-decorline text-info" data-toggle="modal"
+                                                       data-target="#orderDetailModal"
+                                                       ng-click="getOrderDetail(ServerDeviceItem.deviceId,profile)">
+                                                        {{profile.orderNo}}
+                                                    </a>
+                                                </td>
+                                                <td>{{profile.startTime}} 到 {{profile.expireTime}}
+                                                    <span class="font-bold">{{profile.active ? '(已生效)' : '(未生效)'}}</span>
+                                                </td>
+                                                <!--<td>{{profile.flow >= 9999999999 ? '无限' : profile.flow/3600}} 小时/月</td>-->
+                                                <td>{{profile.space >= 9999999999 ? '无限' : profile.space/1048576}} G/月
+                                                </td>
+                                                <td>{{profile.remainDays}}</td>
+                                                <!--<td>-->
+                                                    <!--<a class="text-decorline text-success" data-toggle="modal"-->
+                                                       <!--data-target="#orderDetailModal"-->
+                                                       <!--ng-click="getOrderDetail(ServerDeviceItem.deviceId,profile)">查看订单</a>-->
+                                                <!--</td>-->
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="orderDetailModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" style="width: 900px">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">商品详情</h5>
+                        </div>
+                        <div class="modal-body clearfix" style="margin-left: 80px">
+                            <div class="row">
+                                <div class="col-sm-6 row">
+                                    <label class="col-sm-3 control-label ">设备名称:</label>
+
+                                    <div class="col-sm-9">
+                                        <div class="col-sm-9">
+                                            <p class="form-control-static m-t-n-xs text-limit font-bold">
+                                                {{ServerDeviceItem.deviceName}} </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 row">
+                                    <label class="col-sm-3 control-label ">空&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;间:</label>
+
+                                    <div class="col-sm-7">
+                                        <p class="form-control-static m-t-n-xs text-limit">
+                                            <span class="font-bold">{{orderDetail.space >= 9999999999 ? '无限' : orderDetail.space/1048576}} G/月</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="line"></div>
+
+                            <div class="row ">
+                                <label class="col-sm-3 control-label" style="width: 100px">有效时间:</label>
+
+                                <div class="col-sm-9">
+                                    <p class="form-control-static m-t-n-xs text-limit">
+                                        从
+                                        <span class="font-bold">{{orderDetail.startTime}}</span>
+
+                                        到
+                                        <span class="font-bold">{{orderDetail.expireTime}}</span>
+
+                                        共
+                                        <span class="font-bold">{{orderDetail.month}}</span>
+                                        月
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-header">
+                            <a class="">支付详情</a>
+                        </div>
+                        <div class="modal-body clearfix" style="margin-left: 80px">
+                            <div class="row">
+                                <div class="col-sm-6 row">
+                                    <label class="col-sm-3 control-label">支&nbsp;&nbsp;付&nbsp;号:</label>
+
+                                    <div class="col-sm-9">
+                                        <div class="col-sm-9">
+                                            <p class="form-control-static m-t-n-xs font-bold">
+                                                {{payDetail.payNo}} </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 row">
+                                    <label class="col-sm-3 control-label ">支付状态:</label>
+
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static m-t-n-xs text-limit">
+                                            <span class="font-bold"> {{payDetail.payState === "TRADE_SUCCESS" ? '支付成功' : payDetail.payState}}</p>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="height: 39px">
+                                <div class="col-sm-6 row">
+                                    <label class="col-sm-3 control-label ">支付方式:</label>
+
+                                    <div class="col-sm-7">
+                                        <div class="col-sm-7">
+                                            <p class="form-control-static m-t-n-xs text-limit font-bold">
+                                                {{payDetail.paySource === "Alipay" ? "支付宝" : payDetail.paySource}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 row">
+                                    <label class="col-sm-3 control-label">支付金额:</label>
+
+                                    <div class="col-sm-7">
+                                        <p class="form-control-static m-t-n-xs text-limit">
+                                            <span class="font-bold">{{payDetail.payFee}}&nbsp;&nbsp;RMB</span>
+                                        </p>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <!--<div class="col-sm-6 row">-->
+                                    <!--<label class="col-sm-3 control-label ">购买商品:</label>-->
+
+                                    <!--<div class="col-sm-7">-->
+                                        <!--<div class="col-sm-7">-->
+                                            <!--<p class="form-control-static m-t-n-xs text-limit font-bold">-->
+                                                <!--<p class="form-control-static m-t-n-xs" ng-if="paidGoodsInfo.SPACE">-->
+                                                    <!--空间: {{paidGoodsInfo.SPACE >= 9999999999 ? '无限' : paidGoodsInfo.SPACE/1048576}} G/月-->
+                                                <!--</p>-->
+                                                <!--<p class="form-control-static m-t-n-xs" ng-if="paidGoodsInfo.FLOW">-->
+                                                    <!--时长: {{paidGoodsInfo.FLOW >= 9999999999 ? '无限' : paidGoodsInfo.FLOW/3600}} 小时/月-->
+                                                <!--</p>-->
+                                                <!--<p class="form-control-static m-t-n-xs" ng-if="paidGoodsInfo.TIME">-->
+                                                    <!--有效时间: {{paidGoodsInfo.TIME.start | date: "yyyy-MM-dd"}} 至 {{paidGoodsInfo.TIME.end | date: "yyyy-MM-dd"}}-->
+                                                <!--</p>-->
+                                            <!--</p>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <div class="col-sm-6 row">
+                                    <label class="col-sm-3 control-label ">支付时间:</label>
+
+                                    <div class="col-sm-7">
+                                        <p class="form-control-static m-t-n-xs m-l  text-limit">
+                                            <span class="font-bold">{{payDetail.payTime | date:"yyyy-MM-dd HH:mm:ss"}}</span>
+                                        </p>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                关 闭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

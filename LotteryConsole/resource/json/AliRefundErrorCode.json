@@ -1,0 +1,147 @@
+[
+  {
+    "name": "ILLEGAL_USER",
+    "description": "用户ID不正确",
+    "type": "AliRefund"
+  },
+  {
+    "name": "BATCH_NUM_EXCEED_LIMIT",
+    "description": "总比数大于1000",
+    "type": "AliRefund"
+  },
+  {
+    "name": "REFUND_DATE_ERROR",
+    "description": "错误的退款时间",
+    "type": "AliRefund"
+  },
+  {
+    "name": "BATCH_NUM_ERROR",
+    "description": "传入的总笔数格式错误",
+    "type": "AliRefund"
+  },
+  {
+    "name": "BATCH_NUM_NOT_EQUAL_TOTAL",
+    "description": "传入的退款条数不等于数据集解析出的退款条数",
+    "type": "AliRefund"
+  },
+  {
+    "name": "SINGLE_DETAIL_DATA_EXCEED_LIMIT",
+    "description": "单笔退款明细超出限制",
+    "type": "AliRefund"
+  },
+  {
+    "name": "NOT_THIS_SELLER_TRADE",
+    "description": "不是当前卖家的交易",
+    "type": "AliRefund"
+  },
+  {
+    "name": "DUBL_TRADE_NO_IN_SAME_BATCH",
+    "description": "同一批退款中存在两条相同的退款记录",
+    "type": "AliRefund"
+  },
+  {
+    "name": "DUPLICATE_BATCH_NO",
+    "description": "重复的批次号",
+    "type": "AliRefund"
+  },
+  {
+    "name": "TRADE_STATUS_ERROR",
+    "description": "交易状态不允许退款",
+    "type": "AliRefund"
+  },
+  {
+    "name": "BATCH_NO_FORMAT_ERROR",
+    "description": "批次号格式错误",
+    "type": "AliRefund"
+  },
+  {
+    "name": "SELLER_INFO_NOT_EXIST",
+    "description": "卖家信息不存在",
+    "type": "AliRefund"
+  },
+  {
+    "name": "PARTNER_NOT_SIGN_PROTOCOL",
+    "description": "平台商未签署协议",
+    "type": "AliRefund"
+  },
+  {
+    "name": "NOT_THIS_PARTNERS_TRADE",
+    "description": "退款明细非本合作伙伴的交易",
+    "type": "AliRefund"
+  },
+  {
+    "name": "DETAIL_DATA_FORMAT_ERROR",
+    "description": "数据集参数格式错误",
+    "type": "AliRefund"
+  },
+  {
+    "name": "PWD_REFUND_NOT_ALLOW_ROYALTY",
+    "description": "有密接口不允许退分润",
+    "type": "AliRefund"
+  },
+  {
+    "name": "NANHANG_REFUND_CHARGE_AMOUNT_ERROR",
+    "description": "退票面价金额不合法",
+    "type": "AliRefund"
+  },
+  {
+    "name": "REFUND_AMOUNT_NOT_VALID",
+    "description": "退款金额不合法",
+    "type": "AliRefund"
+  },
+  {
+    "name": "TRADE_PRODUCT_TYPE_NOT_ALLOW_REFUND",
+    "description": "交易类型不允许退交易",
+    "type": "AliRefund"
+  },
+  {
+    "name": "RESULT_FACE_AMOUNT_NOT_VALID",
+    "description": "退款票面价不能大于支付票面价",
+    "type": "AliRefund"
+  },
+  {
+    "name": "REFUND_CHARGE_FEE_ERROR",
+    "description": "退收费金额不合法",
+    "type": "AliRefund"
+  },
+  {
+    "name": "REASON_REFUND_CHARGE_ERR",
+    "description": "退收费失败",
+    "type": "AliRefund"
+  },
+  {
+    "name": "RESULT_AMOUNT_NOT_VALID",
+    "description": "退收费金额错误",
+    "type": "AliRefund"
+  },
+  {
+    "name": "RESULT_ACCOUNT_NO_NOT_VALID",
+    "description": "账号无效",
+    "type": "AliRefund"
+  },
+  {
+    "name": "REASON_TRADE_REFUND_FEE_ERR",
+    "description": "退款金额错误",
+    "type": "AliRefund"
+  },
+  {
+    "name": "REASON_HAS_REFUND_FEE_NOT_MATCH",
+    "description": "已退款金额错误",
+    "type": "AliRefund"
+  },
+  {
+    "name": "TXN_RESULT_ACCOUNT_STATUS_NOT_VALID",
+    "description": "账户状态无效",
+    "type": "AliRefund"
+  },
+  {
+    "name": "TXN_RESULT_ACCOUNT_BALANCE_NOT_ENOUGH",
+    "description": "账户余额不足",
+    "type": "AliRefund"
+  },
+  {
+    "name": "REASON_REFUND_AMOUNT_LESS_THAN_COUPON_FEE",
+    "description": "红包无法部分退款",
+    "type": "AliRefund"
+  }
+]

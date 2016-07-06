@@ -1,0 +1,220 @@
+<div ng-controller="SummaryController" style="width: 1400px">
+    <div class="m-t-sm f_Left">
+        <div class="app-aside m-l-lg">
+            <h4 class="app-aside w-xmm font-mid" >{{nav_name}}</h4>
+        </div>
+        <form name="summaryform" class="form-horizontal f_Left m-l-n-xxxl" style="width: 1200px; height: 47px;">
+                <div class="row">
+                    <div class="control-label col-sm-3">
+
+                        <label class="">时间粒度</label>
+
+                        <label class="i-checks m-b-none m-r-xxs">
+                            <input type="radio" name="timeunit" ng-model="unit.timeUnit" value="YEAR" ng-change="onTimeUnitChange()"><i></i>年
+                        </label>
+                        <label class="i-checks m-b-none m-r-xxs">
+                            <input type="radio" name="timeunit" ng-model="unit.timeUnit" value="QUARTER" ng-change="onTimeUnitChange()"><i></i>季
+                        </label>
+                        <label class="i-checks m-b-none m-r-xxs">
+                            <input type="radio" name="timeunit" ng-model="unit.timeUnit" value="MONTH" ng-change="onTimeUnitChange()"><i></i>月
+                        </label>
+                        <label class="i-checks m-b-none m-r-xxs">
+                            <input type="radio" name="timeunit" ng-model="unit.timeUnit" value="DAY" ng-change="onTimeUnitChange()"><i></i>日
+                        </label>
+                    </div>
+
+                    <div class="col-sm-6" ng-if="showYearSelect">
+                        <div class="row" >
+                            <div class="col-sm-6">
+                                <label class="w-xs app-aside control-label">查询时间：</label>
+
+                                <input type="text" class="text-limit form-control w-xmm app-aside"
+                                       ng-click="timeSelect($event)" id="year1"
+                                       ng-model="summaryArgs.yearChooseStart" title="(格式为:yyyy-MM-dd)"/>
+                            </div>
+                            <div class="col-sm-6 m-l-n-xml">
+                                <label class="app-aside w-xxxs control-label">到：</label>
+
+                                <input type="text" class="text-limit form-control w-xmm app-aside"
+                                       ng-click="timeSelect($event)" id="year2"
+                                       ng-model="summaryArgs.yearChooseEnd" title="(格式为:yyyy-MM-dd)"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6" ng-if="showQuarter">
+                        <div class="row">
+                            <div class="row col-sm-6">
+                                <div class="col-sm-6">
+                                    <input type="text" class="text-limit form-control w-xxs app-aside form_date"
+                                           ng-click="timeSelect($event)" id="querter1"
+                                           ng-model="summaryArgs.yearStart" title="(格式为:yyyy-MM-dd)"/>
+                                    <label class="w-xss app-aside control-label">年</label>
+                                </div>
+                                <div class="col-sm-6 m-l-n-lg">
+                                    <select class="form-control app-aside w-xmd" ng-model="summaryArgs.quarterChooseStart">
+                                        <option value="">季</option>
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                    </select>
+                                    <label class="w-xms app-aside control-label m-l-n-md">季度</label>
+                                </div>
+                            </div>
+                            <div class="row col-sm-6">
+                                <p class="control-label w-xxxs app-aside m-l-n-xxl">到</p>
+
+                                <div class="col-sm-6">
+                                    <input type="text" class="text-limit form-control w-xxs app-aside form_date"
+                                           ng-click="timeSelect($event)" id="querter2"
+                                           ng-model="summaryArgs.yearEnd" title="(格式为:yyyy-MM-dd)"/>
+                                    <label class="w-xss app-aside control-label">年</label>
+                                </div>
+                                <div class="col-sm-6 m-l-n-lg">
+                                    <select class="form-control app-aside w-xmd" ng-model="summaryArgs.quarterChooseEnd">
+                                        <option value="">季</option>
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                    </select>
+                                    <label class="w-xms app-aside control-label m-l-n-md">季度</label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-6" ng-if="showMonthSelect">
+                        <div class="row" >
+                            <div class="col-sm-6">
+                                <label class="w-xs app-aside control-label">查询时间：</label>
+
+                                <input type="text" class="text-limit form-control w-xmm app-aside"
+                                       ng-click="timeSelect($event)" id="time1"
+                                       ng-model="summaryArgs.monthChooseStart" title="(格式为:yyyy-MM-dd)"/>
+                            </div>
+                            <div class="col-sm-6 m-l-n-xml">
+                                <label class="app-aside w-xxxs control-label">到：</label>
+
+                                <input type="text" class="text-limit form-control w-xmm app-aside"
+                                       ng-click="timeSelect($event)" id="time2"
+                                       ng-model="summaryArgs.monthChooseEnd" title="(格式为:yyyy-MM-dd)"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6" ng-if="showDaySelect" >
+                        <div class="row" >
+                            <div class="col-sm-6">
+                                <label class="app-aside w-xs control-label">查询时间：</label>
+
+                                <input type="text" class="text-limit form-control app-aside w-xmm form_date" id="day1"
+                                       ng-click="timeSelect($event)" id="day1"
+                                       ng-model="summaryArgs.dayChooseStart"  title="(格式为:yyyy-MM-dd)"/>
+                            </div>
+                            <div class="col-sm-6 m-l-n-xml">
+                                <label class="app-aside w-xxxs control-label">到：</label>
+
+                                <input type="text" class="text-limit form-control app-aside w-xmm form_date" id="day2"
+                                       ng-click="timeSelect($event)" id="day2"
+                                       ng-model="summaryArgs.dayChooseEnd"  title="(格式为:yyyy-MM-dd)"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2 form-group  app-aside m-l-n-xxxxl w-lm" ng-if=" nav_name == '设备消费统计'">
+                        <div class="row">
+                            <label class="control-label app-aside w-xsm">消费排名：</label>
+                            <select class="form-control app-aside w-sm" ng-model="summaryArgs.topNum">
+                                <option value="">排名TOP值</option>
+                                <option>10</option>
+                                <option>20</option>
+                                <option>30</option>
+                                <option>50</option>
+                                <option>100</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-1 form-group control-label control-label w-xms">
+                        <button class="btn btn-primary m-t-n m-b-n m-t-n-sm" ng-click="summary(summaryform.$valid)" type="submit">统计</button>
+                    </div>
+                </div>
+        </form>
+    </div>
+
+    <div style="height:60px; width:1px; border-left:1px #ccc solid;margin-left: 150px"></div>
+
+    <div style="width: 100%; height: 1px; margin: 0px auto; padding: 0px; background-color: #D8D8D8; overflow: hidden"></div>
+
+    <div class="line"></div>
+
+    <div class="demo-container" style="margin: 0 50px;" ng-if="id == 4 ? false : true">
+        <div class="panel panel-default">
+            <div class="panel-heading font-bold">{{barTitle}}
+                <span class="" style="margin-left: 1000px" ng-show="showUnit">单位：{{barUnit}}</span>
+                <button class="btn btn-primary btn-sm m-l-xl  w-xds" ng-show="detailButton" ng-click = "toggleShow()">{{text}}</button>
+            </div>
+            <div class="panel-body">
+                <div id="barChart" style="height: 300px;">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin: 10px auto;width: 1400px;height: auto" ng-if="ifShow">
+        <div class="" style="margin: 0 50px" >
+            <table class="table table-bordered table-condensed text-center table-striped" ng-if="nav_name != '设备消费统计'">
+                <thead class="bg-light">
+                    <tr class="row">
+                        <td class="col-sm-4">时间</td>
+                        <td class="col-sm-4">{{chartshow.title.fir}}</td>
+                        <td class="col-sm-4">{{chartshow.title.sec}}</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="row info" ng-if="id == 1 ? true : false" ng-repeat="data in chartshow.chartdata.detailDatas">
+                        <td class="col-sm-4">{{data.time}}</td>
+                        <td class="col-sm-4">{{data.incoming | currency:'￥'}}</td>
+                        <td class="col-sm-4">{{data.outgoing | currency:'￥'}}</td>
+                    </tr>
+                    <tr class="row info" ng-if="id == 2 ? true : false" ng-repeat="data in chartshow.chartdata.detailDatas">
+                        <td class="col-sm-4">{{data.time}}</td>
+                        <td class="col-sm-4">{{data.purchase}}</td>
+                        <td class="col-sm-4">{{data.refund}}</td>
+                    </tr>
+                    <tr class="row info" ng-if="id == 1 ? true : false">
+                        <td class="col-sm-4">{{chartshow.total.name}}</td>
+                        <td class="col-sm-4">{{chartshow.total.fir | currency:'￥'}}</td>
+                        <td class="col-sm-4">{{chartshow.total.sec | currency:'￥'}}</td>
+                    </tr>
+                    <tr class="row info" ng-if="id == 2 ? true : false">
+                        <td class="col-sm-4">{{chartshow.total.name}}</td>
+                        <td class="col-sm-4">{{chartshow.total.fir}}</td>
+                        <td class="col-sm-4">{{chartshow.total.sec}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="margin: 0px auto;width: 1000px;height: auto" ng-if="nav_name == '设备消费统计'">
+        <table class="table table-bordered table-condensed text-center table-striped">
+            <p>{{rankInfo}}</p>
+            <thead>
+                <tr class="row bg-light">
+                    <td class="col-sm-3">排名</td>
+                    <td class="col-sm-3">设备ID</td>
+                    <td class="col-sm-3">设备名</td>
+                    <td class="col-sm-3">消费</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="row info" ng-repeat="user in chartshow">
+                    <td class="col-sm-3" ng-bind="$index + 1">1</td>
+                    <td class="col-sm-3">{{user.deviceId}}</td>
+                    <td class="col-sm-3">{{user.deviceName}}</td>
+                    <td class="col-sm-3">{{user.retainedFees | currency:'￥'}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

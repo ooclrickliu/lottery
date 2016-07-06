@@ -1,0 +1,120 @@
+<div class="hbox hbox-auto-xs hbox-auto-sm" ng-controller="OrderController">
+    <div class="col w-md b-r bg-auto">
+        <div class="wrapper-s b-b clearfix">
+            <div class="pull-left m-t-sm m-b-sm">
+                <span class="padder"> 订单管理 </span>
+            </div>
+        </div>
+        <form class="form-group m-sm m-t-lg">
+            <p class="b-b">查询订单</p>
+            <label class="m-l-xs m-t m-b-xs font-bold">订单状态: </label>
+
+            <div class="b-a wrapper-xs rounded" ng-init="orderState = 0">
+                <div class="radio-inline">
+                    <label class="i-checks">
+                        <input type="radio" name="orderState" value="0" ng-model="orderState"/><i></i>已付款</label>
+                </div>
+                <div class="radio-inline">
+                    <label class="i-checks">
+                        <input type="radio" name="orderState" value="1" ng-model="orderState"/><i></i>待付款</label>
+                </div>
+            </div>
+            <label class="m-l-xs m-t m-b-xs font-bold" for="orderNo">订单号: </label>
+            <input type="number" id="orderNo" class="form-control input-sm rounded" placeholder="输入订单号"
+                   ng-model="query.order_no">
+            <label class="m-l-xs m-t m-b-xs font-bold" for="userId">设备号: </label>
+            <input type="number" id="userId" class="form-control input-sm rounded" placeholder="输入设备号"
+                   ng-model="query.user_id">
+            <label class="m-l-xs m-t m-b-xs font-bold" for="createBy">购买人: </label>
+            <input type="number" id="createBy" class="form-control input-sm rounded" placeholder="输入购买人"
+                   ng-model="query.create_by">
+            <label class="m-l-xs m-t m-b-xs font-bold" for="startTime">开始日期: </label>
+            <input type="date" id="startTime" class="form-control input-sm rounded"
+                   ng-model="startTime">
+
+            <label class="m-l-xs m-t m-b-xs font-bold" for="endTime">结束日期: </label>
+            <input type="date" id="endTime" class="form-control input-sm rounded"
+                   ng-model="endTime">
+
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success rounded m-t-md padder-lg" id="search"
+                        ng-click="searchOrders(query, startTime, endTime, orderState)">搜索
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="col">
+        <div class="wrapper-s b-b clearfix">
+            <div class="pull-left m-t-sm m-b-sm">
+                <span class="padder b-l b-l-2x b-l-info" ng-bind="orderStatesMap[selectedOrderState]"> </span>
+            </div>
+        </div>
+        <div class="wrapper-xs clearfix">
+            <table class="table table-bordered">
+                <thead class="bg-light lt" ng-hide="showedOrders.length <= 0">
+                <tr>
+                    <th><a href="" ng-click="sortBy('order_no')">订单号 <span
+                            class="fa {{showSortIcon('order_no')}}"></span></a></th>
+                    <th><a href="" ng-click="sortBy('order_total_fee')">总金额(元) <span
+                            class="fa {{showSortIcon('order_total_fee')}}"></span></a></th>
+                    <th ng-hide="selectedOrderState == orderStates[1]"><a href="" ng-click="sortBy('refunded_fee')">已退金额(元)
+                        <span class="fa {{showSortIcon('refunded_fee')}}"></span></a></th>
+                    <th><a href="" ng-click="sortBy('user_id')">设备Id <span
+                            class="fa {{showSortIcon('user_id')}}"></span></a></th>
+                    <th><a href="" ng-click="sortBy('create_by')">购买者 <span
+                            class="fa {{showSortIcon('create_by')}}"></span></a></th>
+                    <th><a href="" ng-click="sortBy('create_time')">创建时间 <span
+                            class="fa {{showSortIcon('create_time')}}"></span></a></th>
+                    <th ng-hide="selectedOrderState == orderStates[1]">详情</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="order in showedOrders">
+                    <td>
+                        <span class="text-decorline"
+                              ng-if="selectedOrderState == orderStates[1]"
+                                >{{order.orderNo}}
+                        </span>
+                        <a class="text-decorline text-info"
+                           ui-sref="app.order_detail({orderNo:order.orderNo})"
+                           ng-if="selectedOrderState == orderStates[0]"
+                                >{{order.orderNo}}
+                        </a>
+                    </td>
+                    <td>{{order.orderTotalFee}}</td>
+                    <td ng-hide="selectedOrderState == orderStates[1]">{{order.refundedFee == 0 ? '未退款' :
+                        order.refundedFee}}
+                    </td>
+                    <td><a class="text-decorline text-info"
+                           ng-bind="order.userId"
+                           ng-click="showDeviceDetail(order.userId)">
+                    </a>
+                    </td>
+                    <td>{{order.createBy}}</td>
+                    <td>{{order.createTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                    <td ng-hide="selectedOrderState == orderStates[1]"><a class="text-decorline text-success"
+                                                                          ui-sref="app.order_detail({orderNo:order.orderNo})"
+                            >查看
+                    </a>
+                    </td>
+                </tr>
+                <tr ng-show="!showedOrders || showedOrders.length <= 0">
+                    <td colspan="8" class="text-lg text-center" ng-bind-html="loadingHint | to_trusted">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="text-center" ng-hide="showedOrders.length <= 0">
+                <button class="btn btn-default" id="prev" ng-disabled="pageInfo.page <= 0"
+                        ng-click="getOrderListByPage('prev')">
+                    上一页
+                </button>
+                <a>第{{pageInfo.page+1}}页</a>
+                <button class="btn btn-default" ng-disabled="showedOrders.length < pageInfo.limit" id="next"
+                        ng-click="getOrderListByPage('next')">下一页
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

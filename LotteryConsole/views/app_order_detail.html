@@ -1,0 +1,402 @@
+<div class="hbox hbox-auto-xs hbox-auto-sm" ng-controller="OrderDetailController">
+    <div class="col w-md b-r bg-auto">
+        <div class="wrapper b-b bg">
+            <a class="font-bold">订单管理</a>
+        </div>
+        <div class="wrapper hidden-sm hidden-xs">
+            <ul class="nav nav-pills nav-stacked nav-sm">
+                <li ng-repeat="orderState in orderStates"
+                    ng-class="{true:'active', false:''}[orderState == selectedOrderState]">
+                    <a ng-bind="orderState"></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col">
+        <div class="b-b progress-x m-t-sm">
+            <div class="pull-left">
+                <a class="btn btn-sm btn-default w-xxs m-r-sm text-success m-l-md" href="javascript:history.go(-1)">
+                    返回
+                </a>
+            </div>
+            <div class="pull-left m-l-xl m-t-xs">
+                <label>设备名称:&nbsp;&nbsp;&nbsp;&nbsp;{{orderDetail.userName}}</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label>购买人:&nbsp;&nbsp;&nbsp;&nbsp;{{orderDetail.creatorName}}</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label>订单号:&nbsp;&nbsp;&nbsp;&nbsp;{{payDetail.orderNo}}</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+        </div>
+
+        <div class="wrapper-xs clearfix">
+            <!--<div class="wrapper-xs">-->
+                <!--<div class="panel panel-default">-->
+                    <!--<div class="panel-heading">-->
+                        <!--<a class="m-b-sm font-bold text-lg">商品详情</a>-->
+                    <!--</div>-->
+                    <!--<div class="panel-body">-->
+                        <!--<div ng-repeat="item in orderItems">-->
+                            <!--<div class="form-group">-->
+                                <!--<div class="form-group">-->
+                                    <!--<label class="col-lg-3 control-label">设备名称:</label>-->
+                                    <!--<div class="col-lg-9">-->
+                                        <!--<p class="form-control-static m-t-n-xs text-limit">-->
+                                            <!--{{payDetail.payNo}}</p>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="line line-dashed b-b line-lg pull-in"></div>-->
+                                <!--<div class="form-group">-->
+                                    <!--<label class="col-lg-3 control-label">空间大小:</label>-->
+                                    <!--<div class="col-lg-9">-->
+                                        <!--<p class="form-control-static m-t-n-xs" ng-if="paidGoodsInfo.SPACE">-->
+                                             <!--{{paidGoodsInfo.SPACE >= 9999999999 ? '无限' : paidGoodsInfo.SPACE/1048576}} G/月-->
+                                        <!--</p>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="line line-dashed b-b line-lg pull-in"></div>-->
+                                <!--<div class="form-group">-->
+                                    <!--<label class="col-lg-3 control-label">有效时间:</label>-->
+
+                                    <!--<div class="col-lg-9">-->
+                                        <!--<p class="form-control-static m-t-n-xs" ng-if="paidGoodsInfo.TIME">-->
+                                             <!--{{paidGoodsInfo.TIME.start | date: "yyyy-MM-dd"}} 至 {{paidGoodsInfo.TIME.end | date: "yyyy-MM-dd"}}-->
+                                            <!--共-->
+                                        <!--</p>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="line line-dashed b-b line-lg pull-in"></div>  </div>-->
+
+                        <!--</div>-->
+
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="wrapper-xs">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <a class="m-b-sm font-bold text-lg">支付详情</a>
+                        &nbsp;&nbsp;(<a class="text-info" data-toggle="modal"
+                                        data-target="#paymentLogModal"
+                                        ng-click="getPaymentLogDetail(payDetail.payLogId)">查看详情</a>)
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">支付号:</label>
+                                <div class="col-lg-9">
+                                    <p class="form-control-static m-t-n-xs text-limit">
+                                        {{payDetail.payNo}}</p>
+                                </div>
+                            </div>
+                            <div class="line line-dashed b-b line-lg pull-in"></div>
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">支付方式:</label>
+                                <div class="col-lg-9">
+                                    <p class="form-control-static m-t-n-xs text-limit">
+                                        {{payDetail.paySource === "Alipay" ? "支付宝" : payDetail.paySource}}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="line line-dashed b-b line-lg pull-in"></div>
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">购买商品:</label>
+
+                                <div class="col-lg-9">
+                                    <p class="form-control-static m-t-n-xs" ng-if="paidGoodsInfo.SPACE">
+                                        空间: {{paidGoodsInfo.SPACE >= 9999999999 ? '无限' : paidGoodsInfo.SPACE/1048576}} G/月
+                                    </p>
+                                    <p class="form-control-static m-t-n-xs" ng-if="paidGoodsInfo.FLOW">
+                                        时长: {{paidGoodsInfo.FLOW >= 9999999999 ? '无限' : paidGoodsInfo.FLOW/3600}} 小时/月
+                                    </p>
+                                    <p class="form-control-static m-t-n-xs" ng-if="paidGoodsInfo.TIME">
+                                        有效时间: {{paidGoodsInfo.TIME.start | date: "yyyy-MM-dd"}} 至 {{paidGoodsInfo.TIME.end | date: "yyyy-MM-dd"}}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="line line-dashed b-b line-lg pull-in"></div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">支付状态:</label>
+                                <div class="col-lg-9">
+                                    <p class="form-control-static m-t-n-xs text-limit">
+                                        {{payDetail.payState === "TRADE_SUCCESS" ? '支付成功' : payDetail.payState}}</p>
+                                </div>
+                            </div>
+                            <div class="line line-dashed b-b line-lg pull-in"></div>
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">支付金额:</label>
+
+                                <div class="col-lg-9">
+                                    <p class="form-control-static m-t-n-xs text-limit">
+                                        {{payDetail.payFee}}&nbsp;&nbsp;RMB</p>
+                                </div>
+                            </div>
+                            <div class="line line-dashed b-b line-lg pull-in"></div>
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">支付时间:</label>
+
+                                <div class="col-lg-9">
+                                    <p class="form-control-static m-t-n-xs text-limit">
+                                        {{payDetail.payTime | date:"yyyy-MM-dd HH:mm:ss"}}</p>
+                                </div>
+                            </div>
+                            <div class="line line-dashed b-b line-lg pull-in"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="wrapper-xs" ng-show="refundDetail != null">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <a class="m-b-sm font-bold text-lg">退款详情</a>
+                        &nbsp;&nbsp;(<a class="text-info"
+                                        data-toggle="modal"
+                                        data-target="#refundLogModal"
+                                        ng-click="getRefundLogDetail(refundDetail.refundLogId)">查看详情</a>)
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">退款状态:</label>
+
+                                <div class="col-lg-9">
+                                    <p class="form-control-static m-t-n-xs text-limit">
+                                        {{refundDetail.refundState === "SUCCESS" ?
+                                        "成功":errCodeMap[refundDetail.refundState]}}</p>
+                                </div>
+                            </div>
+                            <div class="line line-dashed b-b line-lg pull-in"></div>
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">退款商品:</label>
+
+                                <div class="col-lg-9">
+                                    <p class="form-control-static m-t-n-xs" ng-if="refundGoodsInfo.SPACE">
+                                        空间: {{refundGoodsInfo.SPACE >= 9999999999 ? '无限' : refundGoodsInfo.SPACE/1048576}} G/月
+                                    </p>
+                                    <p class="form-control-static m-t-n-xs" ng-if="refundGoodsInfo.FLOW">
+                                        时长: {{refundGoodsInfo.FLOW >= 9999999999 ? '无限' : refundGoodsInfo.FLOW/3600}} 小时/月
+                                    </p>
+                                    <p class="form-control-static m-t-n-xs" ng-if="refundGoodsInfo.TIME">
+                                        有效时间: {{refundGoodsInfo.TIME.start | date: "yyyy-MM-dd"}} 至 {{refundGoodsInfo.TIME.end | date: "yyyy-MM-dd"}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">退款金额:</label>
+
+                                <div class="col-lg-9">
+                                    <p class="form-control-static m-t-n-xs text-limit">
+                                        {{refundDetail.refundFee}}&nbsp;&nbsp;RMB</p>
+                                </div>
+                            </div>
+                            <div class="line line-dashed b-b line-lg pull-in"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="paymentLogModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{payDetail.paySource === "Alipay" ? "支付宝" :
+                                payDetail.paySource}}支付日志</h5>
+                        </div>
+                        <div class="modal-body clearfix">
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">通知时间:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="paymentLogDetail.notifyTime | date:'yyyy-MM-dd HH:mm:ss'"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">通知类型:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="paymentLogDetail.notifyType"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">通知ID:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="paymentLogDetail.notifyId"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">签名类型:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="paymentLogDetail.signType"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">签名:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-break font-bold"
+                                       ng-bind="paymentLogDetail.sign"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">订单编号:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="paymentLogDetail.outTradeNo"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">描述:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="paymentLogDetail.subject"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">交易号:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="paymentLogDetail.tradeNo"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">交易状态:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="paymentLogDetail.tradeStatus"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">买家Id:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="paymentLogDetail.buyerId"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">买家账号:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="paymentLogDetail.buyerEmail"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">总金额:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold">
+                                        {{paymentLogDetail.totalFee}} RMB</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">折扣:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                            >{{paymentLogDetail.discount}} RMB</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                关 闭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="refundLogModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{payDetail.paySource === "Alipay" ? "支付宝" :
+                                payDetail.paySource}}退款日志</h5>
+                        </div>
+                        <div class="modal-body clearfix">
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">批次号:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="refundLogDetail.batchNo"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">通知时间:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="refundLogDetail.notifyTime | date:'yyyy-MM-dd HH:mm:ss'"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">通知类型:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="refundLogDetail.notifyType"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">通知ID:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="refundLogDetail.notifyId"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">签名类型:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="refundLogDetail.signType"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">签名:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-break font-bold"
+                                       ng-bind="refundLogDetail.sign"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">成功个数:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-limit font-bold"
+                                       ng-bind="refundLogDetail.successNum"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">详细:</label>
+
+                                <div class="col-sm-7">
+                                    <p class="form-control-static m-t-n-xs text-break font-bold"
+                                       ng-bind="refundLogDetail.resultDetails"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                关 闭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

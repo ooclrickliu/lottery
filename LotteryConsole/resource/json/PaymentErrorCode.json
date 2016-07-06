@@ -1,0 +1,252 @@
+[
+	{
+		"name": "InvalidOrderNumber",
+		"description": "此订单号无效",
+		"type": "order"
+	},
+	{
+		"name": "InvalidOrderState",
+		"description": "当前的订单状态不允许执行此操作",
+		"type": "order"
+	},
+	{
+		"name": "NonPositiveTotalFee",
+		"description": "订单金额必须为正数",
+		"type": "order"
+	},
+	{
+		"name": "MismatchUserId",
+		"description": "此订单不属于当前用户",
+		"type": "order"
+	},
+	{
+		"name": "OrderIsDelete",
+		"description": "此订单已经删除",
+		"type": "order"
+	},
+	{
+		"name": "OrderNumberListIsEmpty",
+		"description": "未选中任何订单",
+		"type": "order"
+	},
+	{
+		"name": "QueryOrderListError",
+		"description": "查询订单列表出错",
+		"type": "order"
+	},
+	{
+		"name": "QueryRefundableOrdersError",
+		"description": "查询可继续申请退款的订单列表出错",
+		"type": "order"
+	},
+	{
+		"name": "QueryOrderInfoError",
+		"description": "查询订单详情出错",
+		"type": "order"
+	},
+	{
+		"name": "UpdateOrderStateError",
+		"description": "更新订单状态出错",
+		"type": "order"
+	},
+	{
+		"name": "UpdateOrderDeleteFlagError",
+		"description": "更新订单删除标志出错",
+		"type": "order"
+	},
+	{
+		"name": "GetUnpaidOrdersError",
+		"description": "获取未支付订单出错",
+		"type": "order"
+	},
+	{
+		"name": "JudgeOrderRefundedError",
+		"description": "判断订单是否已申请退款出错",
+		"type": "order"
+	},
+	{
+		"name": "GetTradeNoError",
+		"description": "获取流水号出错",
+		"type": "order"
+	},
+	{
+		"name": "OrderIsNull",
+		"description": "没有提供任何订单的条目",
+		"type": "order"
+	},
+	{
+		"name": "SaveOrderError",
+		"description": "保存订单记录出错",
+		"type": "order"
+	},
+	{
+		"name": "UpdateOrderRefundFeeError",
+		"description": "更新订单退款费用出错",
+		"type": "order"
+	},	
+	{
+		"name": "RefundFeeToMuch",
+		"description": "申请的退款总金额大于订单总金额",
+		"type": "refund"
+	},
+	{
+		"name": "NonPositiveRefundFee",
+		"description": "退款金额不是正数，必须为正数",
+		"type": "refund"
+	},
+	{
+		"name": "UserIdIsBlank",
+		"description": "设备ID号为空",
+		"type": "refund"
+	},
+	{
+		"name": "SaveRefundsError",
+		"description": "保存退款记录列表出错",
+		"type": "refund"
+	},
+	{
+		"name": "SaveRefundLogError",
+		"description": "保存退款日志出错",
+		"type": "refund"
+	},
+	{
+		"name": "GetRefundLogsError",
+		"description": "获取退款日志列表出错",
+		"type": "refund"
+	},	
+	{
+		"name": "GetRefundLogError",
+		"description": "获取退款日志出错",
+		"type": "refund"
+	},
+	{
+		"name": "UpdateRefundsError",
+		"description": "更新退款记录列表出错",
+		"type": "refund"
+	},
+	{
+		"name": "GetRefundError",
+		"description": "获取退款记录出错",
+		"type": "refund"
+	},
+	{
+		"name": "GetRefundsError",
+		"description": "获取退款记录列表出错",
+		"type": "refund"
+	},
+	{
+		"name": "SaveRefundRequestError",
+		"description": "插入退款请求记录出错",
+		"type": "refund request"
+	},
+	{
+		"name": "QueryRefundRequestsError",
+		"description": "查询退款请求列表出错",
+		"type": "refund request"
+	},
+	{
+		"name": "QueryRefundRequestError",
+		"description": "查询退款请求出错",
+		"type": "refund request"
+	},
+	{
+		"name": "QueryNonProcessRefundRequestsError",
+		"description": "查询未处理的退款请求列表出错",
+		"type": "refund request"
+	},
+	{
+		"name": "QueryProcessedRefundRequestsError",
+		"description": "查询已处理的退款请求列表出错",
+		"type": "refund request"
+	},
+	{
+		"name": "QueryAppliedRefundRequestsError",
+		"description": "查询已申请退款请求列表出错",
+		"type": "refund request"
+	},	
+	{
+		"name": "QueryApplyingRefundRequestsError",
+		"description": "查询正在申请退款请求列表出错",
+		"type": "refund request"
+	},
+	{
+		"name": "GetRefundRequestIdsError",
+		"description": "获取申请退款记录的ID列表出错",
+		"type": "refund request"
+	},			
+	{
+		"name": "UpdateRefundRequestsStateError",
+		"description": "更新订单退款请求记录集状态出错",
+		"type": "refund request"
+	},		
+	{
+		"name": "UpdateRefundRequestsError",
+		"description": "更新订单退款请求记录集出错",
+		"type": "refund request"
+	},
+	{
+		"name": "UpdateAuditorIdError",
+		"description": "更新审计员ID出错",
+		"type": "refund request"
+	},
+{
+		"name": "RefundRequestIsNull",
+		"description": "没有选择任何申请退款的条目",
+		"type": "refund request"
+	},	
+	{
+		"name": "SavePaymentLogError",
+		"description": "保存支付日志出错",
+		"type": "payment"
+	},			
+	{
+		"name": "GetPaymentLogsError",
+		"description": "获取支付日志列表出错",
+		"type": "payment"
+	},		
+	{
+		"name": "GetPaymentLogError",
+		"description": "获取支付日志出错",
+		"type": "payment"
+	},
+	{
+		"name": "GetPaymentError",
+		"description": "获取支付记录出错",
+		"type": "payment"
+	},	
+	{
+		"name": "GetPaymentsError",
+		"description": "获取支付记录列表出错",
+		"type": "payment"
+	},			
+	{
+		"name": "SavePaymentError",
+		"description": "保存支付记录出错",
+		"type": "payment"
+	},		
+	{
+		"name": "UpdatePaymentError",
+		"description": "更新支付记录出错",
+		"type": "payment"
+	},
+	{
+		"name": "DeletePaymentError",
+		"description": "删除支付记录出错",
+		"type": "payment"
+	},	
+	{
+		"name": "Unexpected Error",
+		"description": "服务器发生未知的错误",
+		"type": "unexpected"
+	},
+	{
+		"name": "AccessRemoteFailed",
+		"description": "远程访问出错",
+		"type": "access"
+	},
+	{
+		"name": "SDKJsonConvertError",
+		"description": "Json字符串转换成对象时出错",
+		"type": "paymentSDK"
+	}		
+]

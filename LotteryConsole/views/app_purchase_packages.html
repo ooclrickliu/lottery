@@ -1,0 +1,115 @@
+<div ng-controller="devicePurchaseController" style="overflow: hidden">
+    <div>
+        <div>
+            <div class="wrapper-s b-b clearfix" style="margin: 20px 50px">
+                <span><h4>购买套餐</h4></span>
+            </div>
+            <div style="width:1400px;">
+                <div class="" style="margin-left: 120px;" >
+                    <label class="control-label text-left font-bold" style="width: 100%">输入设备ID</label>
+                    <textarea class="form-control w-modify-xl" rows="3" cols="50" placeholder="请输入一个或多个设备ID,格式如下：x,xxx,xx,xxxx"
+                              ng-model="deviceInput" ng-change="checkDeviceId(deviceInput)"></textarea>
+                </div>
+
+                <!--<div>-->
+                    <!--<button type="submit" class="btn btn-primary m-t-n m-b-n btn-sm" style="float: right;margin-top: 0px;margin-right: 675px" ng-click="getDeviceByIds()">完成</button>-->
+                <!--</div>-->
+                <!--<div ng-if="infoMessage" style="margin-left: 80px;">-->
+                    <!--<p><h5>请按照格式输入ID</h5></p>-->
+                <!--</div>-->
+            </div>
+        </div>
+    </div>
+    <div class="line"></div>
+    <div class="line"></div>
+    <div style="width: 100%; height: 1px; margin: 0px auto; padding: 0px; background-color: #D8D8D8; overflow: hidden"></div>
+
+
+    <div style="float: left">
+        <div class="row" >
+            <div class="col-sm-6" style="margin: 30px 0 0 120px;width:700px;">
+                <div class="panel panel-default">
+                    <div class="panel-heading font-bold">套餐配置</div>
+                    <div class="panel-body">
+                        <form class="form-horizontal form-validation">
+                            <div class="wrapper b-b row form-group" ng-show="false">
+                                <div class="m-t-xs text-dark">
+                                    <p>设备ID:</p>
+                                    <span class="m-l-sm m-b-sm text-md font-bold" ng-repeat="deviceId in deviceIds">{{deviceId}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <label class="col-sm-3 control-label w-xsm">购买方式:</label>
+                                <div class="col-sm-6 form-control m-l-xxl"  style="width: 400px; border: 0px">
+                                    <input type="radio" name="radiobutton1" value="购买" ng-model="deviceItem.buyWay" ng-click="changeMenu()"/> 购买&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="radio" name="radiobutton1" value="签约" ng-model="deviceItem.buyWay" ng-click="changeMenu()"/> 签约
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <label class="col-sm-3 control-label w-xsm">存储空间:</label>
+                                <select class="col-sm-6 form-control w-xs" ng-model="deviceItem.space" ng-options="items.name for items in itemsSelect | filter: {type : 'SPACE'} " style="width: 400px;margin-left: 50px">
+                                    <option value="">请选择购买空间</option>
+                                </select>
+                                <!--<select class="col-sm-6 form-control w-xs" ng-model="deviceItem.space" ng-options="items.name for items in itemsSelect | filter: {type : 'SPACE'} " style="width: 400px;margin-left: 50px">-->
+                                <!--</select>-->
+                            </div>
+
+                            <div class="row form-group" ng-if="buyShow">
+                                <label class="col-sm-3 control-label w-xsm">有效时间:</label>
+                                <div class="input-group col-sm-6 w-sm" style="margin-left: 50px;float: left">
+                                    <div class="input-group-btn">
+                                        <input ui-jq="TouchSpin" ng-model="deviceItem.month" type="text" value="1" class="form-control" ng-pattern="/^[0-9]+$/">
+                                    </div>
+                                </div>
+                                <span class="control-label col-sm-3" style="width: 40px">月</span>
+                            </div>
+
+                            <div class="row form-group" ng-show="signShow">
+                                <label class="col-sm-3 control-label w-xsm">有效日期:</label>
+                                <div class=" col-sm-9" style="margin-left: -55px">
+                                    <label class="app-aside w-xs control-label"></label>
+
+                                    <input type="text" class="text-limit form-control app-aside w-xsm" id="year1"
+                                           ng-click="timeSelect($event)"
+                                           ng-model="deviceItem.startTime"  title="(格式为:yyyy-MM-dd)"/>
+
+                                    <label class="app-aside w-xxxs control-label">至&nbsp;&nbsp;</label>
+
+                                    <input type="text" class="text-limit form-control app-aside w-xsm" id="year2"
+                                           ng-click="timeSelect($event)"
+                                           ng-model="deviceItem.endTime"  title="(格式为:yyyy-MM-dd)"/>
+                                </div>
+
+                            </div>
+
+                            <div class="row form-group" ng-if="buyShow">
+                                <label class="col-sm-3 control-label w-xsm">生效方式:</label>
+                                <div class="col-sm-6 form-control m-l-xxl" style="width: 400px; border: 0px">
+                                    <input type="radio" name="radiobutton" value="NOW" ng-model="deviceItem.activateType"/> 立即生效&nbsp;&nbsp;&nbsp;
+                                    <input type="radio" name="radiobutton" value="NEXT_MONTH" ng-model="deviceItem.activateType" /> 次月生效
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="float: right;margin-right: 120px">
+                                <button id="buy" type="submit" class="btn btn-primary m-t-n m-b-n" ng-click="buyNewset(deviceIds)">购买套餐</button>
+                            </div>
+                            <div class="form-group" style="float: right;margin-right: 20px">
+                                <button type="reset" class="btn btn-primary m-t-n m-b-n">重置</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="margin: 30px 20px; width: 300px; float: left" ng-if="errorD">
+        <div class="m-b-md">
+            <alert type="danger"  ng-model="deviceFail">购买失败的设备ID:</alert>
+            <textarea class="form-control" rows="8" style="width: 500px;margin-top: -10px" cols="20" placeholder="" ng-model="deviceFail">
+                购买失败的设备ID:<span class="m-l-sm m-b-sm text-md font-bold" ng-repeat="errorDeviceId in buyErrordata">{{errorDeviceId}}</span></textarea>
+            <button class='btn btn-primary btn-sm' style="margin-top: 10px" ng-click="buyAgain()">复制设备ID到输入框</button>
+        </div>
+    </div>
+</div>
