@@ -6,3 +6,7 @@ PaymentService/.classpath
 PaymentService/.project
 PaymentService/.settings/*
 PaymentService/target/*
+PaymentServiceSDK/.classpath
+PaymentServiceSDK/.project
+PaymentServiceSDK/.settings/*
+PaymentServiceSDK/target/*
