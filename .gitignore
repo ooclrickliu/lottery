@@ -2,3 +2,7 @@ LotteryService/.classpath
 LotteryService/.project
 LotteryService/.settings/*
 LotteryService/target/*
+PaymentService/.classpath
+PaymentService/.project
+PaymentService/.settings/*
+PaymentService/target/*
