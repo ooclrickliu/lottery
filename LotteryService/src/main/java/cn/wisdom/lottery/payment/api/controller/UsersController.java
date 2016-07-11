@@ -8,8 +8,10 @@
 package cn.wisdom.lottery.payment.api.controller;
 
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,9 +23,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import cn.wisdom.lottery.payment.api.response.DoorbellPaymentAPIResult;
 import cn.wisdom.lottery.payment.common.model.JsonDocument;
 import cn.wisdom.lottery.payment.common.utils.CookieUtil;
+import cn.wisdom.lottery.payment.dao.vo.AppProperty;
 import cn.wisdom.lottery.payment.dao.vo.User;
-import cn.wisdom.lottery.payment.dao.vo.PermissionGrant;
-import cn.wisdom.lottery.payment.service.AppPropertiesService;
 import cn.wisdom.lottery.payment.service.UserService;
 import cn.wisdom.lottery.payment.service.context.SessionContext;
 import cn.wisdom.lottery.payment.service.exception.ServiceException;
@@ -46,7 +47,7 @@ public class UsersController
 
     private static final JsonDocument SUCCESS = DoorbellPaymentAPIResult.SUCCESS;
     @Autowired
-    private AppPropertiesService appProperties;
+    private AppProperty appProperties;
 
     /**
      * login.
@@ -65,7 +66,7 @@ public class UsersController
         String accessToken = userService.login(name, password);
 
         CookieUtil.addCookie(response, CookieUtil.KEY_ACCESS_TOKEN, accessToken,
-                appProperties.getCookieAccessTokenAge());
+                appProperties.cookieAccessTokenAge);
 
         return new DoorbellPaymentAPIResult(SessionContext.getCurrentUser());
     }
@@ -110,7 +111,7 @@ public class UsersController
                 newPassword);
 
         CookieUtil.addCookie(response, CookieUtil.KEY_ACCESS_TOKEN,
-                newAccessToken, appProperties.getCookieAccessTokenAge());
+                newAccessToken, appProperties.cookieAccessTokenAge);
 
         return SUCCESS;
     }
@@ -166,23 +167,6 @@ public class UsersController
     {
         userService.deleteUser(id);
         return SUCCESS;
-    }
-
-    /**
-     * Create an admin.
-     * 
-     * @param email
-     * @param password
-     * @return
-     * @throws ServiceException
-     */
-    @RequestMapping(method = RequestMethod.GET, value = "/{id}/permission")
-    @ResponseBody
-    public JsonDocument getPermissionByUserId(@PathVariable int id)
-            throws ServiceException
-    {
-        List<PermissionGrant> permissionList = userService.getPermissionByUserId(id);
-        return new DoorbellPaymentAPIResult(permissionList);
     }
 
     /**

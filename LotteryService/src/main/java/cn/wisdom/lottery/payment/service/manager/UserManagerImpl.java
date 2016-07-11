@@ -161,8 +161,6 @@ public class UserManagerImpl implements UserManager
         User user = new User();
         name = StringUtils.trim(name);
         password = StringUtils.trim(password);
-        user.setPassword(EncryptionUtils.encrypt(password));
-        user.setUserName(name);
         user.setUpdateBy((int) SessionContext.getCurrentUser().getId());
 
         try

@@ -10,7 +10,7 @@ package cn.wisdom.lottery.payment.service;
 import java.util.List;
 
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
-import cn.wisdom.lottery.payment.dao.vo.PermissionGrant;
+import cn.wisdom.lottery.payment.dao.constant.RoleType;
 import cn.wisdom.lottery.payment.dao.vo.User;
 import cn.wisdom.lottery.payment.service.exception.ServiceException;
 
@@ -28,9 +28,10 @@ public interface UserService
 	 * 保存新关注用户
 	 * 
 	 * @param openId
+	 * @param role TODO
 	 * @throws ServiceException
 	 */
-	void createCustomer(String openId) throws ServiceException;
+	void createUser(String openId, RoleType role) throws ServiceException;
 	
 	/**
 	 * 更新用户基本信息
@@ -119,8 +120,6 @@ public interface UserService
      */
     void deleteUser(int id) throws ServiceException;
 
-    List<PermissionGrant> getPermissionByUserId(int userId) throws ServiceException;
-    
     void cleanExpiredUserToken() throws ServiceException;
 
     

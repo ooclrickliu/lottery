@@ -17,8 +17,8 @@ import cn.wisdom.lottery.payment.common.exception.OVTRuntimeException;
 import cn.wisdom.lottery.payment.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.payment.common.utils.EncryptionUtils;
 import cn.wisdom.lottery.payment.dao.UserTokenDao;
+import cn.wisdom.lottery.payment.dao.vo.AppProperty;
 import cn.wisdom.lottery.payment.dao.vo.UserToken;
-import cn.wisdom.lottery.payment.service.AppPropertiesService;
 import cn.wisdom.lottery.payment.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.payment.service.exception.ServiceException;
 
@@ -37,7 +37,7 @@ public class UserTokenManagerImpl implements UserTokenManager
     private UserTokenDao userAccessTokenDao;
 
     @Autowired
-    private AppPropertiesService appProperties;
+    private AppProperty appProperties;
 
     /*
      * (non-Javadoc)
@@ -52,7 +52,7 @@ public class UserTokenManagerImpl implements UserTokenManager
         long userId = 0;
         
         Timestamp expireTime = new Timestamp(DateTimeUtils.addSeconds(
-                new java.util.Date(), appProperties.getCookieAccessTokenAge())
+                new java.util.Date(), appProperties.cookieAccessTokenAge)
                 .getTime());
         try
         {
@@ -85,7 +85,7 @@ public class UserTokenManagerImpl implements UserTokenManager
         accessToken.setToken(token);
         accessToken.setUserId(userId);
         accessToken.setExpireTime(new Timestamp(DateTimeUtils.addSeconds(
-                new java.util.Date(), appProperties.getCookieAccessTokenAge())
+                new java.util.Date(), appProperties.cookieAccessTokenAge)
                 .getTime()));
         
         try

@@ -13,6 +13,7 @@ import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import cn.wisdom.lottery.payment.dao.constant.RoleType;
 import cn.wisdom.lottery.payment.service.UserService;
 import cn.wisdom.lottery.payment.service.exception.ServiceException;
 
@@ -71,7 +72,7 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		
 		// 保存用户
 		try {
-			userService.createCustomer(wxMessage.getFromUserName());
+			userService.createUser(wxMessage.getFromUserName(), RoleType.CUSTOMER);
 		} catch (ServiceException e) {
 			
 		}

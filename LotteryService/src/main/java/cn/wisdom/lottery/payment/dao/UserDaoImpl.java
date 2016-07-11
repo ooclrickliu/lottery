@@ -13,8 +13,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import cn.wisdom.lottery.payment.dao.mapper.UserMapper;
-import cn.wisdom.lottery.payment.dao.vo.Customer;
+import cn.wisdom.lottery.payment.dao.mapper.DaoRowMapper;
 import cn.wisdom.lottery.payment.dao.vo.User;
 
 /**
@@ -32,15 +31,12 @@ public class UserDaoImpl implements UserDao
     @Autowired
     private DaoHelper daoHelper;
 
-    @Autowired
-    private UserMapper userMapper;
+    private static final String SQL_INSERT_USER = "INSERT IGNORE INTO user(openid, role, "
+            + "create_time, update_time) "
+            + "VALUES(?, ?, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
 
-    private static final String SQL_INSERT_USER = "INSERT IGNORE INTO user(admin_name, admin_pwd,"
-            + "update_by, update_time,create_time) "
-            + "VALUES(?, ?, ?, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-
-    private static final String SQL_GET_PREFIX = "SELECT id, admin_name, admin_pwd, "
-            + " create_time, update_by FROM admin ";
+    private static final String SQL_GET_PREFIX = "SELECT id, openid, role, real_name, phone, card_no, "
+            + " create_time, update_time FROM user ";
 
     private static final String SQL_GET_USER = SQL_GET_PREFIX
             + "WHERE id = ? LIMIT 1";
@@ -59,6 +55,8 @@ public class UserDaoImpl implements UserDao
     private static final String SQL_GET_USER_BY_PERMISSION = "SELECT id,admin_name,admin_pwd,create_time, update_by "
             + "FROM admin " + "WHERE id "
             + "IN (SELECT ap_admin_id FROM admin_permission WHERE ap_perm_id = ?)";
+    
+    private static final DaoRowMapper<User> userMapper = new DaoRowMapper<User>(User.class);
 
     public User getUser(final long id)
     {
@@ -98,38 +96,18 @@ public class UserDaoImpl implements UserDao
      */
     public long save(final User user)
     {
-    	// user
         Object[] params = new Object[2];
-        params[0] = user.getType().toString();
-        params[1] = user.getOpenid();
+        params[0] = user.getOpenid();
+        params[1] = user.getRole().toString();
 
         String errMsg = MessageFormat.format("Failed insert user, openid={0}!",
                 user.getOpenid());
 
         long id = daoHelper.save(SQL_INSERT_USER, errMsg, true, params);
 
-        // customer
-        if (user instanceof Customer) {
-			save((Customer) user);
-		}
-        
-        
         return id;
     }
     
-    private void save(Customer customer)
-    {
-    	// user
-        Object[] params = new Object[2];
-        params[0] = customer.getId();
-        params[1] = customer.getOpenid();
-
-        String errMsg = MessageFormat.format("Failed insert customer, openid={0}!",
-        		customer.getOpenid());
-
-        daoHelper.save(SQL_INSERT_USER, errMsg, false, params);
-    }
-
     /*
      * (non-Javadoc)
      * 

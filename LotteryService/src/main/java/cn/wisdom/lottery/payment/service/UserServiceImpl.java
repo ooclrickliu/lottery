@@ -7,7 +7,6 @@
  */
 package cn.wisdom.lottery.payment.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
@@ -18,21 +17,14 @@ import org.springframework.stereotype.Service;
 import cn.wisdom.lottery.payment.common.log.Logger;
 import cn.wisdom.lottery.payment.common.log.LoggerFactory;
 import cn.wisdom.lottery.payment.common.utils.DataFormatValidator;
-import cn.wisdom.lottery.payment.common.utils.EncryptionUtils;
 import cn.wisdom.lottery.payment.common.utils.StringUtils;
 import cn.wisdom.lottery.payment.dao.UserDao;
-import cn.wisdom.lottery.payment.dao.constant.UserType;
-import cn.wisdom.lottery.payment.dao.vo.Customer;
-import cn.wisdom.lottery.payment.dao.vo.Permission;
-import cn.wisdom.lottery.payment.dao.vo.PermissionGrant;
+import cn.wisdom.lottery.payment.dao.constant.RoleType;
 import cn.wisdom.lottery.payment.dao.vo.User;
-import cn.wisdom.lottery.payment.service.context.SessionContext;
 import cn.wisdom.lottery.payment.service.exception.InvalidDataInputException;
 import cn.wisdom.lottery.payment.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.payment.service.exception.ServiceException;
-import cn.wisdom.lottery.payment.service.manager.PermissionManager;
 import cn.wisdom.lottery.payment.service.manager.UserManager;
-import cn.wisdom.lottery.payment.service.manager.UserPermissionManager;
 import cn.wisdom.lottery.payment.service.manager.UserTokenManager;
 
 /**
@@ -48,12 +40,9 @@ public class UserServiceImpl implements UserService
 {
     @Autowired
     private UserTokenManager userAccessTokenManager;
+    
     @Autowired
     private UserManager userManager;
-    @Autowired
-    private PermissionManager permissionManager;
-    @Autowired
-    private UserPermissionManager userPermissionManager;
     
     @Autowired
     private UserDao userDao;
@@ -75,12 +64,6 @@ public class UserServiceImpl implements UserService
         {
             throw new ServiceException(ServiceErrorCode.INVALID_ACCESS,
                     "Failed to find user by userId!");
-        }
-        else
-        {
-            List<Permission> permission = permissionManager.getPermissionByUserId((int) user
-                    .getId());
-            user.setPermission(permission);
         }
 
         return user;
@@ -146,26 +129,27 @@ public class UserServiceImpl implements UserService
     {
         // check args' format
         // checkFormat(name, password);
-        User user = userManager.getUserByName(name);
-        if (user == null)
-        {
-            throw new ServiceException(ServiceErrorCode.USER_NOT_EXIST, "User is not exist!");
-        }
-
-        // check password
-        if (!StringUtils.equals(user.getPassword(), EncryptionUtils.encrypt(password)))
-        {
-            throw new ServiceException(ServiceErrorCode.WRONG_PASSWORD, "Password is wrong!");
-        }
-
-        List<Permission> permission = permissionManager.getPermissionByUserId((int) user.getId());
-        user.setPermission(permission);
-        // generate access token
-        String accessToken = userAccessTokenManager.generateAccessToken(user.getId());
-        // put user into session context
-        SessionContext.setCurrentUser(user);
-
-        return accessToken;
+//        User user = userManager.getUserByName(name);
+//        if (user == null)
+//        {
+//            throw new ServiceException(ServiceErrorCode.USER_NOT_EXIST, "User is not exist!");
+//        }
+//
+//        // check password
+//        if (!StringUtils.equals(user.getPassword(), EncryptionUtils.encrypt(password)))
+//        {
+//            throw new ServiceException(ServiceErrorCode.WRONG_PASSWORD, "Password is wrong!");
+//        }
+//
+//        List<Permission> permission = permissionManager.getPermissionByUserId((int) user.getId());
+//        user.setPermission(permission);
+//        // generate access token
+//        String accessToken = userAccessTokenManager.generateAccessToken(user.getId());
+//        // put user into session context
+//        SessionContext.setCurrentUser(user);
+//
+//        return accessToken;
+    	return "";
     }
 
     /*
@@ -189,34 +173,35 @@ public class UserServiceImpl implements UserService
      */
     public String changePassword(String oldPassword, String newPassword) throws ServiceException
     {
-        // check format
-        if (!DataFormatValidator.isValidPassword(oldPassword)
-                || !DataFormatValidator.isValidPassword(newPassword))
-        {
-            throw new InvalidDataInputException(ServiceErrorCode.INVALID_PASSWORD,
-                    "Password format is invalid!");
-        }
-
-        // new password can't be same as old one
-        if (StringUtils.equals(oldPassword, newPassword))
-        {
-            throw new InvalidDataInputException(ServiceErrorCode.SAME_NEW_OLD_PASSWORD,
-                    "New password can't be same as old one!");
-        }
-
-        User currentUser = SessionContext.getCurrentUser();
-
-        // check old password
-        if (!StringUtils.equals(currentUser.getPassword(), EncryptionUtils.encrypt(oldPassword)))
-        {
-            throw new InvalidDataInputException(ServiceErrorCode.WRONG_PASSWORD,
-                    "Old password is wrong!");
-        }
-
-        // change password flow
-        String accessToken = changePassword(newPassword, currentUser.getId());
-
-        return accessToken;
+//        // check format
+//        if (!DataFormatValidator.isValidPassword(oldPassword)
+//                || !DataFormatValidator.isValidPassword(newPassword))
+//        {
+//            throw new InvalidDataInputException(ServiceErrorCode.INVALID_PASSWORD,
+//                    "Password format is invalid!");
+//        }
+//
+//        // new password can't be same as old one
+//        if (StringUtils.equals(oldPassword, newPassword))
+//        {
+//            throw new InvalidDataInputException(ServiceErrorCode.SAME_NEW_OLD_PASSWORD,
+//                    "New password can't be same as old one!");
+//        }
+//
+//        User currentUser = SessionContext.getCurrentUser();
+//
+//        // check old password
+//        if (!StringUtils.equals(currentUser.getPassword(), EncryptionUtils.encrypt(oldPassword)))
+//        {
+//            throw new InvalidDataInputException(ServiceErrorCode.WRONG_PASSWORD,
+//                    "Old password is wrong!");
+//        }
+//
+//        // change password flow
+//        String accessToken = changePassword(newPassword, currentUser.getId());
+//
+//        return accessToken;
+    	return "";
     }
 
     /**
@@ -277,56 +262,7 @@ public class UserServiceImpl implements UserService
     @Override
     public void deleteUser(int id) throws ServiceException
     {
-        // just need check email format
-        // checkNameFormat(name);
-        List<Permission> permissions = permissionManager.getPermissionByUserId(id);
-        for (int i = 0; i < permissions.size(); i++)
-        {
-            Permission permission = permissions.get(i);
-            if (permission.isSA())
-            {
-                throw new ServiceException(ServiceErrorCode.CAN_NOT_DELETE_SA,
-                        "Can't delete super admin");
-            }
-        }
-        userPermissionManager.deleteByUserId(id);
         userManager.deleteUser(id);
-    }
-
-    @Override
-    public List<PermissionGrant> getPermissionByUserId(int userId) throws ServiceException
-    {
-        List<PermissionGrant> permissiongrants = new ArrayList<PermissionGrant>();
-
-        List<Permission> permissions1 = permissionManager.getPermissionByUserId(userId);
-        List<Permission> permissions2 = permissionManager.getUnPermissionByUserId(userId);
-
-        for (int i = 0; i < permissions2.size(); i++)
-        {
-            PermissionGrant permissiongrant = new PermissionGrant();
-            Permission permission = permissions2.get(i);
-            if (!permission.isSA())
-            {
-                permissiongrant.setPermission(permission);
-                permissiongrant.setState("UNGRANT");
-                permissiongrants.add(permissiongrant);
-            }
-
-        }
-
-        for (int i = 0; i < permissions1.size(); i++)
-        {
-            PermissionGrant permissiongrant = new PermissionGrant();
-            Permission permission = permissions1.get(i);
-            if (!permission.isSA())
-            {
-                permissiongrant.setPermission(permission);
-                permissiongrant.setState("GRANTED");
-                permissiongrants.add(permissiongrant);
-            }
-        }
-
-        return permissiongrants;
     }
 
     /*
@@ -343,13 +279,13 @@ public class UserServiceImpl implements UserService
     }
 
 	@Override
-	public void createCustomer(String openId) throws ServiceException {
-		Customer customer = new Customer();
+	public void createUser(String openId, RoleType role) throws ServiceException {
+		User user = new User();
 		
-		customer.setType(UserType.CUSTOMER);
-		customer.setOpenid(openId);
+		user.setRole(role);
+		user.setOpenid(openId);
 		
-		userDao.save(customer);
+		userDao.save(user);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package cn.wisdom.lottery.payment.dao.constant;
 
-public enum UserType {
+public enum RoleType {
 
 	CUSTOMER, MERCHANT, ADMIN
 }

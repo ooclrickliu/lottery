@@ -33,8 +33,6 @@ import cn.wisdom.lottery.payment.dao.annotation.Column;
  */
 public class DaoRowMapper<T> implements RowMapper<T>
 {
-    // private static final Log LOG = LogFactory.getLog(DaoRowMapper.class);
-
     private Logger logger = LoggerFactory.getLogger(DaoRowMapper.class
             .getName());
 

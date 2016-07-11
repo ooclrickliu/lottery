@@ -7,6 +7,9 @@
  */
 package cn.wisdom.lottery.payment.dao.vo;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 /**
  * AppProperty
  * 
@@ -15,48 +18,15 @@ package cn.wisdom.lottery.payment.dao.vo;
  * @See
  * @Since [OVT Cloud Platform]/[API] 1.0
  */
-public class AppProperty extends BaseEntity
+@Component
+public class AppProperty
 {
-    private String propName;
-
-    private String propValue;
-
-    private String desc;
-
-    public String getPropName()
-    {
-        return propName;
-    }
-
-    public void setPropName(String propName)
-    {
-        this.propName = propName;
-    }
-
-    public String getPropValue()
-    {
-        return propValue;
-    }
-
-    public void setPropValue(String propValue)
-    {
-        this.propValue = propValue;
-    }
-
-    public String getDesc()
-    {
-        return desc;
-    }
-
-    public void setDesc(String desc)
-    {
-        this.desc = desc;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "AppProperty [propName=" + propName + ", propValue=" + propValue + ", desc=" + desc
-                + ", id=" + id + "]";
-    }
+	@Value("cookie_access_token_age")
+	public int cookieAccessTokenAge;
+	
+	@Value("payment_service_url")
+	public String paymentServiceUrl;
+	
+	@Value("debug_pay")
+	public boolean debugPay;
 }

@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.wisdom.lottery.payment.common.utils.StringUtils;
-import cn.wisdom.lottery.payment.service.AppPropertiesService;
+import cn.wisdom.lottery.payment.dao.vo.AppProperty;
+
 import com.ovt.order.util.OVPayment;
 
 /**
@@ -26,7 +27,7 @@ import com.ovt.order.util.OVPayment;
 public class OVPaymentProxy
 {
     @Autowired
-    private AppPropertiesService appProperties;
+    private AppProperty appProperties;
 
     private OVPayment ovPayment;
 
@@ -34,12 +35,12 @@ public class OVPaymentProxy
     {
         if (ovPayment == null)
         {
-            ovPayment = new OVPayment(appProperties.getPaymentServiceUrl());
+            ovPayment = new OVPayment(appProperties.paymentServiceUrl);
         }
         
         if(ovPayment != null && StringUtils.isBlank(ovPayment.getBaseUrl()))
         {
-            ovPayment.setBaseUrl(appProperties.getPaymentServiceUrl());
+            ovPayment.setBaseUrl(appProperties.paymentServiceUrl);
         }
 
         return ovPayment;

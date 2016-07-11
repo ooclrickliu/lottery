@@ -4,12 +4,10 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import cn.wisdom.lottery.payment.dao.constant.LotteryType;
-import cn.wisdom.lottery.payment.dao.mapper.PrizeLotteryMapper.SSQPeriodInfoMapper;
-import cn.wisdom.lottery.payment.dao.mapper.PrizeLotteryMapper.SSQPrizeInfoMapper;
+import cn.wisdom.lottery.payment.dao.mapper.DaoRowMapper;
 import cn.wisdom.lottery.payment.dao.vo.PrizeLottery;
 import cn.wisdom.lottery.payment.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.payment.service.remote.response.LotteryOpenData;
@@ -17,31 +15,27 @@ import cn.wisdom.lottery.payment.service.remote.response.LotteryOpenData;
 @Repository
 public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 
-	private static final String GET_SSQ_PRIZE = "select * from prize_lottery_ssq where period = ?";
+	private static final String GET_SSQ_PRIZE = "select * from prize_no_ssq where period = ?";
 	
-	private static final String GET_SSQ_CURRENT_PERIOD = "select period, open_time from prize_lottery_ssq where open_time > current_timestamp limit 1";
+	private static final String GET_SSQ_CURRENT_PERIOD = "select period, open_time from prize_no_ssq where open_time > current_timestamp limit 1";
 	
-	private static final String GET_SSQ_NEXT_N_PERIOD = "select period from prize_lottery_ssq where open_time > current_timestamp limit ?";
+	private static final String GET_SSQ_NEXT_N_PERIOD = "select period from prize_no_ssq where open_time > current_timestamp limit ?";
 	
-	private static final String GET_SSQ_LAST_PERIOD = "select * from prize_lottery_ssq where open_time < current_timestamp order by id desc limit 1";
+	private static final String GET_SSQ_LAST_PERIOD = "select id, period, open_time, number from prize_no_ssq where open_time < current_timestamp order by id desc limit 1";
 	
-	private static final String UPDATE_SSQ_OPEN_INFO = "update prize_lottery_ssq set number = ?, update_time = current_timestamp "
+	private static final String UPDATE_SSQ_OPEN_INFO = "update prize_no_ssq set number = ?, update_time = current_timestamp "
 			+ " where period = ?";
 	
 	@Autowired
 	private DaoHelper daoHelper;
 	
-	@Autowired
-	private SSQPrizeInfoMapper ssqPrizeInfoMapper;
-	
-	@Autowired
-	private SSQPeriodInfoMapper ssqPeriodInfoMapper;
+    private static final DaoRowMapper<PrizeLotterySSQ> ssqPrizeInfoMapper = new DaoRowMapper<PrizeLotterySSQ>(PrizeLotterySSQ.class);
 	
 	@Override
 	public PrizeLottery getPrizeLottery(LotteryType lotteryType, int period) {
 		
 		String errMsg = MessageFormat.format("Failed to query {0}-[{1}] prize lottery info.", lotteryType, period);
-		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_PRIZE, getRowMapper(lotteryType), errMsg, period);
+		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_PRIZE, ssqPrizeInfoMapper, errMsg, period);
 		
 		return prizeLottery;
 	}
@@ -72,7 +66,7 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 	@Override
 	public LotteryOpenData getCurrentPeriod(LotteryType lotteryType) {
 		String errMsg = MessageFormat.format("Failed to query {0} current period info.", lotteryType);
-		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_CURRENT_PERIOD, ssqPeriodInfoMapper, errMsg);
+		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_CURRENT_PERIOD, ssqPrizeInfoMapper, errMsg);
 		
 		return new LotteryOpenData(prizeLottery);
 	}
@@ -87,18 +81,9 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 
 	@Override
 	public LotteryOpenData getLastestOpenInfo(LotteryType lotteryType) {
-		String errMsg = MessageFormat.format("Failed to query {0} current period info.", lotteryType);
-		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_LAST_PERIOD, getRowMapper(lotteryType), errMsg);
+		String errMsg = MessageFormat.format("Failed to query {0} latest open info.", lotteryType);
+		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_LAST_PERIOD, ssqPrizeInfoMapper, errMsg);
 		
 		return new LotteryOpenData(prizeLottery);
-	}
-	
-	private RowMapper<? extends PrizeLottery> getRowMapper(LotteryType lotteryType) {
-		if (lotteryType == LotteryType.SSQ) {
-			return ssqPrizeInfoMapper;
-		}
-		else {
-			return ssqPrizeInfoMapper;
-		}
 	}
 }

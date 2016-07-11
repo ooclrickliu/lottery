@@ -11,9 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import cn.wisdom.lottery.payment.common.utils.StringUtils;
 import cn.wisdom.lottery.payment.dao.constant.LotteryType;
-import cn.wisdom.lottery.payment.dao.mapper.LotteryMapper;
-import cn.wisdom.lottery.payment.dao.mapper.LotteryNumberMapper;
-import cn.wisdom.lottery.payment.dao.mapper.LotteryPeriodMapper;
+import cn.wisdom.lottery.payment.dao.mapper.DaoRowMapper;
 import cn.wisdom.lottery.payment.dao.vo.Lottery;
 import cn.wisdom.lottery.payment.dao.vo.LotteryNumber;
 import cn.wisdom.lottery.payment.dao.vo.LotteryPeriod;
@@ -64,14 +62,11 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ "ticket_fetch_time = current_timestamp, update_time = current_timestamp "
 			+ "where order_no = ?";
 
-	@Autowired
-	private LotteryMapper lotteryMapper;
+    private static final DaoRowMapper<Lottery> lotteryMapper = new DaoRowMapper<Lottery>(Lottery.class);
 	
-	@Autowired
-	private LotteryNumberMapper lotteryNumberMapper;
+    private static final DaoRowMapper<LotteryNumber> lotteryNumberMapper = new DaoRowMapper<LotteryNumber>(LotteryNumber.class);
 	
-	@Autowired
-	private LotteryPeriodMapper lotteryPeriodMapper;
+    private static final DaoRowMapper<LotteryPeriod> lotteryPeriodMapper = new DaoRowMapper<LotteryPeriod>(LotteryPeriod.class);
 
 	@Override
 	public void saveLottery(Lottery lottery) {

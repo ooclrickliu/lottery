@@ -2,16 +2,17 @@ package cn.wisdom.lottery.payment.dao.vo;
 
 import java.sql.Timestamp;
 
-public class PrizeLottery extends BaseEntity {
+import cn.wisdom.lottery.payment.dao.annotation.Column;
 
+public abstract class PrizeLottery extends BaseEntity {
+
+	@Column("period")
 	protected int period;
-	
+
+	@Column("open_time")
 	protected Timestamp openTime;
 	
-	public String getNumber() {
-		
-		return "";
-	}
+	public abstract String getNumber();
 
 	public int getPeriod() {
 		return period;

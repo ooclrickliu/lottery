@@ -12,6 +12,7 @@ import cn.wisdom.lottery.payment.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.payment.dao.LotteryDao;
 import cn.wisdom.lottery.payment.dao.constant.LotteryType;
 import cn.wisdom.lottery.payment.dao.constant.TicketState;
+import cn.wisdom.lottery.payment.dao.vo.AppProperty;
 import cn.wisdom.lottery.payment.dao.vo.Lottery;
 import cn.wisdom.lottery.payment.dao.vo.User;
 import cn.wisdom.lottery.payment.service.context.SessionContext;
@@ -26,7 +27,7 @@ import com.ovt.order.util.exception.PaymentSDKException;
 public class LotteryServiceImpl implements LotteryService {
 
     @Autowired
-    private AppPropertiesService appProperties;
+    private AppProperty appProperties;
 
     @Autowired
     private OVPaymentProxy ovPaymentProxy;
@@ -58,7 +59,7 @@ public class LotteryServiceImpl implements LotteryService {
         // 4. save order
         try
         {
-            if (appProperties.isDebugPay())
+            if (appProperties.debugPay)
             {
                 order.setOrderTotalFee(0.01f);
             }

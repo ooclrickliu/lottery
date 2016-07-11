@@ -7,14 +7,11 @@
  */
 package cn.wisdom.lottery.payment.api.interceptor;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
@@ -24,18 +21,11 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import cn.wisdom.lottery.payment.api.exception.NoAccessException;
 import cn.wisdom.lottery.payment.api.response.DoorbellPaymentAPIResult;
 import cn.wisdom.lottery.payment.common.model.JsonDocument;
-import cn.wisdom.lottery.payment.common.utils.CollectionUtils;
-import cn.wisdom.lottery.payment.common.utils.CookieUtil;
 import cn.wisdom.lottery.payment.common.utils.HttpUtils;
-import cn.wisdom.lottery.payment.common.utils.StringUtils;
-import cn.wisdom.lottery.payment.dao.constant.AppClientType;
-import cn.wisdom.lottery.payment.dao.vo.Permission;
+import cn.wisdom.lottery.payment.dao.vo.AppProperty;
 import cn.wisdom.lottery.payment.dao.vo.User;
-import cn.wisdom.lottery.payment.service.AppPropertiesService;
-import cn.wisdom.lottery.payment.service.PermissionGrantService;
 import cn.wisdom.lottery.payment.service.UserService;
 import cn.wisdom.lottery.payment.service.context.SessionContext;
-import cn.wisdom.lottery.payment.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.payment.service.exception.ServiceException;
 
 /**
@@ -55,12 +45,6 @@ public class PlatformAccessInterceptor extends HandlerInterceptorAdapter
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private AppPropertiesService appProperties;
-
-    @Autowired
-    private PermissionGrantService permissionConstants;
 
     @PostConstruct
     private void init()
