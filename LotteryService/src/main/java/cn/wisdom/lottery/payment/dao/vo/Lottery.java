@@ -9,6 +9,7 @@ import java.util.Map;
 import cn.wisdom.lottery.payment.common.exception.OVTException;
 import cn.wisdom.lottery.payment.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.payment.common.utils.JsonUtils;
+import cn.wisdom.lottery.payment.dao.annotation.Column;
 import cn.wisdom.lottery.payment.dao.constant.BusinessType;
 import cn.wisdom.lottery.payment.dao.constant.LotteryType;
 import cn.wisdom.lottery.payment.dao.constant.TicketState;
@@ -24,34 +25,46 @@ import cn.wisdom.lottery.payment.dao.constant.TicketState;
  */
 public class Lottery extends BaseEntity {
 
+	@Column("order_no")
 	private String orderNo;
-	
+
+	@Column("lotter_type")
 	private LotteryType lotterType;
-	
+
+	@Column("business_type")
 	private BusinessType businessType;
 
 	private List<Integer> periods = new ArrayList<Integer>();
-	
+
+	@Column("times")
 	private int times;
 	
 	private List<LotteryNumber> numbers = new ArrayList<LotteryNumber>();
 
+	@Column("ticket_state")
 	private TicketState ticketState;
-	
+
 	private boolean fetched;
 
+	@Column("owner")
 	private long owner;
 
+	@Column("merchant")
 	private long merchant;
 
+	@Column("distribute_time")
 	private Timestamp distributeTime;
-	
+
+	@Column("ticket_print_time")
 	private Timestamp ticketPrintTime;
-	
+
+	@Column("ticket_fetch_time")
 	private Timestamp ticketFetchTime;
 
+	@Column("prize_info")
 	private String prizeInfo;
 
+	@Column("prize_bonus")
 	private int prizeBonus;
 	
 	public static void main(String[] args) {

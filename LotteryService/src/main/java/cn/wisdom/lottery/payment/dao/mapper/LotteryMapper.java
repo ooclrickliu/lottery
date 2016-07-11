@@ -33,7 +33,7 @@ public class LotteryMapper implements RowMapper<Lottery>{
 		lottery.setUpdateTime(rs.getTimestamp(LOTTERY.UPDATE_TIME));
 		
 		
-		return null;
+		return lottery;
 	}
 
 }

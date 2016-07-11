@@ -6,6 +6,7 @@ import java.util.List;
 import cn.wisdom.lottery.payment.common.utils.CollectionUtils;
 import cn.wisdom.lottery.payment.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.payment.common.utils.StringUtils;
+import cn.wisdom.lottery.payment.dao.annotation.Column;
 
 public class PrizeLotterySSQ extends PrizeLottery {
 	
@@ -13,10 +14,11 @@ public class PrizeLotterySSQ extends PrizeLottery {
 
 	private List<Integer> blue = new ArrayList<Integer>();
 	
+	@Column("number")
 	private String number;
 	
 	//08,10,11,20,21,27+11
-	public static String LOTTERY_FORMAT_SSQ = "(0-33)\\+(0-16)+";
+//	private static String LOTTERY_FORMAT_SSQ = "(0-33)\\+(0-16)+";
 	
 	public PrizeLotterySSQ()
 	{

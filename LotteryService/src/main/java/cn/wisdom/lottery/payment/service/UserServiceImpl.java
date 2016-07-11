@@ -20,6 +20,9 @@ import cn.wisdom.lottery.payment.common.log.LoggerFactory;
 import cn.wisdom.lottery.payment.common.utils.DataFormatValidator;
 import cn.wisdom.lottery.payment.common.utils.EncryptionUtils;
 import cn.wisdom.lottery.payment.common.utils.StringUtils;
+import cn.wisdom.lottery.payment.dao.UserDao;
+import cn.wisdom.lottery.payment.dao.constant.UserType;
+import cn.wisdom.lottery.payment.dao.vo.Customer;
 import cn.wisdom.lottery.payment.dao.vo.Permission;
 import cn.wisdom.lottery.payment.dao.vo.PermissionGrant;
 import cn.wisdom.lottery.payment.dao.vo.User;
@@ -51,6 +54,9 @@ public class UserServiceImpl implements UserService
     private PermissionManager permissionManager;
     @Autowired
     private UserPermissionManager userPermissionManager;
+    
+    @Autowired
+    private UserDao userDao;
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class.getName());
 
@@ -337,9 +343,13 @@ public class UserServiceImpl implements UserService
     }
 
 	@Override
-	public void createUser(String openId) throws ServiceException {
-		// TODO Auto-generated method stub
+	public void createCustomer(String openId) throws ServiceException {
+		Customer customer = new Customer();
 		
+		customer.setType(UserType.CUSTOMER);
+		customer.setOpenid(openId);
+		
+		userDao.save(customer);
 	}
 
 	@Override

@@ -66,12 +66,14 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		} 
 		// 关注
 		else {
-			// 保存用户
-			try {
-				userService.createUser(wxMessage.getFromUserName());
-			} catch (ServiceException e) {
-				
-			}
+			
+		}
+		
+		// 保存用户
+		try {
+			userService.createCustomer(wxMessage.getFromUserName());
+		} catch (ServiceException e) {
+			
 		}
 
 	}

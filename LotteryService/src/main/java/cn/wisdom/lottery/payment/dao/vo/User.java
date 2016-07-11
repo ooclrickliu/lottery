@@ -7,7 +7,8 @@
  */
 package cn.wisdom.lottery.payment.dao.vo;
 
-import java.util.List;
+import cn.wisdom.lottery.payment.dao.annotation.Column;
+import cn.wisdom.lottery.payment.dao.constant.UserType;
 
 /**
  * User2
@@ -20,51 +21,48 @@ import java.util.List;
 public class User extends BaseEntity
 {
 
-    private String userName;
+	@Column("user_type")
+    private UserType type;
 
-    private String password;
+	@Column("phone")
+    private String phone;
+	
+	@Column("card_no")
+	private String cardNo;
+	
+	@Column("openid")
+    private String openid;
+
+	public String getOpenid() {
+		return openid;
+	}
+
+	public void setOpenid(String openid) {
+		this.openid = openid;
+	}
+
+	public UserType getType() {
+		return type;
+	}
+
+	public void setType(UserType type) {
+		this.type = type;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getCardNo() {
+		return cardNo;
+	}
+
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
+	}
     
-    private List<Permission> permission;
-    
-    public List<Permission> getPermission()
-    {
-        return permission;
-    }
-
-    public void setPermission(List<Permission> permission)
-    {
-        this.permission = permission;
-    }
-
-    public String getPassword()
-    {
-        return password;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
-    }
-
-    public String getUserName()
-    {
-        return userName;
-    }
-
-    public void setUserName(String userName)
-    {
-        this.userName = userName;
-    }
-
-    @Override
-    public String toString()
-    {
-        StringBuilder builder = new StringBuilder();
-        builder.append("User [userName=").append(userName)
-                .append(", password=").append(password)
-                .append(", userId=").append(id)
-                .append(", createTime=").append(createTime)
-                .append(", updateTime=").append(updateTime);
-        return builder.toString();
-    }
 }

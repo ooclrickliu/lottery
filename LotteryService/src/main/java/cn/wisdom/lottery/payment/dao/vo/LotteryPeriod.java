@@ -1,9 +1,13 @@
 package cn.wisdom.lottery.payment.dao.vo;
 
+import cn.wisdom.lottery.payment.dao.annotation.Column;
+
 public class LotteryPeriod extends BaseEntity {
 	
+	@Column("lottery_id")
 	private long lotteryId;
-	
+
+	@Column("period")
 	private int period;
 
 	public long getLotteryId() {

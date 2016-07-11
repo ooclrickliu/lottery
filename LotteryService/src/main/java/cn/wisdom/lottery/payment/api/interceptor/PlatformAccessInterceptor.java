@@ -49,8 +49,6 @@ import cn.wisdom.lottery.payment.service.exception.ServiceException;
  */
 public class PlatformAccessInterceptor extends HandlerInterceptorAdapter
 {
-    private static final String TOKEN = "token";
-
     private static final String CLIENT_TYPE = "clientType";
     
     private static final String OPENID = "openId";
@@ -150,49 +148,6 @@ public class PlatformAccessInterceptor extends HandlerInterceptorAdapter
     {
         super.postHandle(request, response, handler, modelAndView);
         SessionContext.destroy();
-    }
-
-    private boolean checkPermission(HttpServletRequest request)
-    {
-        String path = request.getPathInfo();
-        String pathPrefix = path.split(StringUtils.SLASH)[1];
-
-        if (!permissionConstants.getPermissionIncludeMap().containsKey(pathPrefix)
-                || permissionConstants.getPermissionExcludeUrlSet().contains(path))
-        {
-            return true;
-        }
-
-        if (hasPermission(permissionConstants.getPermissionIncludeMap().get(pathPrefix), request))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean hasPermission(String permName, HttpServletRequest request)
-    {
-        if (StringUtils.isBlank(permName))
-        {
-            return false;
-        }
-
-        User user = SessionContext.getCurrentUser();
-        List<Permission> permissions = user.getPermission();
-
-        if (CollectionUtils.isNotEmpty(permissions))
-        {
-            for (Permission permission : permissions)
-            {
-                if (permission.isSA() || permission.getPermissionCode().equalsIgnoreCase(permName))
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     private void writeResponse(HttpServletResponse response, String errCode) throws Exception

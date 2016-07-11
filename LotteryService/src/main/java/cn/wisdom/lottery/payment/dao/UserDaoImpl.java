@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import cn.wisdom.lottery.payment.dao.mapper.UserMapper;
+import cn.wisdom.lottery.payment.dao.vo.Customer;
 import cn.wisdom.lottery.payment.dao.vo.User;
 
 /**
@@ -34,7 +35,7 @@ public class UserDaoImpl implements UserDao
     @Autowired
     private UserMapper userMapper;
 
-    private static final String SQL_INSERT_USER = "INSERT INTO admin(admin_name, admin_pwd,"
+    private static final String SQL_INSERT_USER = "INSERT IGNORE INTO user(admin_name, admin_pwd,"
             + "update_by, update_time,create_time) "
             + "VALUES(?, ?, ?, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
 
@@ -97,17 +98,36 @@ public class UserDaoImpl implements UserDao
      */
     public long save(final User user)
     {
-        Object[] params = new Object[3];
-        params[0] = user.getUserName();
-        params[1] = user.getPassword();
-        params[2] = user.getUpdateBy();
+    	// user
+        Object[] params = new Object[2];
+        params[0] = user.getType().toString();
+        params[1] = user.getOpenid();
 
-        String errMsg = MessageFormat.format("Failed insert user, name={0}!",
-                user.getUserName());
+        String errMsg = MessageFormat.format("Failed insert user, openid={0}!",
+                user.getOpenid());
 
         long id = daoHelper.save(SQL_INSERT_USER, errMsg, true, params);
 
+        // customer
+        if (user instanceof Customer) {
+			save((Customer) user);
+		}
+        
+        
         return id;
+    }
+    
+    private void save(Customer customer)
+    {
+    	// user
+        Object[] params = new Object[2];
+        params[0] = customer.getId();
+        params[1] = customer.getOpenid();
+
+        String errMsg = MessageFormat.format("Failed insert customer, openid={0}!",
+        		customer.getOpenid());
+
+        daoHelper.save(SQL_INSERT_USER, errMsg, false, params);
     }
 
     /*

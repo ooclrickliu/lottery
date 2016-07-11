@@ -337,7 +337,7 @@ public class DaoRowMapper<T> implements RowMapper<T>
                 {
                     // 获取字段中包含RowMapper的注解
                     Column mapper = field.getAnnotation(Column.class);
-                    if ((mapper != null) && (mapper.name().equals(name)))
+                    if ((mapper != null) && (mapper.value().equals(name)))
                     {
                         field.setAccessible(true);
 

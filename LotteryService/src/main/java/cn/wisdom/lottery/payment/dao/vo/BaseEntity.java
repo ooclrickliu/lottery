@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 
 import cn.wisdom.lottery.payment.common.exception.OVTException;
 import cn.wisdom.lottery.payment.common.utils.JsonUtils;
+import cn.wisdom.lottery.payment.dao.annotation.Column;
 
 /**
  * BaseEntity
@@ -23,12 +24,16 @@ import cn.wisdom.lottery.payment.common.utils.JsonUtils;
 public class BaseEntity
 {
 
+	@Column("id")
     protected long id;
-    
+
+	@Column("create_time")
     protected Timestamp createTime;
-    
+
+	@Column("update_time")
     protected Timestamp updateTime;
-    
+
+	@Column("update_by")
     protected int updateBy;
 
     public BaseEntity()

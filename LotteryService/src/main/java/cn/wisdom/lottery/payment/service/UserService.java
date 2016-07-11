@@ -30,7 +30,7 @@ public interface UserService
 	 * @param openId
 	 * @throws ServiceException
 	 */
-	void createUser(String openId) throws ServiceException;
+	void createCustomer(String openId) throws ServiceException;
 	
 	/**
 	 * 更新用户基本信息

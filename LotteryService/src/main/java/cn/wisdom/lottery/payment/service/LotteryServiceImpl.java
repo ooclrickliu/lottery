@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service;
 import cn.wisdom.lottery.payment.common.log.Logger;
 import cn.wisdom.lottery.payment.common.log.LoggerFactory;
 import cn.wisdom.lottery.payment.common.utils.DateTimeUtils;
-import cn.wisdom.lottery.payment.common.utils.StringUtils;
 import cn.wisdom.lottery.payment.dao.LotteryDao;
-import cn.wisdom.lottery.payment.dao.constant.BusinessType;
 import cn.wisdom.lottery.payment.dao.constant.LotteryType;
 import cn.wisdom.lottery.payment.dao.constant.TicketState;
 import cn.wisdom.lottery.payment.dao.vo.Lottery;
@@ -48,14 +46,8 @@ public class LotteryServiceImpl implements LotteryService {
 	public Lottery createPrivateOrder(Lottery lottery) throws ServiceException {
 		logger.debug("Receive lottery order: {}!", lottery);
         
-        // 0. delete it, then create a new one, if is old order
-        if (StringUtils.isNotBlank(lottery.getOrderNo()))
-        {
-//            this.cancelOrder(orderRequest.getDeviceId(), lotterySSQ.getOrderNo());
-        }
-        
-        // 1. init lottery
-        initLottery(lottery);
+        // 1. set owner for private lottery
+		lottery.setOwner(SessionContext.getCurrentUser().getId());
 
         // 2. save lottery
         saveLottery(lottery);
@@ -179,7 +171,6 @@ public class LotteryServiceImpl implements LotteryService {
 	}
 	
 	private void saveLottery(Lottery lottery) throws ServiceException {
-		//TODO 
 		
 		lotteryDao.saveLottery(lottery);
 	}
@@ -196,13 +187,6 @@ public class LotteryServiceImpl implements LotteryService {
 		lotteryPriceService.calculateLotteryTotalFee(lottery);
 		
 		return order;
-	}
-
-	private void initLottery(Lottery lottery) throws ServiceException
-	{
-		if (lottery.getBusinessType() == BusinessType.Private) {
-			lottery.setOwner(SessionContext.getCurrentUser().getId());
-		}
 	}
 
 

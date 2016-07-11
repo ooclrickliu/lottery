@@ -1,10 +1,14 @@
 package cn.wisdom.lottery.payment.dao.vo;
 
+import cn.wisdom.lottery.payment.dao.annotation.Column;
+
 
 public class LotteryNumber extends BaseEntity {
 
+	@Column("lottery_id")
 	private long lotteryId;
-	
+
+	@Column("number")
 	private String number;
 	
 	public LotteryNumber(String number) {
