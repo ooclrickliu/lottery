@@ -59,7 +59,7 @@ public class LotteryController {
 		return new LotteryJsonDocument(latestOpenInfo);
 	}
 
-    @RequestMapping(method = RequestMethod.POST, value = "/ssq/createOrder")
+    @RequestMapping(method = RequestMethod.POST, value = "/order/create/ssq")
     @ResponseBody
 	public JsonDocument submitSSQPrivateOrder(@RequestParam List<String> numbers, 
 			@RequestParam int periods, @RequestParam int times)
