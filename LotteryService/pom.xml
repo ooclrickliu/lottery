@@ -190,7 +190,7 @@
 		<profile>
 			<id>Local</id>
 			<properties>
-				<db.url>jdbc:mysql://localhost:3306/lottery</db.url>
+				<db.url>jdbc:mysql://localhost:3307/lottery</db.url>
 				<db.username>root</db.username>
 				<db.password>usbw</db.password>
 				<memcache.server>192.168.56.1:11211</memcache.server>

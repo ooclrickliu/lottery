@@ -85,24 +85,26 @@ public class LotteryOpenPrizeTask {
 		List<Lottery> printedLotteries = lotteryService.getPrintedLotteries(LotteryType.SSQ, ssq.getPeriod());
 		
 		// 2. calculate prize info & bonus.
-		List<Lottery> prizeLotteries = new ArrayList<Lottery>();
-		for (Lottery lottery : printedLotteries) {
-			Map<Long, Map<Integer, Integer>> prizeInfo = lotteryPrizeService.getPrizeInfo(lottery, ssq);
-			
-			if (CollectionUtils.isNotEmpty(prizeInfo)) {
-				try {
-					lottery.setPrizeInfo(JsonUtils.toJson(prizeInfo));
-				} catch (OVTException e) {
-				}
-				lottery.setPrizeBonus(lotteryPrizeService.getPrizeBonus(prizeInfo));
+		if (CollectionUtils.isNotEmpty(printedLotteries)) {
+			List<Lottery> prizeLotteries = new ArrayList<Lottery>();
+			for (Lottery lottery : printedLotteries) {
+				Map<Long, Map<Integer, Integer>> prizeInfo = lotteryPrizeService.getPrizeInfo(lottery, ssq);
 				
-				prizeLotteries.add(lottery);
+				if (CollectionUtils.isNotEmpty(prizeInfo)) {
+					try {
+						lottery.setPrizeInfo(JsonUtils.toJson(prizeInfo));
+					} catch (OVTException e) {
+					}
+					lottery.setPrizeBonus(lotteryPrizeService.getPrizeBonus(prizeInfo));
+					
+					prizeLotteries.add(lottery);
+				}
 			}
+			lotteryService.updatePrizeInfo(prizeLotteries);
+			
+			// 3. notify owner
+			notifyOwner(prizeLotteries);
 		}
-		lotteryService.updatePrizeInfo(prizeLotteries);
-		
-		// 3. notify owner
-		notifyOwner(prizeLotteries);
 	}
 
 	private void notifyOwner(List<Lottery> prizeLotteries) {

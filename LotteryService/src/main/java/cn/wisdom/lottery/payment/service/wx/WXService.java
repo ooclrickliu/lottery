@@ -28,8 +28,7 @@ public class WXService {
 
 	@PostConstruct
 	public void init() {
-		InputStream is1 = ClassLoader
-				.getSystemResourceAsStream("wx-config.xml");
+		InputStream is1 = this.getClass().getResourceAsStream("/wx-config.xml");
 		WxMpWisdomInMemoryConfigStorage config = WxMpWisdomInMemoryConfigStorage
 				.fromXml(is1);
 

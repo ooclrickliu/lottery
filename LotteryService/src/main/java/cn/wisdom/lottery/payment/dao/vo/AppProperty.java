@@ -21,12 +21,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppProperty
 {
-	@Value("cookie_access_token_age")
+	@Value("${cookie.access_token.age}")
 	public int cookieAccessTokenAge;
 	
-	@Value("payment_service_url")
+	@Value("${payment.service_url}")
 	public String paymentServiceUrl;
 	
-	@Value("debug_pay")
+	@Value("${payment.debug}")
 	public boolean debugPay;
 }

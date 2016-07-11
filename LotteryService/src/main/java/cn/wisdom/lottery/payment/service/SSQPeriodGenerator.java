@@ -17,7 +17,7 @@ public class SSQPeriodGenerator {
 	@Autowired
 	private DaoHelper daoHelper;
 	
-	private static final String INSERT_SSQ_PERIOD = "insert ignore into prize_lottery_ssq(period, open_time, update_time) "
+	private static final String INSERT_SSQ_PERIOD = "insert into prize_no_ssq(period, open_time, update_time) "
 			+ "values(?, ?, current_timestamp)";
 	
 	public static void main(String[] args) {

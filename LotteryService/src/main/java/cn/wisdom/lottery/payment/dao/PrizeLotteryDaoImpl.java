@@ -49,15 +49,9 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 			PrizeLotterySSQ ssq = (PrizeLotterySSQ) lottery;
 			sql = UPDATE_SSQ_OPEN_INFO;
 			
-			args = new Object[8];
-			args[0] = ssq.getRed().get(0);
-			args[1] = ssq.getRed().get(1);
-			args[2] = ssq.getRed().get(2);
-			args[3] = ssq.getRed().get(3);
-			args[4] = ssq.getRed().get(4);
-			args[5] = ssq.getRed().get(5);
-			args[6] = ssq.getBlue().get(0);
-			args[7] = ssq.getPeriod();
+			args = new Object[2];
+			args[0] = ssq.getNumber();
+			args[1] = ssq.getPeriod();
 		}
 		String errMsg = MessageFormat.format("Failed to genearte period for year [{0}]", lottery);
 		daoHelper.update(sql, errMsg, args);

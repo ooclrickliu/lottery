@@ -20,7 +20,7 @@
 	
 	<aop:aspectj-autoproxy />
 	
-	<context:property-placeholder location="classpath:redis.properties,classpath:memcache.properties" />
+	<context:property-placeholder location="classpath:redis.properties,classpath:app.properties" />
 
 	<!-- DAO -->
 	<import resource="classpath:config-dao.xml" />

@@ -161,8 +161,8 @@ public class LotteryServiceImpl implements LotteryService {
 	@Override
 	public List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
 			throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return lotteryDao.getPrintedLotteries(lotteryType, period);
 	}
 
 	@Override

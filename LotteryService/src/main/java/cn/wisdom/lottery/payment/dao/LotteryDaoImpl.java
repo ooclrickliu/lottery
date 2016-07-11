@@ -31,9 +31,14 @@ public class LotteryDaoImpl implements LotteryDao {
 	private static final String SAVE_LOTTERY_PERIOD = "insert into lottery_period(lottery_id, period) "
 			+ "values (?, ?)";
 
-	private static final String GET_LOTTERY_PREFIX = "select id, lotter_type, business_type, times, ticket_state, "
-			+ "owner, merchant, distribute_time, ticket_print_time, ticket_fetch_time, prize_info, "
-			+ "prize_bonus, create_time, update_time from lottery ";
+	private static final String GET_LOTTERY_PREFIX = "select * from lottery";
+	
+	private static final String GET_LOTTERY_JOIN_PREFIX = "select l.*, p.period from lottery_period p join lottery l on p.lottery_id = l.id ";
+	
+	private static final String GET_LOTTERY_ID_PREFIX = "select l.id from lottery_period p join lottery l on p.lottery_id = l.id ";
+	
+	private static final String GET_LOTTERY_BY_TICKET_STATE = GET_LOTTERY_ID_PREFIX
+			+ " where period = ? and lotter_type = ? and ticket_state = ?";
 
 	private static final String GET_LOTTERY_BY_ORDER = GET_LOTTERY_PREFIX
 			+ " where order_no in( ?)";
@@ -44,8 +49,8 @@ public class LotteryDaoImpl implements LotteryDao {
 	private static final String GET_LOTTERY_PERIOD = "select id, lottery_id, period from lottery_period "
 			+ " where lottery_id in(?) order by id";
 
-	private static final String GET_LOTTERY_BY_MERCHANT = GET_LOTTERY_PREFIX
-			+ " where period = ? and merchant = ?";
+	private static final String GET_LOTTERY_BY_MERCHANT = GET_LOTTERY_JOIN_PREFIX
+			+ " where lotter_type = ? and period = ? and merchant = ?";
 
 	private static final String UPDATE_LOTTERY_TICKET_STATE = "update lottery set ticket_state = ?, update_time = current_timestamp "
 			+ "where order_no = ?";
@@ -202,7 +207,7 @@ public class LotteryDaoImpl implements LotteryDao {
 				"Failed to query lottery by merchant [{0}], peroid [{1}]",
 				merchantId, period);
 		List<Lottery> lotteries = daoHelper.queryForList(
-				GET_LOTTERY_BY_MERCHANT, lotteryMapper, errMsg, period,
+				GET_LOTTERY_BY_MERCHANT, lotteryMapper, errMsg, lotteryType.toString(), period,
 				merchantId);
 
 		getLotteryNumbers(lotteries);
@@ -254,6 +259,19 @@ public class LotteryDaoImpl implements LotteryDao {
 				.format("Failed to update lottery ticket fetch time by orderNo [{1}]",
 						lottery.getTicketState(), lottery.getOrderNo());
 		daoHelper.update(UPDATE_LOTTERY_FETCH_STATE, errMsg, lottery.getOrderNo());
+	}
+
+	@Override
+	public List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period) {
+		String errMsg = MessageFormat.format(
+				"Failed to query printed lottery by lotteryType [{0}], peroid [{1}]",
+				lotteryType, period);
+		List<Lottery> lotteries = daoHelper.queryForList(
+				GET_LOTTERY_BY_TICKET_STATE, lotteryMapper, errMsg, lotteryType.toString(), period);
+
+		getLotteryNumbers(lotteries);
+
+		return lotteries;
 	}
 
 }
