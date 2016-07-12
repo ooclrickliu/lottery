@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2016 年 07 月 11 日 16:41
+-- 生成日期: 2016 年 07 月 12 日 16:53
 -- 服务器版本: 5.5.20
 -- PHP 版本: 5.3.9
 
@@ -52,7 +52,6 @@ CREATE TABLE IF NOT EXISTS `lottery` (
   `order_no` varchar(50) NOT NULL,
   `lotter_type` varchar(10) NOT NULL,
   `business_type` varchar(10) NOT NULL DEFAULT '''''',
-  `period` smallint(6) NOT NULL DEFAULT '0',
   `times` int(11) NOT NULL DEFAULT '1',
   `ticket_state` varchar(20) NOT NULL DEFAULT '''''',
   `owner` bigint(20) DEFAULT NULL,
@@ -68,7 +67,14 @@ CREATE TABLE IF NOT EXISTS `lottery` (
   UNIQUE KEY `idx_l_order_no` (`order_no`),
   KEY `idx_l_type` (`lotter_type`),
   KEY `idx_l_merchant` (`merchant`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+
+--
+-- 转存表中的数据 `lottery`
+--
+
+INSERT INTO `lottery` (`id`, `order_no`, `lotter_type`, `business_type`, `times`, `ticket_state`, `owner`, `merchant`, `distribute_time`, `ticket_print_time`, `ticket_fetch_time`, `prize_info`, `prize_bonus`, `create_time`, `update_time`) VALUES
+(4, '1468335029193', 'SSQ', 'Private', 1, 'NotPrint', NULL, NULL, NULL, NULL, NULL, '''''', NULL, '2016-07-12 14:50:29', '2016-07-12 14:50:29');
 
 -- --------------------------------------------------------
 
@@ -77,12 +83,20 @@ CREATE TABLE IF NOT EXISTS `lottery` (
 --
 
 CREATE TABLE IF NOT EXISTS `lottery_number` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `lottery_id` bigint(20) NOT NULL,
   `number` varchar(100) NOT NULL DEFAULT '''''',
   PRIMARY KEY (`id`),
   KEY `lottery_id` (`lottery_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+
+--
+-- 转存表中的数据 `lottery_number`
+--
+
+INSERT INTO `lottery_number` (`id`, `lottery_id`, `number`) VALUES
+(3, 4, '01,02,03,04,05,06+07'),
+(4, 4, '11,12,13,14,15,16+17');
 
 -- --------------------------------------------------------
 
@@ -93,9 +107,16 @@ CREATE TABLE IF NOT EXISTS `lottery_number` (
 CREATE TABLE IF NOT EXISTS `lottery_period` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `lottery_id` bigint(20) NOT NULL,
-  `period` smallint(6) NOT NULL,
+  `period` int(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+
+--
+-- 转存表中的数据 `lottery_period`
+--
+
+INSERT INTO `lottery_period` (`id`, `lottery_id`, `period`) VALUES
+(1, 4, 2016081);
 
 -- --------------------------------------------------------
 
@@ -212,8 +233,8 @@ INSERT INTO `prize_no_ssq` (`id`, `period`, `open_time`, `number`, `create_time`
 (77, 2016076, '2016-07-03 11:00:00', NULL, '2016-07-11 14:07:46', '2016-07-11 14:07:46'),
 (78, 2016077, '2016-07-05 11:00:00', NULL, '2016-07-11 14:07:46', '2016-07-11 14:07:46'),
 (79, 2016078, '2016-07-07 11:00:00', NULL, '2016-07-11 14:07:46', '2016-07-11 14:07:46'),
-(80, 2016079, '2016-07-10 11:00:00', '01,03,10,12,24,28+02', '2016-07-11 14:07:46', '2016-07-11 14:14:58'),
-(81, 2016080, '2016-07-12 11:00:00', NULL, '2016-07-11 14:07:46', '2016-07-11 14:07:46'),
+(80, 2016079, '2016-07-10 11:00:00', '01,03,10,12,24,28+02', '2016-07-11 14:07:46', '2016-07-12 13:30:01'),
+(81, 2016080, '2016-07-12 11:00:00', '01,16,17,24,25,32+14', '2016-07-11 14:07:46', '2016-07-12 13:36:01'),
 (82, 2016081, '2016-07-14 11:00:00', NULL, '2016-07-11 14:07:46', '2016-07-11 14:07:46'),
 (83, 2016082, '2016-07-17 11:00:00', NULL, '2016-07-11 14:07:46', '2016-07-11 14:07:46'),
 (84, 2016083, '2016-07-19 11:00:00', NULL, '2016-07-11 14:07:46', '2016-07-11 14:07:46'),
@@ -305,7 +326,14 @@ CREATE TABLE IF NOT EXISTS `user` (
   `update_time` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `openid` (`openid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+
+--
+-- 转存表中的数据 `user`
+--
+
+INSERT INTO `user` (`id`, `openid`, `role`, `real_name`, `phone`, `card_no`, `create_time`, `update_time`) VALUES
+(1, 'test', 'CUSTOMER', '刘志', '15629913656', '422301198239289909', '2016-07-12 12:50:07', '2016-07-12 12:50:07');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
