@@ -13,6 +13,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import cn.wisdom.lottery.payment.common.utils.StringUtils;
 import cn.wisdom.lottery.payment.dao.mapper.DaoRowMapper;
 import cn.wisdom.lottery.payment.dao.vo.User;
 
@@ -38,8 +39,11 @@ public class UserDaoImpl implements UserDao
     private static final String SQL_GET_PREFIX = "SELECT id, openid, role, real_name, phone, card_no, "
             + " create_time, update_time FROM user ";
 
+    private static final String SQL_GET_USER_BY_OPENID = SQL_GET_PREFIX
+            + "WHERE openid = ? LIMIT 1";
+    
     private static final String SQL_GET_USER = SQL_GET_PREFIX
-            + "WHERE id = ? LIMIT 1";
+    		+ "WHERE id = ? LIMIT 1";
 
     // private static final String SQL_GET_USER_LIST = SQL_GET_PREFIX
     // + "order by {0} {1} LIMIT {2}, {3}";
@@ -192,5 +196,20 @@ public class UserDaoImpl implements UserDao
 
         return users;
     }
+
+	@Override
+	public User getUserByOpenid(String openId) {
+		User user = null;
+		if (StringUtils.isNotBlank(openId))
+        {
+			// get from db
+	        String errMsg = MessageFormat.format("Failed to query user by openid {0}!",
+	        		openId);
+	        user = daoHelper.queryForObject(SQL_GET_USER_BY_OPENID, userMapper, errMsg,
+	        		openId);
+        }
+
+        return user;
+	}
 
 }

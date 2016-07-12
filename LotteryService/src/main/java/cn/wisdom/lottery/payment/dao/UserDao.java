@@ -84,5 +84,13 @@ public interface UserDao
      */
     
     List<User> getUserByPermission(int permId);
+
+    /**
+     * Get user by openid.
+     * 
+     * @param openId
+     * @return
+     */
+	User getUserByOpenid(String openId);
      
 }

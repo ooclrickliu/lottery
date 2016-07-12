@@ -22,8 +22,8 @@ public class LotteryOpenData {
 	public LotteryOpenData(PrizeLottery prizeLottery) 
 	{
 		this.setExpect(DataConvertUtils.toString(prizeLottery.getPeriod()));
-		this.setOpentime(DateTimeUtils.formatSqlDate(prizeLottery.getOpenTime()));
-		this.setOpentimestamp(DateTimeUtils.formatSqlDate(prizeLottery.getUpdateTime()));
+		this.setOpentime(DateTimeUtils.formatSqlDateTime(prizeLottery.getOpenTime()));
+		this.setOpentimestamp(DateTimeUtils.formatSqlDateTime(prizeLottery.getUpdateTime()));
 		this.setOpencode(prizeLottery.getNumber());
 	}
 

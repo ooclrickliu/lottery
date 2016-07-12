@@ -26,12 +26,12 @@
 	<import resource="classpath:config-dao.xml" />
 
 	<!-- Interceptor -->
-	<!-- <mvc:interceptors>
+	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/*/**" />
 			<mvc:exclude-mapping path="/user/login" />
 			<mvc:exclude-mapping path="/orders/callback/*" />
 			<bean class="cn.wisdom.lottery.payment.api.interceptor.PlatformAccessInterceptor" />
 		</mvc:interceptor>
-	</mvc:interceptors> -->
+	</mvc:interceptors>
 </beans>

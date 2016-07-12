@@ -296,8 +296,9 @@ public class UserServiceImpl implements UserService
 
 	@Override
 	public User getUserByOpenId(String openId) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		
+		return userDao.getUserByOpenid(openId);
 	}
 
 }

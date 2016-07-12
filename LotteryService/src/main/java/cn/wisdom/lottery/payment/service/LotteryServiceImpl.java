@@ -14,6 +14,7 @@ import cn.wisdom.lottery.payment.dao.constant.LotteryType;
 import cn.wisdom.lottery.payment.dao.constant.TicketState;
 import cn.wisdom.lottery.payment.dao.vo.AppProperty;
 import cn.wisdom.lottery.payment.dao.vo.Lottery;
+import cn.wisdom.lottery.payment.dao.vo.LotteryNumber;
 import cn.wisdom.lottery.payment.dao.vo.User;
 import cn.wisdom.lottery.payment.service.context.SessionContext;
 import cn.wisdom.lottery.payment.service.exception.ServiceErrorCode;
@@ -50,13 +51,10 @@ public class LotteryServiceImpl implements LotteryService {
         // 1. set owner for private lottery
 		lottery.setOwner(SessionContext.getCurrentUser().getId());
 
-        // 2. save lottery
-        saveLottery(lottery);
-
-        // 3. create order
+        // 2. create order
         Order order = createOrder(lottery);
         
-        // 4. save order
+        // 3. save order
         try
         {
             if (appProperties.debugPay)
@@ -66,6 +64,9 @@ public class LotteryServiceImpl implements LotteryService {
             order = ovPaymentProxy.getOVPayment().createOrder(order);
             
             lottery.setOrderNo(order.getOrderNo());
+
+            // 4. save lottery
+            saveLottery(lottery);
         }
         catch (PaymentSDKException e)
         {
@@ -183,7 +184,11 @@ public class LotteryServiceImpl implements LotteryService {
 		order.setUserId("" + user.getId());
 		order.setCreateBy("" + user.getId());
 
-		order.setOrderRemark(lottery.getNumbers().toString());
+		String remark = "";
+		for (LotteryNumber lotteryNumber : lottery.getNumbers()) {
+			remark += lotteryNumber.getNumber() + ";";
+		}
+		order.setOrderRemark(remark);
 
 		lotteryPriceService.calculateLotteryTotalFee(lottery);
 		

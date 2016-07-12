@@ -24,7 +24,8 @@ public class User extends BaseEntity
     private String openid;
 
 	@Column("role")
-    private RoleType role;
+    private String roleValue;
+	private RoleType role;
 	
 	@Column("real_name")
 	private String real_name;
@@ -60,11 +61,12 @@ public class User extends BaseEntity
 	}
 
 	public RoleType getRole() {
-		return role;
+		return RoleType.valueOf(this.roleValue);
 	}
 
 	public void setRole(RoleType role) {
 		this.role = role;
+		this.roleValue = this.role.toString();
 	}
 
 	public String getReal_name() {

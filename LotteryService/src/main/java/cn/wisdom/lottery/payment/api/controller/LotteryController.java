@@ -4,17 +4,19 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.wisdom.lottery.payment.api.model.CurrentPeriodInfo;
-import cn.wisdom.lottery.payment.api.model.LatestOpenInfo;
 import cn.wisdom.lottery.payment.api.model.LotteryJsonDocument;
+import cn.wisdom.lottery.payment.api.request.LotteryOrderRequest;
 import cn.wisdom.lottery.payment.common.model.JsonDocument;
 import cn.wisdom.lottery.payment.dao.constant.BusinessType;
 import cn.wisdom.lottery.payment.dao.constant.LotteryType;
+import cn.wisdom.lottery.payment.dao.constant.TicketState;
 import cn.wisdom.lottery.payment.dao.vo.Lottery;
 import cn.wisdom.lottery.payment.dao.vo.LotteryNumber;
 import cn.wisdom.lottery.payment.dao.vo.User;
@@ -38,7 +40,7 @@ public class LotteryController {
 			throws ServiceException {
 
 		LotteryOpenData currentPeriod = lotteryServiceFacade
-				.getCurrentPeriod(LotteryType.valueOf(lotteryType));
+				.getCurrentPeriod(LotteryType.valueOf(lotteryType.toUpperCase()));
 
 		CurrentPeriodInfo currentPeriodInfo = new CurrentPeriodInfo(
 				currentPeriod);
@@ -46,38 +48,26 @@ public class LotteryController {
 		return new LotteryJsonDocument(currentPeriodInfo);
 	}
 
-    @RequestMapping(method = RequestMethod.GET, value = "/lastOpen")
-    @ResponseBody
-	public JsonDocument getLatestOpenInfo(@RequestParam String lotteryType)
-			throws ServiceException {
-
-		LotteryOpenData openInfo = lotteryServiceFacade
-				.getLatestOpenInfo(LotteryType.valueOf(lotteryType));
-
-		LatestOpenInfo latestOpenInfo = new LatestOpenInfo(openInfo);
-
-		return new LotteryJsonDocument(latestOpenInfo);
-	}
-
     @RequestMapping(method = RequestMethod.POST, value = "/order/create/ssq")
     @ResponseBody
-	public JsonDocument submitSSQPrivateOrder(@RequestParam List<String> numbers, 
-			@RequestParam int periods, @RequestParam int times)
+	public JsonDocument submitSSQPrivateOrder(@RequestBody LotteryOrderRequest request)
 			throws ServiceException {
 
 		Lottery lottery = new Lottery();
 		lottery.setBusinessType(BusinessType.Private);
 		lottery.setLotterType(LotteryType.SSQ);
-		lottery.setTimes(times); //倍数
+		lottery.setTimes(request.getTimes()); //倍数
 		
-		for (String number : numbers) {
+		for (String number : request.getNumbers()) {
 			lottery.getNumbers().add(new LotteryNumber(number));
 		}
 		
 		//追号
 		List<Integer> nextNPeriods = lotteryServiceFacade
-				.getNextNPeriods(LotteryType.SSQ, periods);
+				.getNextNPeriods(LotteryType.SSQ, request.getPeriods());
 		lottery.setPeriods(nextNPeriods);
+		
+		lottery.setTicketState(TicketState.NotPrint);
 
 		lottery = lotteryServiceFacade.createPrivateOrder(LotteryType.SSQ,
 				lottery);

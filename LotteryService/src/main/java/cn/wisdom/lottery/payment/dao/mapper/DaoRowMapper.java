@@ -79,7 +79,7 @@ public class DaoRowMapper<T> implements RowMapper<T>
         getAllField(allFields, clazz);
     }
 
-    @SuppressWarnings(value = "unchecked")
+//    @SuppressWarnings(value = "unchecked")
     public T mapRow(ResultSet resultRet, int index) throws SQLException
     {
         T object = null;

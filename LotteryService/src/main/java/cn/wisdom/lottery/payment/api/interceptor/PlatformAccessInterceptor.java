@@ -41,7 +41,7 @@ public class PlatformAccessInterceptor extends HandlerInterceptorAdapter
 {
     private static final String CLIENT_TYPE = "clientType";
     
-    private static final String OPENID = "openId";
+    private static final String OPENID = "openid";
 
     @Autowired
     private UserService userService;

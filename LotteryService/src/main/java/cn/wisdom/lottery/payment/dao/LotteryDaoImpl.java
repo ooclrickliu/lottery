@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import cn.wisdom.lottery.payment.common.utils.StringUtils;
 import cn.wisdom.lottery.payment.dao.constant.LotteryType;
+import cn.wisdom.lottery.payment.dao.constant.TicketState;
 import cn.wisdom.lottery.payment.dao.mapper.DaoRowMapper;
 import cn.wisdom.lottery.payment.dao.vo.Lottery;
 import cn.wisdom.lottery.payment.dao.vo.LotteryNumber;
@@ -75,7 +76,7 @@ public class LotteryDaoImpl implements LotteryDao {
 
 	@Override
 	public void saveLottery(Lottery lottery) {
-		Object[] args = new Object[4];
+		Object[] args = new Object[5];
 		args[0] = lottery.getOrderNo();
 		args[1] = lottery.getLotterType().toString();
 		args[2] = lottery.getBusinessType().toString();
@@ -91,7 +92,7 @@ public class LotteryDaoImpl implements LotteryDao {
 		for (LotteryNumber lotteryNumber : lottery.getNumbers()) {
 			args = new Object[2];
 			args[0] = lotteryId;
-			args[1] = lotteryNumber;
+			args[1] = lotteryNumber.getNumber();
 
 			batchArgs.add(args);
 		}
@@ -267,7 +268,7 @@ public class LotteryDaoImpl implements LotteryDao {
 				"Failed to query printed lottery by lotteryType [{0}], peroid [{1}]",
 				lotteryType, period);
 		List<Lottery> lotteries = daoHelper.queryForList(
-				GET_LOTTERY_BY_TICKET_STATE, lotteryMapper, errMsg, lotteryType.toString(), period);
+				GET_LOTTERY_BY_TICKET_STATE, lotteryMapper, errMsg, period, lotteryType.toString(), TicketState.Printed.toString());
 
 		getLotteryNumbers(lotteries);
 

@@ -29,14 +29,14 @@ public class JaxbUtil
      */
     public JaxbUtil(Class<?>... types)
     {
-        try
+        /*try
         {
             jaxbContext = JAXBContext.newInstance(types);
         }
         catch (JAXBException e)
         {
             throw new RuntimeException(e);
-        }
+        }*/
     }
 
     /**
@@ -87,15 +87,16 @@ public class JaxbUtil
     @SuppressWarnings("unchecked")
     public <T> T fromXml(String xml)
     {
-        try
-        {
-            StringReader reader = new StringReader(xml);
-            return (T) createUnmarshaller().unmarshal(reader);
-        }
-        catch (JAXBException e)
-        {
-            throw new RuntimeException(e);
-        }
+//        try
+//        {
+//            StringReader reader = new StringReader(xml);
+//            return (T) createUnmarshaller().unmarshal(reader);
+//        }
+//        catch (JAXBException e)
+//        {
+//            throw new RuntimeException(e);
+//        }
+        return null;
     }
 
     /**
@@ -104,18 +105,19 @@ public class JaxbUtil
     @SuppressWarnings("unchecked")
     public <T> T fromXml(String xml, boolean caseSensitive)
     {
-        try
-        {
-            String fromXml = xml;
-            if (!caseSensitive)
-                fromXml = xml.toLowerCase();
-            StringReader reader = new StringReader(fromXml);
-            return (T) createUnmarshaller().unmarshal(reader);
-        }
-        catch (JAXBException e)
-        {
-            throw new RuntimeException(e);
-        }
+//        try
+//        {
+//            String fromXml = xml;
+//            if (!caseSensitive)
+//                fromXml = xml.toLowerCase();
+//            StringReader reader = new StringReader(fromXml);
+//            return (T) createUnmarshaller().unmarshal(reader);
+//        }
+//        catch (JAXBException e)
+//        {
+//            throw new RuntimeException(e);
+//        }
+        return null;
     }
 
     /**
