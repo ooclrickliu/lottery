@@ -190,14 +190,14 @@
 		<profile>
 			<id>Local</id>
 			<properties>
-				<db.url>jdbc:mysql://192.168.56.1:3306/lottery</db.url>
-				<db.username>root</db.username>
-				<db.password>root</db.password>
+				<db.url>jdbc:mysql://localhost:3306/lottery</db.url>
+				<db.username>lottery</db.username>
+				<db.password>lottery#123</db.password>
 				<memcache.server>192.168.56.1:11211</memcache.server>
 				<redis.host>192.168.56.1</redis.host>
 				<redis.port>26379</redis.port>
 				<redis.password>redis@ovt.com</redis.password>
-				<log.path>/home/newooeyes/ov_payment/logs/doorbell</log.path>
+				<log.path>/home/lottery/logs</log.path>
 			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -213,7 +213,7 @@
 				<redis.host>192.168.1.230</redis.host>
 				<redis.port>26379</redis.port>
 				<redis.password>redis@ovt.com</redis.password>
-				<log.path>/home/newooeyes/ov_payment/logs/doorbell</log.path>
+				<log.path>/home/lottery/logs</log.path>
 			</properties>
 		</profile>
 		<profile>
@@ -226,7 +226,7 @@
 				<redis.host>10.117.14.207</redis.host>
 				<redis.port>26379</redis.port>
 				<redis.password>redis@ovt.com</redis.password>
-				<log.path>/home/newooeyes/ov_payment/logs/doorbell</log.path>
+				<log.path>/home/lottery/logs</log.path>
 			</properties>
 		</profile>
 	</profiles>

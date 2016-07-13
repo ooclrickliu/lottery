@@ -23,23 +23,38 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- 表的结构 `customer`
+-- 表的结构 `user`
 --
 
-CREATE TABLE IF NOT EXISTS `customer` (
-  `id` bigint(20) NOT NULL,
-  `nick_name` varchar(50) NOT NULL,
-  `sex` bit(1) NOT NULL,
-  `province` varchar(50) NOT NULL,
-  `city` varchar(50) NOT NULL,
-  `country` varchar(50) NOT NULL,
-  `head_img_url` varchar(200) NOT NULL,
-  `unionid` varchar(100) NOT NULL,
-  `subscribe_time` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `openid` varchar(50) NOT NULL,
+  `role` varchar(20) NOT NULL DEFAULT '',
+  `real_name` varchar(50) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `card_no` varchar(20) DEFAULT NULL,`nick_name` varchar(50) NOT NULL,
+
+  `sex` bit(1) NULL,
+  `province` varchar(50) NULL,
+  `city` varchar(50) NULL,
+  `country` varchar(50) NULL,
+  `head_img_url` varchar(200) NULL,
+  `unionid` varchar(100) NULL,
+  `subscribe_time` int(11) NULL,
+
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `update_time` timestamp NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `openid` (`openid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+
+--
+-- 转存表中的数据 `user`
+--
+
+INSERT INTO `user` (`id`, `openid`, `role`, `real_name`, `phone`, `card_no`, `create_time`, `update_time`) VALUES
+(1, 'test', 'CUSTOMER', '刘志', '15629913656', '422301198239289909', '2016-07-12 12:50:07', '2016-07-12 12:50:07');
+
 
 -- --------------------------------------------------------
 
@@ -117,21 +132,6 @@ CREATE TABLE IF NOT EXISTS `lottery_period` (
 
 INSERT INTO `lottery_period` (`id`, `lottery_id`, `period`) VALUES
 (1, 4, 2016081);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `merchant`
---
-
-CREATE TABLE IF NOT EXISTS `merchant` (
-  `id` bigint(20) NOT NULL,
-  `address` varchar(200) DEFAULT NULL,
-  `cert_no` varchar(20) DEFAULT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -312,28 +312,18 @@ INSERT INTO `prize_no_ssq` (`id`, `period`, `open_time`, `number`, `create_time`
 -- --------------------------------------------------------
 
 --
--- 表的结构 `user`
+-- 表的结构 `global_variable`
 --
 
-CREATE TABLE IF NOT EXISTS `user` (
+CREATE TABLE IF NOT EXISTS `global_variable` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `openid` varchar(50) NOT NULL,
-  `role` varchar(20) NOT NULL DEFAULT '''''',
-  `real_name` varchar(50) DEFAULT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `card_no` varchar(20) DEFAULT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `openid` (`openid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+  `key` varchar(50) NOT NULL,
+  `value` varchar(500) NOT NULL,
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
---
--- 转存表中的数据 `user`
---
-
-INSERT INTO `user` (`id`, `openid`, `role`, `real_name`, `phone`, `card_no`, `create_time`, `update_time`) VALUES
-(1, 'test', 'CUSTOMER', '刘志', '15629913656', '422301198239289909', '2016-07-12 12:50:07', '2016-07-12 12:50:07');
+-- --------------------------------------------------------
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -34,7 +34,7 @@ public interface UserService
 	void createUser(String openId, RoleType role) throws ServiceException;
 	
 	/**
-	 * 更新用户基本信息
+	 * 更新用户基本信息, 基本信息通过OAuth2.0获得
 	 * 
 	 * @param wxMpUser
 	 * @throws ServiceException

@@ -73,6 +73,7 @@ public class ServiceErrorCode
     public static final String INVALID_STATE = "InvalidState";
     public static final String NO_PRIVILEGE = "NoPrivilege";
     
-    
+    //WX
+    public static final String OAUTH_FAIL = "OAuthFail";
     
 }

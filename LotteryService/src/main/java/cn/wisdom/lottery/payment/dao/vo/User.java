@@ -7,6 +7,7 @@
  */
 package cn.wisdom.lottery.payment.dao.vo;
 
+import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import cn.wisdom.lottery.payment.dao.annotation.Column;
 import cn.wisdom.lottery.payment.dao.constant.RoleType;
 
@@ -35,6 +36,108 @@ public class User extends BaseEntity
 	
 	@Column("card_no")
 	private String cardNo;
+	
+	@Column("nick_name")
+    private String nickName;
+
+	@Column("sex")
+    private String sex;
+	
+	@Column("province")
+    private String province;
+
+	@Column("city")
+    private String city;
+
+	@Column("country")
+    private String country;
+
+	@Column("head_img_url")
+    private String headImgUrl;
+	
+	@Column("unionid")
+    private String unionid;
+
+	@Column("subscribe_time")
+    private long subscribeTime;
+	
+	public User() {}
+	
+	public User(WxMpUser wxMpUser) {
+		this.openid = wxMpUser.getOpenId();
+		this.nickName = wxMpUser.getNickname();
+		this.province = wxMpUser.getProvince();
+		this.city = wxMpUser.getCity();
+		this.country = wxMpUser.getCountry();
+		this.sex = wxMpUser.getSex();
+		this.headImgUrl = wxMpUser.getHeadImgUrl();
+		this.unionid = wxMpUser.getUnionId();
+		this.subscribeTime = wxMpUser.getSubscribeTime();
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getHeadImgUrl() {
+		return headImgUrl;
+	}
+
+	public void setHeadImgUrl(String headImgUrl) {
+		this.headImgUrl = headImgUrl;
+	}
+
+	public String getUnionid() {
+		return unionid;
+	}
+
+	public void setUnionid(String unionid) {
+		this.unionid = unionid;
+	}
+
+	public long getSubscribeTime() {
+		return subscribeTime;
+	}
+
+	public void setSubscribeTime(long subscribeTime) {
+		this.subscribeTime = subscribeTime;
+	}
 
 	public String getOpenid() {
 		return openid;
