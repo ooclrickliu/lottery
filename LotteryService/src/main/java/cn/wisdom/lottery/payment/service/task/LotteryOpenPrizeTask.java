@@ -16,8 +16,7 @@ import cn.wisdom.lottery.payment.common.utils.JsonUtils;
 import cn.wisdom.lottery.payment.dao.constant.LotteryType;
 import cn.wisdom.lottery.payment.dao.vo.Lottery;
 import cn.wisdom.lottery.payment.dao.vo.PrizeLotterySSQ;
-import cn.wisdom.lottery.payment.service.LotteryPrizeService;
-import cn.wisdom.lottery.payment.service.LotteryService;
+import cn.wisdom.lottery.payment.service.LotteryServiceFacade;
 import cn.wisdom.lottery.payment.service.exception.ServiceException;
 import cn.wisdom.lottery.payment.service.remote.LotteryRemoteService;
 import cn.wisdom.lottery.payment.service.remote.response.LotteryOpenData;
@@ -27,12 +26,9 @@ public class LotteryOpenPrizeTask {
 
 	@Autowired
 	private LotteryRemoteService lotteryRemoteService;
-
-	@Autowired
-	private LotteryPrizeService lotteryPrizeService;
 	
 	@Autowired
-	private LotteryService lotteryService;
+	private LotteryServiceFacade lotteryServiceFacade;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(LotteryOpenPrizeTask.class.getName());
 
@@ -45,7 +41,7 @@ public class LotteryOpenPrizeTask {
 			LOGGER.info("SSQ task start...");
 			
 			// 1. get current period
-			LotteryOpenData currentPeriod = lotteryPrizeService.getCurrentPeriod(LotteryType.SSQ);
+			LotteryOpenData currentPeriod = lotteryServiceFacade.getCurrentPeriod(LotteryType.SSQ);
 
 			LOGGER.info("Current period: {}", currentPeriod);
 
@@ -65,7 +61,7 @@ public class LotteryOpenPrizeTask {
 				
 				PrizeLotterySSQ ssq = new PrizeLotterySSQ(period, lotteryOpenData.getOpencode());
 				
-				lotteryPrizeService.savePrizeLottery(ssq, LotteryType.SSQ);
+				lotteryServiceFacade.savePrizeLottery(ssq, LotteryType.SSQ);
 				
 				// 3. update prize info.
 				updatePrizeInfo(ssq);
@@ -77,30 +73,39 @@ public class LotteryOpenPrizeTask {
 		}
 
 	}
+	
+	public void reopenSSQPrize(int period) throws ServiceException {
+		// 1. get openInfo
+		LotteryOpenData openInfo = lotteryServiceFacade.getOpenInfo(LotteryType.SSQ, period);
+		
+		// 2. update prize info.
+		PrizeLotterySSQ ssq = new PrizeLotterySSQ(period, openInfo.getOpencode());
+		updatePrizeInfo(ssq);
+	}
 
 	private void updatePrizeInfo(PrizeLotterySSQ ssq) throws ServiceException {
 		LOGGER.info("Start to update lotteries' prize info...");
 		
 		// 1. get all "Printed" tickets of this period
-		List<Lottery> printedLotteries = lotteryService.getPrintedLotteries(LotteryType.SSQ, ssq.getPeriod());
+		List<Lottery> printedLotteries = lotteryServiceFacade.getPrintedLotteries(LotteryType.SSQ, ssq.getPeriod());
 		
 		// 2. calculate prize info & bonus.
 		if (CollectionUtils.isNotEmpty(printedLotteries)) {
 			List<Lottery> prizeLotteries = new ArrayList<Lottery>();
 			for (Lottery lottery : printedLotteries) {
-				Map<Long, Map<Integer, Integer>> prizeInfo = lotteryPrizeService.getPrizeInfo(lottery, ssq);
+				Map<Long, Map<Integer, Integer>> prizeInfo = lotteryServiceFacade.getPrizeInfo(lottery, ssq);
 				
 				if (CollectionUtils.isNotEmpty(prizeInfo)) {
 					try {
 						lottery.setPrizeInfo(JsonUtils.toJson(prizeInfo));
 					} catch (OVTException e) {
 					}
-					lottery.setPrizeBonus(lotteryPrizeService.getPrizeBonus(prizeInfo));
+					lottery.setPrizeBonus(lotteryServiceFacade.getPrizeBonus(prizeInfo));
 					
 					prizeLotteries.add(lottery);
 				}
 			}
-			lotteryService.updatePrizeInfo(prizeLotteries);
+			lotteryServiceFacade.updatePrizeInfo(prizeLotteries);
 			
 			// 3. notify owner
 			notifyOwner(prizeLotteries);

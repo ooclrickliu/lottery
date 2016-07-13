@@ -29,9 +29,11 @@ public class Lottery extends BaseEntity {
 	private String orderNo;
 
 	@Column("lotter_type")
-	private LotteryType lotterType;
+	private String lotteryTypeValue;
+	private LotteryType lotteryType;
 
 	@Column("business_type")
+	private String businessTypeValue;
 	private BusinessType businessType;
 
 	private List<Integer> periods = new ArrayList<Integer>();
@@ -42,6 +44,7 @@ public class Lottery extends BaseEntity {
 	private List<LotteryNumber> numbers = new ArrayList<LotteryNumber>();
 
 	@Column("ticket_state")
+	private String ticketStateValue;
 	private TicketState ticketState;
 
 	private boolean fetched;
@@ -70,7 +73,7 @@ public class Lottery extends BaseEntity {
 	public static void main(String[] args) {
 		Lottery lottery = new Lottery();
 		lottery.setOrderNo("2016062910012001");
-		lottery.setLotterType(LotteryType.SSQ);
+		lottery.setLotteryType(LotteryType.SSQ);
 		lottery.setBusinessType(BusinessType.Private);
 		lottery.setTimes(5);
 		lottery.setTicketState(TicketState.CanPrint);
@@ -111,20 +114,17 @@ public class Lottery extends BaseEntity {
 		this.orderNo = orderNo;
 	}
 
-	public LotteryType getLotterType() {
-		return lotterType;
-	}
-
-	public void setLotterType(LotteryType lotterType) {
-		this.lotterType = lotterType;
-	}
-
 	public TicketState getTicketState() {
+		if (ticketState == null) {
+			ticketState = TicketState.valueOf(ticketStateValue);
+		}
+		
 		return ticketState;
 	}
 
 	public void setTicketState(TicketState ticketState) {
 		this.ticketState = ticketState;
+		this.ticketStateValue = ticketState.toString();
 	}
 
 	public long getOwner() {
@@ -152,11 +152,15 @@ public class Lottery extends BaseEntity {
 	}
 
 	public BusinessType getBusinessType() {
+		if (businessType == null) {
+			businessType = BusinessType.valueOf(businessTypeValue);
+		}
 		return businessType;
 	}
 
 	public void setBusinessType(BusinessType businessType) {
 		this.businessType = businessType;
+		this.businessTypeValue = businessType.toString();
 	}
 
 	public Timestamp getDistributeTime() {
@@ -173,9 +177,14 @@ public class Lottery extends BaseEntity {
 
 	public void setTicketFetchTime(Timestamp ticketFetchTime) {
 		this.ticketFetchTime = ticketFetchTime;
+		this.fetched = true;
 	}
 
 	public boolean isFetched() {
+		if (!fetched && ticketFetchTime != null) {
+			fetched = true;
+		}
+		
 		return fetched;
 	}
 
@@ -221,5 +230,17 @@ public class Lottery extends BaseEntity {
 
 	public void setPeriods(List<Integer> periods) {
 		this.periods = periods;
+	}
+
+	public LotteryType getLotteryType() {
+		if (lotteryType == null) {
+			lotteryType = LotteryType.valueOf(lotteryTypeValue);
+		}
+		return lotteryType;
+	}
+
+	public void setLotteryType(LotteryType lotteryType) {
+		this.lotteryType = lotteryType;
+		this.lotteryTypeValue = lotteryType.toString();
 	}
 }

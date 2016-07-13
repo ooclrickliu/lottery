@@ -7,9 +7,10 @@
  */
 package com.ovt.basic;
 
-import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.util.Locale;
+
+import cn.wisdom.lottery.payment.dao.mapper.UserMapper;
 
 
 /**
@@ -145,7 +146,11 @@ public class TestMain
         
 //        System.out.println(new Timestamp(1473699461));
     	
-    	System.out.println("123".equals("" + 123));
+//    	System.out.println("123".equals("" + 123));
+    	
+    	UserMapper userMapper = new UserMapper();
+    	
+    	System.out.println("Done");
     }
     
     public static String formatNumber(double num,int maxFractionDigits) {

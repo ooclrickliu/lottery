@@ -36,6 +36,15 @@ public interface LotteryPrizeService {
 	 * @return
 	 */
 	LotteryOpenData getLatestOpenInfo(LotteryType lotteryType);
+
+	/**
+	 * Get open info of specified period.
+	 * 
+	 * @param lotteryType
+	 * @param perid
+	 * @return
+	 */
+	LotteryOpenData getOpenInfo(LotteryType lotteryType, int period);
 	
 	/**
 	 * Get prize no of lottery by type and time.

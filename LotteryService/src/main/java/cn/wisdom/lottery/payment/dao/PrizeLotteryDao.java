@@ -16,5 +16,7 @@ public interface PrizeLotteryDao {
 
 	LotteryOpenData getLastestOpenInfo(LotteryType lotteryType);
 
+	LotteryOpenData getOpenInfo(LotteryType lotteryType, int period);
+
 	List<Integer> getNextNPeriods(LotteryType lotteryType, int n);
 }

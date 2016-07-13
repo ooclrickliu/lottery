@@ -1,5 +1,6 @@
 package cn.wisdom.lottery.payment.dao;
 
+import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import cn.wisdom.lottery.payment.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.payment.common.utils.StringUtils;
 import cn.wisdom.lottery.payment.dao.constant.LotteryType;
 import cn.wisdom.lottery.payment.dao.constant.TicketState;
@@ -23,8 +25,8 @@ public class LotteryDaoImpl implements LotteryDao {
 	@Autowired
 	private DaoHelper daoHelper;
 
-	private static final String SAVE_LOTTERY = "insert into lottery(order_no, lotter_type, business_type, times, ticket_state, update_time) "
-			+ "values (?, ?, ?, ?, ?, current_timestamp)";
+	private static final String SAVE_LOTTERY = "insert into lottery(order_no, lotter_type, business_type, times, ticket_state, owner, update_time) "
+			+ "values (?, ?, ?, ?, ?, ?, current_timestamp)";
 
 	private static final String SAVE_LOTTERY_NUMBER = "insert into lottery_number(lottery_id, number) "
 			+ "values (?, ?)";
@@ -36,13 +38,13 @@ public class LotteryDaoImpl implements LotteryDao {
 	
 	private static final String GET_LOTTERY_JOIN_PREFIX = "select l.*, p.period from lottery_period p join lottery l on p.lottery_id = l.id ";
 	
-	private static final String GET_LOTTERY_ID_PREFIX = "select l.id from lottery_period p join lottery l on p.lottery_id = l.id ";
+	private static final String GET_LOTTERY_ID_PREFIX = "select l.id, l.lotter_type from lottery_period p join lottery l on p.lottery_id = l.id ";
 	
 	private static final String GET_LOTTERY_BY_TICKET_STATE = GET_LOTTERY_ID_PREFIX
 			+ " where period = ? and lotter_type = ? and ticket_state = ?";
 
 	private static final String GET_LOTTERY_BY_ORDER = GET_LOTTERY_PREFIX
-			+ " where order_no in( ?)";
+			+ " where order_no in( {0})";
 	
 	private static final String GET_LOTTERY_NUMBER = "select id, lottery_id, number from lottery_number "
 			+ " where lottery_id in(?) order by id";
@@ -67,6 +69,10 @@ public class LotteryDaoImpl implements LotteryDao {
 	private static final String UPDATE_LOTTERY_FETCH_STATE = "update lottery set "
 			+ "ticket_fetch_time = current_timestamp, update_time = current_timestamp "
 			+ "where order_no = ?";
+	
+	private static final String UPDATE_LOTTERY_PRIZE_INFO = "update lottery set prize_info = ?, "
+			+ "prize_bonus = ?, update_time = current_timestamp "
+			+ "where id = ?";
 
     private static final DaoRowMapper<Lottery> lotteryMapper = new DaoRowMapper<Lottery>(Lottery.class);
 	
@@ -76,16 +82,23 @@ public class LotteryDaoImpl implements LotteryDao {
 
 	@Override
 	public void saveLottery(Lottery lottery) {
-		Object[] args = new Object[5];
+		Object[] args = new Object[6];
 		args[0] = lottery.getOrderNo();
-		args[1] = lottery.getLotterType().toString();
+		args[1] = lottery.getLotteryType().toString();
 		args[2] = lottery.getBusinessType().toString();
 		args[3] = lottery.getTimes();
 		args[4] = lottery.getTicketState().toString();
+		args[5] = lottery.getOwner();
 
 		String errMsg = MessageFormat
 				.format("Failed to save lottery!", lottery);
 		long lotteryId = daoHelper.save(SAVE_LOTTERY, errMsg, true, args);
+		
+		lottery.setId(lotteryId);
+		
+		Timestamp current = DateTimeUtils.getCurrentTimestamp();
+		lottery.setCreateTime(current);
+		lottery.setUpdateTime(current);
 
 		// lottery number
 		List<Object[]> batchArgs = new ArrayList<Object[]>();
@@ -117,23 +130,35 @@ public class LotteryDaoImpl implements LotteryDao {
 
 	@Override
 	public Lottery getLottery(String orderNo) {
+		
+		return this.getLottery(orderNo, true, true);
+	}
+	
+	@Override
+	public Lottery getLottery(String orderNo, boolean queryNumber, boolean queryPeriod) {
 
+		String sql = MessageFormat.format(GET_LOTTERY_BY_ORDER, orderNo);
+		
 		String errMsg = MessageFormat.format(
 				"Failed to query lottery by orderNo [{0}]", orderNo);
-		Lottery lottery = daoHelper.queryForObject(GET_LOTTERY_BY_ORDER,
-				lotteryMapper, errMsg, orderNo);
+		Lottery lottery = daoHelper.queryForObject(sql,
+				lotteryMapper, errMsg);
 		
 		if (lottery != null) {
-			List<LotteryNumber> numbers = daoHelper.queryForList(GET_LOTTERY_NUMBER, lotteryNumberMapper, errMsg, lottery.getId());
-			lottery.setNumbers(numbers);
-			
-			List<LotteryPeriod> periods = daoHelper.queryForList(GET_LOTTERY_PERIOD, lotteryPeriodMapper, errMsg, lottery.getId());
-			
-			List<Integer> periodList = new ArrayList<Integer>();
-			for (LotteryPeriod lotteryPeriod : periods) {
-				periodList.add(lotteryPeriod.getPeriod());
+			if (queryNumber) {
+				List<LotteryNumber> numbers = daoHelper.queryForList(GET_LOTTERY_NUMBER, lotteryNumberMapper, errMsg, lottery.getId());
+				lottery.setNumbers(numbers);
 			}
-			lottery.setPeriods(periodList);
+			
+			if (queryPeriod) {
+				List<LotteryPeriod> periods = daoHelper.queryForList(GET_LOTTERY_PERIOD, lotteryPeriodMapper, errMsg, lottery.getId());
+				
+				List<Integer> periodList = new ArrayList<Integer>();
+				for (LotteryPeriod lotteryPeriod : periods) {
+					periodList.add(lotteryPeriod.getPeriod());
+				}
+				lottery.setPeriods(periodList);
+			}
 		}
 		
 		return lottery;
@@ -142,11 +167,13 @@ public class LotteryDaoImpl implements LotteryDao {
 	@Override
 	public List<Lottery> getLottery(List<String> orderNos, boolean queryNumber, boolean queryPeriod) {
 		String orderNosCSV = StringUtils.getCSV(orderNos, true);
+		
+		String sql = MessageFormat.format(GET_LOTTERY_BY_ORDER, orderNosCSV);
 
 		String errMsg = MessageFormat.format(
 				"Failed to query lottery by orderNos [{0}]", orderNosCSV);
-		List<Lottery> lotteries = daoHelper.queryForList(GET_LOTTERY_BY_ORDER,
-				lotteryMapper, errMsg, orderNosCSV);
+		List<Lottery> lotteries = daoHelper.queryForList(sql,
+				lotteryMapper, errMsg);
 
 		if (queryNumber) {
 			getLotteryNumbers(lotteries);
@@ -273,6 +300,23 @@ public class LotteryDaoImpl implements LotteryDao {
 		getLotteryNumbers(lotteries);
 
 		return lotteries;
+	}
+
+	@Override
+	public void updatePrizeInfo(List<Lottery> prizeLotteries) {
+		List<Object[]> batchArgs = new ArrayList<Object[]>();
+		for (Lottery lottery : prizeLotteries) {
+			Object[] args = new Object[3];
+			args[0] = lottery.getPrizeInfo();
+			args[1] = lottery.getPrizeBonus();
+			args[2] = lottery.getId();
+
+			batchArgs.add(args);
+		}
+		
+		String errMsg = "Failed to update lottery prize info.";
+
+		daoHelper.batchUpdate(UPDATE_LOTTERY_PRIZE_INFO, batchArgs, errMsg);
 	}
 
 }

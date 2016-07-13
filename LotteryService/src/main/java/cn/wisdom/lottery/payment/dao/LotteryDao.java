@@ -11,6 +11,8 @@ public interface LotteryDao {
 
 	Lottery getLottery(String orderNo);
 	
+	Lottery getLottery(String orderNo, boolean queryNumber, boolean queryPeriod);
+	
 	List<Lottery> getLottery(List<String> orderNos, boolean queryNumber, boolean queryPeriod);
 	
 	List<Lottery> getLottery(LotteryType lotteryType, int period, long merchantId);
@@ -24,6 +26,8 @@ public interface LotteryDao {
 	void updateFetchState(Lottery lottery);
 
 	List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period);
+
+	void updatePrizeInfo(List<Lottery> prizeLotteries);
 
 	
 }

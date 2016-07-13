@@ -11,6 +11,11 @@ public class LotteryNumber extends BaseEntity {
 	@Column("number")
 	private String number;
 	
+	public LotteryNumber()
+	{
+		
+	}
+	
 	public LotteryNumber(String number) {
 		this.number = number;
 	}

@@ -1,12 +1,14 @@
 package cn.wisdom.lottery.payment.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.wisdom.lottery.payment.dao.constant.LotteryType;
 import cn.wisdom.lottery.payment.dao.vo.Lottery;
+import cn.wisdom.lottery.payment.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.payment.service.context.SessionContext;
 import cn.wisdom.lottery.payment.service.exception.ServiceException;
 import cn.wisdom.lottery.payment.service.remote.response.LotteryOpenData;
@@ -44,6 +46,13 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade {
 	}
 
 	@Override
+	public LotteryOpenData getOpenInfo(LotteryType lotteryType, int period)
+			throws ServiceException {
+		
+		return lotteryPrizeService.getOpenInfo(lotteryType, period);
+	}
+
+	@Override
 	public Lottery getLottery(String orderNo) throws ServiceException {
 		
 		return lotteryService.getLottery(orderNo);
@@ -72,6 +81,35 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade {
 	public List<Lottery> queryLottery(LotteryType lotteryType, int period, long merchantId)
 			throws ServiceException {
 		return lotteryService.queryLottery(lotteryType, period, merchantId);
+	}
+
+	@Override
+	public void savePrizeLottery(PrizeLotterySSQ prizeLotterySSQ,
+			LotteryType lotteryType) {
+		
+		lotteryPrizeService.savePrizeLottery(prizeLotterySSQ, lotteryType);
+	}
+
+	@Override
+	public List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
+			throws ServiceException {
+		return lotteryService.getPrintedLotteries(lotteryType, period);
+	}
+
+	@Override
+	public Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery,
+			PrizeLotterySSQ prizeLotterySSQ) throws ServiceException {
+		return lotteryPrizeService.getPrizeInfo(lottery, prizeLotterySSQ);
+	}
+
+	@Override
+	public int getPrizeBonus(Map<Long, Map<Integer, Integer>> prizeInfo) {
+		return lotteryPrizeService.getPrizeBonus(prizeInfo);
+	}
+
+	@Override
+	public void updatePrizeInfo(List<Lottery> prizeLotteries) {
+		lotteryService.updatePrizeInfo(prizeLotteries);
 	}
 
 }

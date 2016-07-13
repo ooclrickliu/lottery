@@ -142,7 +142,6 @@ public class LotteryServiceImpl implements LotteryService {
     		throw new ServiceException(ServiceErrorCode.NO_PRIVILEGE, "No fetch privillidge!");
 		}
     	
-    	lottery.setFetched(true);
     	lottery.setTicketFetchTime(DateTimeUtils.getCurrentTimestamp());
 		lotteryDao.updateFetchState(lottery);
     }
@@ -150,11 +149,14 @@ public class LotteryServiceImpl implements LotteryService {
 	@Override
 	public void onPaidSuccess(String userId, String orderNo)
 			throws ServiceException {
-		Lottery lottery = lotteryDao.getLottery(orderNo);
+		Lottery lottery = lotteryDao.getLottery(orderNo, false, false);
 		
 		lottery.setTicketState(TicketState.CanPrint);
 		
 		lotteryDao.updateTicketState(lottery);
+		
+		// default distribute to sb.
+		this.distributeTicket(orderNo, 2);
 		
 		// notify merchants
 	}
@@ -168,8 +170,7 @@ public class LotteryServiceImpl implements LotteryService {
 
 	@Override
 	public void updatePrizeInfo(List<Lottery> prizeLotteries) {
-		// TODO set prizeInfo, prizeBonus
-		
+		lotteryDao.updatePrizeInfo(prizeLotteries);
 	}
 	
 	private void saveLottery(Lottery lottery) throws ServiceException {

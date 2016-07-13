@@ -137,7 +137,7 @@
 		<profile>
 			<id>Local</id>
 			<properties>
-				<db.url>jdbc:mysql://localhost:3307/ovpaydb</db.url>
+				<db.url>jdbc:mysql://192.168.56.1:3306/ovpaydb</db.url>
 				<db.username>ovpay</db.username>
 				<db.password>ovpay</db.password>
 				<redis.host>192.168.56.1</redis.host>

@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.wisdom.lottery.payment.common.utils.CollectionUtils;
 import cn.wisdom.lottery.payment.dao.PrizeLotteryDao;
 import cn.wisdom.lottery.payment.dao.constant.LotteryType;
 import cn.wisdom.lottery.payment.dao.vo.Lottery;
@@ -64,6 +65,12 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 
 		return prizeLotteryDao.getLastestOpenInfo(lotteryType);
 	}
+	
+	@Override
+	public LotteryOpenData getOpenInfo(LotteryType lotteryType, int period) {
+		
+		return prizeLotteryDao.getOpenInfo(lotteryType, period);
+	}
 
 	@Override
 	public String getPrizeNo(LotteryType lotteryType, int period)
@@ -82,7 +89,7 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 	public Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery, PrizeLotterySSQ openLottery) {
 		Map<Long, Map<Integer, Integer>> prizeInfo = new HashMap<Long, Map<Integer,Integer>>();
 
-		if (lottery.getLotterType() == LotteryType.SSQ) {
+		if (lottery.getLotteryType() == LotteryType.SSQ) {
 			Map<Integer, Integer> singlePrizeInfo;
 			for (LotteryNumber number : lottery.getNumbers()) {
 				singlePrizeInfo = new HashMap<Integer, Integer>();
@@ -107,7 +114,9 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 				singlePrizeInfo = calculators.get(LotteryType.SSQ).getPrizeInfo(rawLottery.getRed().size(), 
 						rawLottery.getBlue().size(), rHits, bHits);
 				
-				prizeInfo.put(number.getId(), singlePrizeInfo);
+				if (CollectionUtils.isNotEmpty(singlePrizeInfo)) {
+					prizeInfo.put(number.getId(), singlePrizeInfo);
+				}
 			}
 		}
 		

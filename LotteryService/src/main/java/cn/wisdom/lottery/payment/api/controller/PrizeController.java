@@ -71,4 +71,14 @@ public class PrizeController {
 		
 		return LotteryJsonDocument.SUCCESS;
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/reopen")
+	@ResponseBody
+	public JsonDocument getRemoteSSQLatestOpenInfo(@RequestParam int period)
+			throws ServiceException {
+		
+		lotteryOpenPrizeTask.reopenSSQPrize(period);
+		
+		return LotteryJsonDocument.SUCCESS;
+	}
 }

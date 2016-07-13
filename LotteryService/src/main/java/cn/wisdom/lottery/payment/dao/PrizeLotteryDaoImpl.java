@@ -23,6 +23,8 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 	
 	private static final String GET_SSQ_LAST_PERIOD = "select id, period, open_time, number from prize_no_ssq where open_time < current_timestamp order by id desc limit 1";
 	
+	private static final String GET_SSQ_PERIOD = "select id, period, open_time, number from prize_no_ssq where period = ? limit 1";
+	
 	private static final String UPDATE_SSQ_OPEN_INFO = "update prize_no_ssq set number = ?, update_time = current_timestamp "
 			+ " where period = ?";
 	
@@ -77,6 +79,14 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 	public LotteryOpenData getLastestOpenInfo(LotteryType lotteryType) {
 		String errMsg = MessageFormat.format("Failed to query {0} latest open info.", lotteryType);
 		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_LAST_PERIOD, ssqPrizeInfoMapper, errMsg);
+		
+		return new LotteryOpenData(prizeLottery);
+	}
+
+	@Override
+	public LotteryOpenData getOpenInfo(LotteryType lotteryType, int period) {
+		String errMsg = MessageFormat.format("Failed to query {0} open info of period {1}.", lotteryType, period);
+		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_PERIOD, ssqPrizeInfoMapper, errMsg, period);
 		
 		return new LotteryOpenData(prizeLottery);
 	}

@@ -55,7 +55,7 @@ public class LotteryPriceServiceImpl implements LotteryPriceService {
 	@Override
 	public int calculateLotteryTotalFee(Lottery lottery)
 			throws ServiceException {
-		LotteryPriceCalculator calculator = this.calculators.get(lottery.getLotterType());
+		LotteryPriceCalculator calculator = this.calculators.get(lottery.getLotteryType());
 		
 		int price = calculator.calculatePrice(lottery);
 		

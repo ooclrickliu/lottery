@@ -55,7 +55,7 @@ public class LotteryController {
 
 		Lottery lottery = new Lottery();
 		lottery.setBusinessType(BusinessType.Private);
-		lottery.setLotterType(LotteryType.SSQ);
+		lottery.setLotteryType(LotteryType.SSQ);
 		lottery.setTimes(request.getTimes()); //倍数
 		
 		for (String number : request.getNumbers()) {
