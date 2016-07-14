@@ -148,9 +148,10 @@ public class TestMain
     	
 //    	System.out.println("123".equals("" + 123));
     	
-    	UserMapper userMapper = new UserMapper();
-    	
-    	System.out.println("Done");
+//    	UserMapper userMapper = new UserMapper();
+//    	
+//    	System.out.println("Done");
+    	System.out.println(System.currentTimeMillis());
     }
     
     public static String formatNumber(double num,int maxFractionDigits) {

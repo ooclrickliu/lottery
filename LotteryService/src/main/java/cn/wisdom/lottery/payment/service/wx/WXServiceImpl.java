@@ -20,7 +20,7 @@ import cn.wisdom.lottery.payment.service.wx.message.WxMpTextHandler;
 @Service
 public class WXServiceImpl implements WXService {
 	
-//	private WxMpInMemoryConfigStorage wxConfig;
+	private WxMpInMemoryConfigStorage wxConfig;
 
 	private WxMpService wxMpService;
 
@@ -32,7 +32,7 @@ public class WXServiceImpl implements WXService {
 		WxMpWisdomInMemoryConfigStorage config = WxMpWisdomInMemoryConfigStorage
 				.fromXml(is1);
 
-//		wxConfig = config;
+		wxConfig = config;
 		wxMpService = new WxMpServiceImpl();
 		wxMpService.setWxMpConfigStorage(config);
 
@@ -55,18 +55,11 @@ public class WXServiceImpl implements WXService {
 		return wxMpService;
 	}
 
-	@Override
-	public String getAccessToken() {
-		wxMpService.getAccessToken();
-		
-		return null;
+	public WxMpMessageRouter getWxMpMessageRouter() {
+		return wxMpMessageRouter;
 	}
 
-//	public WxMpMessageRouter getWxMpMessageRouter() {
-//		return wxMpMessageRouter;
-//	}
-//
-//	public WxMpInMemoryConfigStorage getWxConfig() {
-//		return wxConfig;
-//	}
+	public WxMpInMemoryConfigStorage getWxConfig() {
+		return wxConfig;
+	}
 }

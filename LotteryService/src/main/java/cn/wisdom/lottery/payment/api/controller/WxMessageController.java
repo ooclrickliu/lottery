@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -17,6 +18,7 @@ import cn.wisdom.lottery.payment.service.wx.WXService;
 @Controller
 public class WxMessageController {
 
+	@Autowired
 	private WXService wxService;
 
 	public void service(HttpServletRequest request, HttpServletResponse response)

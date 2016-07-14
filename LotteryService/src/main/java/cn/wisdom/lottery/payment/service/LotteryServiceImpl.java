@@ -49,6 +49,7 @@ public class LotteryServiceImpl implements LotteryService {
 		logger.debug("Receive lottery order: {}!", lottery);
         
         // 1. set owner for private lottery
+		lottery.setCreateBy(SessionContext.getCurrentUser().getId());
 		lottery.setOwner(SessionContext.getCurrentUser().getId());
 
         // 2. create order

@@ -88,6 +88,15 @@ public interface LotteryService
 	 * @param prizeLotteries
 	 */
 	void updatePrizeInfo(List<Lottery> prizeLotteries);
+
+	/**
+	 * Get customer's latest lottery.
+	 * 
+	 * @param openid
+	 * @param lotteryType
+	 * @return
+	 */
+	List<Lottery> getMyLatestLottery(String openid, LotteryType lotteryType);
 	/*********************************************************************************/
 //	
 //    /**

@@ -1,10 +1,14 @@
 package cn.wisdom.lottery.payment.service.wx;
 
+import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
+import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 
 public interface WXService {
 
-	public WxMpService getWxMpService();
+	WxMpService getWxMpService();
 	
-	public String getAccessToken();
+	WxMpMessageRouter getWxMpMessageRouter();
+	
+	WxMpInMemoryConfigStorage getWxConfig();
 }

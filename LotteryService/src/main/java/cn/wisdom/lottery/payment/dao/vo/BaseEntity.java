@@ -33,8 +33,11 @@ public class BaseEntity
 	@Column("update_time")
     protected Timestamp updateTime;
 
+	@Column("create_by")
+    protected long createBy;
+	
 	@Column("update_by")
-    protected int updateBy;
+	protected long updateBy;
 
     public BaseEntity()
     {
@@ -51,12 +54,12 @@ public class BaseEntity
         this.id = id;
     }
 
-    public int getUpdateBy()
+    public long getUpdateBy()
     {
         return updateBy;
     }
 
-    public void setUpdateBy(int updateBy)
+    public void setUpdateBy(long updateBy)
     {
         this.updateBy = updateBy;
     }
@@ -125,5 +128,13 @@ public class BaseEntity
     {
         this.updateTime = updateTime;
     }
+
+	public long getCreateBy() {
+		return createBy;
+	}
+
+	public void setCreateBy(long createBy) {
+		this.createBy = createBy;
+	}
 
 }

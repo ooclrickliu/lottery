@@ -59,6 +59,13 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade {
 	}
 
 	@Override
+	public List<Lottery> getMyLatestLottery(String openid,
+			LotteryType lotteryType) {
+		
+		return lotteryService.getMyLatestLottery(openid, lotteryType);
+	}
+
+	@Override
 	public void onPaidSuccess(String userId, String orderNo)
 			throws ServiceException {
 		lotteryService.onPaidSuccess(userId, orderNo);
