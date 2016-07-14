@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>WeUI</title>
+    <link rel="stylesheet" href="css/weui.css"/>
+    <link rel="stylesheet" href="css/main.css"/>
+</head>
+<body ontouchstart>
+<div class="container" id="container">
+    <div style="display: flex;">
+        <div class="col-xs-6" style="padding: 10px;">
+            <a href="javascript:;" class="weui_btn weui_btn_default" id="selectBall"><span
+                    class="icon">+</span>
+                <span>自选号码</span></a>
+        </div>
+        <div class="col-xs-6" style="padding: 10px;">
+            <a href="javascript:;" class="weui_btn weui_btn_default" id="randomFive"><span
+                    class="icon">+</span>
+                <span>机选五注</span></a>
+        </div>
+    </div>
+    <div class="content" style="margin-bottom: 132px;">
+        <div class="ball_list" id="ball_list">
+        </div>
+    </div>
+    <div class="footer">
+        <div style="padding: 0 8px;border-bottom: 1px solid #cccccc">
+            <div class="col-xs-6">
+                <div class="spinner" style="border-right: 1px solid #dddddd;">
+                    <span class="text-light">追</span>
+                    <a class="button" id="periodMinus">-</a>
+                    <input type="text" id="period" class="text" value="1"/>
+                    <a class="button" style="padding: 3px 8px;" id="periodAdd">+</a>
+                    <span class="text-light">期</span>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="spinner" style="text-align: center;padding: 12px 2px">
+                    <span class="text-light">投</span>
+                    <a class="button" id="multipleMinus">-</a>
+                    <input type="text" id="multiple" class="text" value="1"/>
+                    <a class="button" style="padding: 3px 8px;" id="multipleAdd">+</a>
+                    <span class="text-light">倍</span>
+                </div>
+            </div>
+            <div style="clear:both;height:0px;"></div>
+        </div>
+        <div class="content">
+            <div style="padding: 5px 0;">
+                <a href="javascript:;" id="submitDoubleBallSelect" class="weui_btn weui_btn_warn">立即付款 <span
+                        id="totalFee">0</span>&nbsp;元</a>
+            </div>
+            <div class="text-center text-light">
+                <input type="checkbox" value="" id="confirmProto" checked/>
+                <label for="confirmProto" style="font-size: 14px;">
+                    我已阅读并同意《<a href="#" class="text-light text-underline">服务协议</a>》和《<a
+                        href="#" class="text-light text-underline">免密协议</a>》
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/zepto.js"></script>
+<script src="js/main.js"></script>
+<script src="js/buy.js"></script>
+<script>
+    $('.ball_list_item').each(function (index, item) {
+        var left = $(item).find('.ball_list_item_left');
+        var right = $(item).find('.ball_list_item_right');
+        if (left.height() > right.height()) {
+            right.css("padding-top", Math.floor((left.height() - right.height()) / 2));
+        }
+    });
+</script>
+</body>
+</html>
