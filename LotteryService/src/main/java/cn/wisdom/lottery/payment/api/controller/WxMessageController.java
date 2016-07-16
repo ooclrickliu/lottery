@@ -14,13 +14,14 @@ import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import cn.wisdom.lottery.payment.service.wx.WXService;
 
-@RequestMapping("/wx/message")
+@RequestMapping("/wx")
 @Controller
 public class WxMessageController {
 
 	@Autowired
 	private WXService wxService;
 
+	@RequestMapping("/message")
 	public void service(HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		response.setContentType("text/html;charset=utf-8");

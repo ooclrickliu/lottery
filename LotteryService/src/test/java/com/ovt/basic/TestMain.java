@@ -7,9 +7,11 @@
  */
 package com.ovt.basic;
 
+import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import me.chanjar.weixin.common.util.crypto.SHA1;
 import cn.wisdom.lottery.payment.dao.mapper.UserMapper;
 
 
@@ -151,7 +153,20 @@ public class TestMain
 //    	UserMapper userMapper = new UserMapper();
 //    	
 //    	System.out.println("Done");
-    	System.out.println(System.currentTimeMillis());
+//    	System.out.println(System.currentTimeMillis());
+    	
+    	
+    	try {
+			String sign = SHA1.gen("wisdom", "1468634745", "1338596064");
+			
+			System.out.println(sign);
+			
+			
+			System.out.println("600a22c344239118388d8e7683c072174085f910");
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public static String formatNumber(double num,int maxFractionDigits) {

@@ -198,4 +198,12 @@ public class LotteryServiceImpl implements LotteryService {
 	}
 
 
+	@Override
+	public List<Lottery> getMyLatestLottery(String openid,
+			LotteryType lotteryType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 }

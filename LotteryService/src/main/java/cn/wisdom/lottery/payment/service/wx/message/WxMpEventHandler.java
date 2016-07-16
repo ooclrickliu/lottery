@@ -80,16 +80,16 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 			
 			WxMpCustomMessage wxCustomeMessage = new WxMpCustomMessage();
 			if (CollectionUtils.isEmpty(lotteries)) {
-				wxCustomeMessage.setTitle(title);
-				wxCustomeMessage.setDescription(description);
-				wxCustomeMessage.setContent(content);
-				wxCustomeMessage.setToUser(toUser);
-				wxCustomeMessage.setMsgType(msgType);
+//				wxCustomeMessage.setTitle(title);
+//				wxCustomeMessage.setDescription(description);
+//				wxCustomeMessage.setContent(content);
+//				wxCustomeMessage.setToUser(toUser);
+//				wxCustomeMessage.setMsgType(msgType);
 				String description = "您没有投注记录!";
 			}
 			else {
 				
-				wxService.getWxMpService().customMessageSend(message);
+//				wxService.getWxMpService().customMessageSend(message);
 			}
 		}
 	}
