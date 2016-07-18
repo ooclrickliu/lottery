@@ -67,7 +67,7 @@ public class LotteryController {
 				.getNextNPeriods(LotteryType.SSQ, request.getPeriods());
 		lottery.setPeriods(nextNPeriods);
 		
-		lottery.setTicketState(TicketState.NotPrint);
+		lottery.setTicketState(TicketState.UnPaid);
 
 		lottery = lotteryServiceFacade.createPrivateOrder(LotteryType.SSQ,
 				lottery);

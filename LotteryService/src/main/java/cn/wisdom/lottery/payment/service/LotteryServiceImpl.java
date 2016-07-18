@@ -90,7 +90,7 @@ public class LotteryServiceImpl implements LotteryService {
 		// change lottery ticket_state to 'Distributed' and set merchant
 		Lottery lotteryProfile = lotteryDao.getLottery(orderNo);
 		
-		if (lotteryProfile.getTicketState() != TicketState.CanPrint) {
+		if (lotteryProfile.getTicketState() != TicketState.Paid) {
 			String errMsg = MessageFormat.format("Ticket in state [{0}], can't be distributed!", 
 					lotteryProfile.getTicketState());
 			throw new ServiceException(ServiceErrorCode.INVALID_STATE, errMsg);
@@ -152,7 +152,7 @@ public class LotteryServiceImpl implements LotteryService {
 			throws ServiceException {
 		Lottery lottery = lotteryDao.getLottery(orderNo, false, false);
 		
-		lottery.setTicketState(TicketState.CanPrint);
+		lottery.setTicketState(TicketState.Paid);
 		
 		lotteryDao.updateTicketState(lottery);
 		
@@ -199,10 +199,10 @@ public class LotteryServiceImpl implements LotteryService {
 
 
 	@Override
-	public List<Lottery> getMyLatestLottery(String openid,
-			LotteryType lotteryType) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Lottery> getMyLottery(String openid,
+			LotteryType lotteryType, int period, int limit) {
+		
+		return lotteryDao.getLottery(openid, lotteryType, period, limit);
 	}
 
 

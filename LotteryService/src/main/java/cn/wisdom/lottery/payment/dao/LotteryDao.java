@@ -17,6 +17,8 @@ public interface LotteryDao {
 	
 	List<Lottery> getLottery(LotteryType lotteryType, int period, long merchantId);
 
+	List<Lottery> getLottery(String openid, LotteryType lotteryType, int period, int limit);
+
 	void updateTicketState(Lottery lottery);
 
 	void updatePrintState(List<Lottery> lotteries);

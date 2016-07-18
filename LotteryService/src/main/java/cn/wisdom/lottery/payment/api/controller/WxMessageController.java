@@ -53,6 +53,7 @@ public class WxMessageController {
 			// 明文传输的消息
 			WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(request
 					.getInputStream());
+			System.out.println("------------raw Message:\n" + inMessage.toString());
 			WxMpXmlOutMessage outMessage = wxService.getWxMpMessageRouter()
 					.route(inMessage);
 			if (outMessage != null) {
@@ -67,6 +68,9 @@ public class WxMessageController {
 			WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(
 					request.getInputStream(), wxService.getWxConfig(),
 					timestamp, nonce, msgSignature);
+			
+			System.out.println("------------- Aes Message:\n" + inMessage.toString());
+			
 			WxMpXmlOutMessage outMessage = wxService.getWxMpMessageRouter()
 					.route(inMessage);
 			response.getWriter().write(

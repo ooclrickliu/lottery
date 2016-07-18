@@ -54,6 +54,9 @@ public class LotteryDaoImpl implements LotteryDao {
 
 	private static final String GET_LOTTERY_BY_MERCHANT = GET_LOTTERY_JOIN_PREFIX
 			+ " where lotter_type = ? and period = ? and merchant = ?";
+	
+	private static final String GET_LOTTERY_BY_USER = GET_LOTTERY_JOIN_PREFIX
+			+ " where openid = ? and lotter_type = ? and period <= ? and ticket_state <> 'UnPaid' order by id desc, period desc limit ?";
 
 	private static final String UPDATE_LOTTERY_TICKET_STATE = "update lottery set ticket_state = ?, update_time = current_timestamp "
 			+ "where order_no = ?";
@@ -241,6 +244,21 @@ public class LotteryDaoImpl implements LotteryDao {
 
 		getLotteryNumbers(lotteries);
 
+		return lotteries;
+	}
+
+	@Override
+	public List<Lottery> getLottery(String openid, LotteryType lotteryType, int period,
+			int limit) {
+		String errMsg = MessageFormat.format(
+				"Failed to query lottery by openid [{0}], limit [{1}]",
+				openid, limit);
+		List<Lottery> lotteries = daoHelper.queryForList(
+				GET_LOTTERY_BY_USER, lotteryMapper, errMsg, openid, lotteryType.toString(), period,
+				limit);
+
+		getLotteryNumbers(lotteries);
+		
 		return lotteries;
 	}
 

@@ -76,7 +76,7 @@ public class Lottery extends BaseEntity {
 		lottery.setLotteryType(LotteryType.SSQ);
 		lottery.setBusinessType(BusinessType.Private);
 		lottery.setTimes(5);
-		lottery.setTicketState(TicketState.CanPrint);
+		lottery.setTicketState(TicketState.Paid);
 		lottery.setFetched(false);
 		lottery.setOwner(10001);
 		lottery.setMerchant(1203);
