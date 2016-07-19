@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>信易贷</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+    <link rel="stylesheet" href="css/main.css">
+
+</head>
+<body>
+<div class="page-group">
+    <div class="page page-current">
+        <div class="content">
+            <div class="buttons-tab">
+                <a href="#tab1" class="tab-link tab-icon active button button-fat">
+                    <span class="iconfont icon-shenfenzheng"></span>
+                    <span class="tab-label">身份认证</span>
+                </a>
+                <a href="#tab2" class="tab-link tab-icon button button-fat">
+                    <span class="iconfont icon-lianxiren"></span>
+                    <span class="tab-label">联系人</span>
+                </a>
+                <a href="#tab3" class="tab-link tab-icon button button-fat">
+                    <span class="iconfont icon-shouji"></span>
+                    <span class="tab-label">手机实名</span>
+                </a>
+            </div>
+            <div class="tabs">
+                <div id="tab1" class="tab active">
+                    <div class="content-block-title">&nbsp;</div>
+                    <div class="list-block">
+                        <ul>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">真实姓名</div>
+                                        <div class="item-input">
+                                            <input type="text" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content item-hover">
+                                    <div class="item-inner">
+                                        <div class="item-title label">身份证号</div>
+                                        <div class="item-input">
+                                            <p id="ID_F">未上传</p>
+                                        </div>
+                                        <div class="item-media" style="padding-top: 0;padding-bottom: 0">
+                                            <img src="img/camera.png" width="30">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content item-hover">
+                                    <div class="item-inner">
+                                        <div class="item-title label">有效期</div>
+                                        <div class="item-input">
+                                            <p id="ID_B">未上传</p>
+                                        </div>
+                                        <div class="item-media" style="padding-top: 0;padding-bottom: 0">
+                                            <img src="img/camera.png" width="30">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content item-hover">
+                                    <div class="item-inner">
+                                        <div class="item-title label">手持身份证</div>
+                                        <div class="item-input">
+                                            <p id="ID_H">未上传</p>
+                                        </div>
+                                        <div class="item-media" style="padding-top: 0;padding-bottom: 0">
+                                            <img src="img/camera.png" width="30">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="content-block-title">&nbsp;</div>
+                    <div class="list-block">
+                        <ul>
+                            <li>
+                                <div class="item-content item-link">
+                                    <div class="item-inner">
+                                        <div class="item-title label">所在城区</div>
+                                        <div class="item-input">
+                                            <input type="text" class="" placeholder="北京 东城区" id="city-picker" readonly="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content item-link">
+                                    <div class="item-inner">
+                                        <div class="item-title label">婚姻状况</div>
+                                        <div class="item-input">
+                                            <select>
+                                                <option>未婚</option>
+                                                <option>已婚</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content item-link">
+                                    <div class="item-inner">
+                                        <div class="item-title label">学历</div>
+                                        <div class="item-input">
+                                            <select>
+                                                <option>硕士及以上</option>
+                                                <option>本科</option>
+                                                <option>高中及以下</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="content-block">
+                        <div class="row">
+                            <div class="col-50" style="margin-left: 28%;">
+                                <a href="javascript:;" class="button button-big button-fill ">提交</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab2" class="tab">
+                    <div class="content-block-title">紧急联系人(1)</div>
+                    <div class="list-block">
+                        <ul>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-title label">姓名</div>
+                                        <div class="item-input">
+                                            <input type="text" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-media"><i class="icon icon-form-email"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-title label">与本人关系</div>
+                                        <div class="item-input">
+                                            <select>
+                                                <option>亲戚</option>
+                                                <option>朋友</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-media"><i class="icon icon-form-password"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-title label">手机号码</div>
+                                        <div class="item-input">
+                                            <input type="number" placeholder="" class="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="content-block-title">紧急联系人(2)</div>
+                    <div class="list-block">
+                        <ul>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-title label">姓名</div>
+                                        <div class="item-input">
+                                            <input type="text" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-media"><i class="icon icon-form-email"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-title label">与本人关系</div>
+                                        <div class="item-input">
+                                            <select>
+                                                <option>亲戚</option>
+                                                <option>朋友</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-media"><i class="icon icon-form-password"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-title label">手机号码</div>
+                                        <div class="item-input">
+                                            <input type="number" placeholder="" class="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="content-block">
+                        <div class="row">
+                            <div class="col-50" style="margin-left: 28%;">
+                                <a href="javascript:;" class="button button-big button-fill ">提交</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab3" class="tab">
+                    <div class="content-block-title">&nbsp;</div>
+                    <div class="list-block">
+                        <ul>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-title label">手机号</div>
+                                        <div class="item-input">
+                                            <input type="number" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-media"><i class="icon icon-form-email"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-title label">服务密码</div>
+                                        <div class="item-input">
+                                            <input type="password" placeholder="" class="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="content-block">
+                        <div class="row">
+                            <div class="col-50" style="margin-left: 28%;">
+                                <a href="#" class="button button-big button-fill ">提交</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+<script type="text/javascript" src="//g.alicdn.com/msui/sm/0.6.2/js/sm-city-picker.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="js/jweixin-1.0.0.js" charset="utf-8"></script>
+<script>
+    $("#city-picker").cityPicker({
+        toolbarTemplate: '<header class="bar bar-nav"><button class="button button-link pull-right close-picker">确定</button><h1 class="title">选择收货地址</h1></header>'
+    });
+    wx.config({
+        debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: '', // 必填，公众号的唯一标识
+        timestamp: '', // 必填，生成签名的时间戳
+        nonceStr: '', // 必填，生成签名的随机串
+        signature: '',// 必填，签名，见附录1
+        jsApiList: [] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+    });
+</script>
+</body>
+</html>
