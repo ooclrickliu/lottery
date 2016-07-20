@@ -22,8 +22,8 @@
             $.each(ball.blue, function (j, blue) {
                 ballListInner += '<p class="text-info">' + blue + '</p>';
             });
-            ballListInner += '</div><div class="ball_list_item_right"><a href="javascript:;" class="text-light remove" data-index="' + i +
-                '"></a></div><div style="clear:both;height:0px;"></div></div>';
+            ballListInner += '</div><div class="ball_list_item_right remove" data-index="' + i +
+                '"><a href="javascript:;" class="text-light" ></a></div><div style="clear:both;height:0;"></div></div>';
 
             singlePeriodAndOneMultipleFee += getCombineNum(ball.red.length, 6) * getCombineNum(ball.blue.length, 1) * 2;
         });
@@ -31,13 +31,27 @@
         ballList.html(ballListInner);
         updateTotalFee();
 
+        var ballListItems = $('.ball_list_item');
+        ballListItems.each(function (index, item) {
+            var left = $(item).find('.ball_list_item_left');
+            var right = $(item).find('.ball_list_item_right');
+            if (left.height() > right.height()) {
+                var height = Math.floor((left.height() - right.height()) / 2);
+                right.css("padding-top", 10+height);
+                right.css("padding-bottom", 11+height);
+            }
+        });
+
         $('.remove').on('tap', function (event) {
             var index = $(event.target).attr('data-index');
             savedBalls.splice(index, 1);
             Cookie.setToJson('balls', savedBalls);
 
             var targetDom = $(event.target).parent();
-            targetDom.animate({opacity: 0}, 300, 'linear', function () {
+            targetDom.animate({
+                'margin-left': '-400px',
+                'opacity': 0
+            }, 200, 'ease', function () {
                 updateView();
             })
         });
@@ -101,11 +115,55 @@
 
     });
 
+    var lottery;
     submitDoubleBallSelect.on('tap', function () {
         if (!submitDoubleBallSelect.hasClass('weui_btn_disabled')) {
             //调用支付接口
-            console.log(totalFeeText.text());
+            $.ajax({
+                type: 'POST',
+                url: '/api/lottery/order/create/ssq',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    numbers: stringifyBalls(savedBalls),
+                    periods: periodInput.val(),
+                    times: multipleInput.val()
+                }),
+                success: function (response) {
+                    lottery = response.data;
+                    pay();
+                }
+            });
         }
     });
 
+    function onBridgeReady() {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest', {
+                "appId": lottery.appId,
+                "timeStamp": lottery.timestamp,
+                "nonceStr": lottery.nonceStr,
+                "package": "prepay_id=" + lottery.pg,
+                "signType": lottery.signType,
+                "paySign": lottery.paySign
+            },
+            function (res) {
+                if (res.err_msg == "get_brand_wcpay_request:ok") {
+                    alert("支付成功");
+                }
+            }
+        );
+    }
+
+    function pay() {
+        if (typeof WeixinJSBridge == "undefined") {
+            if (document.addEventListener) {
+                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+            } else if (document.attachEvent) {
+                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+            }
+        } else {
+            onBridgeReady();
+        }
+    }
 })(Zepto);
