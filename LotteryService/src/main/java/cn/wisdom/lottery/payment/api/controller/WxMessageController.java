@@ -14,13 +14,14 @@ import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import cn.wisdom.lottery.payment.service.wx.WXService;
 
-@RequestMapping("/wx/message")
+@RequestMapping("/wx")
 @Controller
 public class WxMessageController {
 
 	@Autowired
 	private WXService wxService;
 
+	@RequestMapping("/message")
 	public void service(HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		response.setContentType("text/html;charset=utf-8");
@@ -52,6 +53,7 @@ public class WxMessageController {
 			// 明文传输的消息
 			WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(request
 					.getInputStream());
+			System.out.println("------------raw Message:\n" + inMessage.toString());
 			WxMpXmlOutMessage outMessage = wxService.getWxMpMessageRouter()
 					.route(inMessage);
 			if (outMessage != null) {
@@ -66,6 +68,9 @@ public class WxMessageController {
 			WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(
 					request.getInputStream(), wxService.getWxConfig(),
 					timestamp, nonce, msgSignature);
+			
+			System.out.println("------------- Aes Message:\n" + inMessage.toString());
+			
 			WxMpXmlOutMessage outMessage = wxService.getWxMpMessageRouter()
 					.route(inMessage);
 			response.getWriter().write(

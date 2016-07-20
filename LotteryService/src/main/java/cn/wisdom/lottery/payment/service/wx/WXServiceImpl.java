@@ -5,11 +5,14 @@ import java.io.InputStream;
 import javax.annotation.PostConstruct;
 
 import me.chanjar.weixin.common.api.WxConsts;
+import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.WxMpServiceImpl;
+import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
+import me.chanjar.weixin.mp.bean.result.WxMpUser;
 
 import org.springframework.stereotype.Service;
 
@@ -61,5 +64,17 @@ public class WXServiceImpl implements WXService {
 
 	public WxMpInMemoryConfigStorage getWxConfig() {
 		return wxConfig;
+	}
+
+	@Override
+	public WxMpUser getWxMpUserByOauthCode(String oauthCode) {
+		WxMpUser wxMpUser = null;
+		try {
+			WxMpOAuth2AccessToken oauth2getAccessToken = wxMpService.oauth2getAccessToken(oauthCode);
+			wxMpUser = wxMpService.oauth2getUserInfo(oauth2getAccessToken, "cn-Zh");
+		} catch (WxErrorException e) {
+			e.printStackTrace();
+		}
+		return wxMpUser;
 	}
 }

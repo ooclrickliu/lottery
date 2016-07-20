@@ -96,7 +96,7 @@ public interface LotteryService
 	 * @param lotteryType
 	 * @return
 	 */
-	List<Lottery> getMyLatestLottery(String openid, LotteryType lotteryType);
+	List<Lottery> getMyLottery(String openid, LotteryType lotteryType, int period, int limit);
 	/*********************************************************************************/
 //	
 //    /**
