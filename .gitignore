@@ -11,3 +11,8 @@ PaymentServiceSDK/.project
 PaymentServiceSDK/.settings/*
 PaymentServiceSDK/target/*
 /LotteryWxPages/.idea
+wxloan/.idea/deployment.xml
+wxloan/.idea/misc.xml
+wxloan/.idea/modules.xml
+wxloan/.idea/workspace.xml
+wxloan/.idea/wxloan.iml
