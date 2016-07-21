@@ -52,7 +52,7 @@ var getCombineNum = function (total, select) {
         combineNum *= (total - i);
     }
     var sub = 1;
-    for(var j = length; j >= 1; j--){
+    for (var j = length; j >= 1; j--) {
         sub *= j;
     }
     combineNum /= sub;
@@ -79,4 +79,21 @@ var getRandomReds = function () {
 
 var getRandomBlue = function () {
     return [ballsText[genRandom(16)]];
+};
+
+var stringifyBalls = function (balls) {
+    return balls.map(function (ball) {
+        return ball.red.toString() + '+' + ball.blue.toString();
+    });
+};
+
+var week = ['日', '一', '二', '三', '四', '五', '六'];
+var getTimeStr = function (time) {
+    var date = new Date(time);
+    var retStr = '周'+week[date.getDay()] + ' ';
+    retStr += date.getHours() + ':';
+    var minute = date.getMinutes();
+    if(minute < 10) minute = '0'+minute;
+    retStr += minute;
+    return retStr;
 };

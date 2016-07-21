@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-    <title>WeUI</title>
+    <title>双色球</title>
     <link rel="stylesheet" href="css/weui.css"/>
     <link rel="stylesheet" href="css/main.css"/>
 </head>
 <body ontouchstart>
 <div class="container" id="container">
     <div class="notice">
-        <div class="notice-left">
-            <p>14136期 周日 21:30 开奖奖池 3亿3249万</p>
-        </div>
-        <a class="text-info">开奖公告</a>
+        <p><span id="currentPeriod"></span>期 <span id="currentOpenTime"></span> 开奖 奖池 <span id="currentTotal"></span>
+        </p>
     </div>
     <div class="content" style="margin-bottom: 96px;">
         <div class="ball_row">
@@ -90,12 +88,5 @@
 <script src="js/zepto.js"></script>
 <script src="js/main.js"></script>
 <script src="js/select.js"></script>
-<script>
-    var deviceWidth = window.outerWidth;
-    if (deviceWidth >= 320) {
-        $('.ball_row').css("padding-left", Math.floor((deviceWidth - 320) % 51 / 2));
-    }
-
-</script>
 </body>
 </html>

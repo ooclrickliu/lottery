@@ -11,7 +11,20 @@
         blue_balls = $('.ball_blue'),
         stakeNum = $('#stakeNum'),
         randomBtn = $('#random'),
+        currentPeriod = $('#currentPeriod'),
+        currentOpenTime = $('#currentOpenTime'),
+        currentTotal = $('#currentTotal'),
         submitDoubleBallSelect = $("#submitDoubleBallSelect");
+
+    $.ajax({
+        method: 'GET', url: '/api/lottery/currentPeriod?lotteryType=ssq',
+        success: function (response) {
+            var lottery = JSON.parse(response).data;
+            currentPeriod.text(lottery.period);
+            currentOpenTime.text(getTimeStr(lottery.openTime));
+            currentTotal.text(lottery.totalMoney);
+        }
+    });
 
     updateStateNum();
     red_balls.on('tap', function (event) {
@@ -61,7 +74,7 @@
             stake += getCombineNum(ball.red.length, 6) * getCombineNum(ball.blue.length, 1);
         });
         stakeNum.text(stake);
-    };
+    }
 
     submitDoubleBallSelect.on('tap', function () {
         if (savedBalls.length > 0 && stakeNum.text() > 0) {
