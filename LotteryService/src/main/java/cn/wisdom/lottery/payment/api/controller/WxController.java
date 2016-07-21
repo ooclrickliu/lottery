@@ -8,15 +8,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import me.chanjar.weixin.common.bean.WxJsapiSignature;
+import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.util.StringUtils;
 import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
+import cn.wisdom.lottery.payment.api.model.LotteryJsonDocument;
 import cn.wisdom.lottery.payment.service.wx.WXService;
 
 @RequestMapping("/wx")
 @Controller
-public class WxMessageController {
+public class WxController {
 
 	@Autowired
 	private WXService wxService;
@@ -53,7 +58,6 @@ public class WxMessageController {
 			// 明文传输的消息
 			WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(request
 					.getInputStream());
-			System.out.println("------------raw Message:\n" + inMessage.toString());
 			WxMpXmlOutMessage outMessage = wxService.getWxMpMessageRouter()
 					.route(inMessage);
 			if (outMessage != null) {
@@ -69,8 +73,6 @@ public class WxMessageController {
 					request.getInputStream(), wxService.getWxConfig(),
 					timestamp, nonce, msgSignature);
 			
-			System.out.println("------------- Aes Message:\n" + inMessage.toString());
-			
 			WxMpXmlOutMessage outMessage = wxService.getWxMpMessageRouter()
 					.route(inMessage);
 			response.getWriter().write(
@@ -81,5 +83,19 @@ public class WxMessageController {
 		response.getWriter().println("不可识别的加密类型");
 
 		return;
+	}
+	
+	@RequestMapping("/jsapiTicketSignature")
+	@ResponseBody
+	public LotteryJsonDocument getJsapiTicketSignature(@RequestParam String url)
+	{
+		WxJsapiSignature jsapiSignature = null;
+		try {
+			jsapiSignature = wxService.getWxMpService().createJsapiSignature(url);
+		} catch (WxErrorException e) {
+			e.printStackTrace();
+		}
+		
+		return new LotteryJsonDocument(jsapiSignature);
 	}
 }
