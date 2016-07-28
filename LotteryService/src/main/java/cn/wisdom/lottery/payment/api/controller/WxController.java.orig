@@ -17,9 +17,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+<<<<<<< HEAD:LotteryService/src/main/java/cn/wisdom/lottery/payment/api/controller/WxController.java
 import cn.wisdom.lottery.payment.api.model.LotteryJsonDocument;
 import cn.wisdom.lottery.payment.common.model.JsonDocument;
+=======
+import me.chanjar.weixin.common.bean.WxJsapiSignature;
+import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.common.util.StringUtils;
+import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import cn.wisdom.lottery.payment.api.model.LotteryJsonDocument;
+>>>>>>> 374be27e9384a3577149be3d53b73721dc3dde6e:LotteryService/src/main/java/cn/wisdom/lottery/payment/api/controller/WxController.java
 import cn.wisdom.lottery.payment.service.wx.WXService;
 
 @RequestMapping("/wx")
@@ -58,7 +66,7 @@ public class WxController {
 				.getParameter("encrypt_type");
 
 		if ("raw".equals(encryptType)) {
-			// 明文传输的消�
+			// 明文传输的消息
 			WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(request
 					.getInputStream());
 			WxMpXmlOutMessage outMessage = wxService.getWxMpMessageRouter()
@@ -70,7 +78,7 @@ public class WxController {
 		}
 
 		if ("aes".equals(encryptType)) {
-			// 是aes加密的消�
+			// 是aes加密的消息
 			String msgSignature = request.getParameter("msg_signature");
 			WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(
 					request.getInputStream(), wxService.getWxConfig(),
@@ -85,14 +93,21 @@ public class WxController {
 			return;
 		}
 
-		response.getWriter().println("不可识别的加密类�);
+		response.getWriter().println("不可识别的加密类型");
 
 		return;
 	}
+<<<<<<< HEAD:LotteryService/src/main/java/cn/wisdom/lottery/payment/api/controller/WxController.java
 
 	@RequestMapping("/jsapiTicketSignature")
 	@ResponseBody
 	public JsonDocument getJsapiTicketSignature(@RequestParam String url)
+=======
+	
+	@RequestMapping("/jsapiTicketSignature")
+	@ResponseBody
+	public LotteryJsonDocument getJsapiTicketSignature(@RequestParam String url)
+>>>>>>> 374be27e9384a3577149be3d53b73721dc3dde6e:LotteryService/src/main/java/cn/wisdom/lottery/payment/api/controller/WxController.java
 	{
 		WxJsapiSignature jsapiSignature = null;
 		try {

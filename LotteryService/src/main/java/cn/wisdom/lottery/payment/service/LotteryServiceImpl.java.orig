@@ -200,8 +200,14 @@ public class LotteryServiceImpl implements LotteryService {
 
 	@Override
 	public List<Lottery> getMyLottery(String openid,
-			LotteryType lotteryType, int period, int limit) {
+<<<<<<< HEAD
+			LotteryType lotteryType) {
 		return lotteryDao.getLottery(orderNo, queryNumber, queryPeriod);
+=======
+			LotteryType lotteryType, int period, int limit) {
+		
+		return lotteryDao.getLottery(openid, lotteryType, period, limit);
+>>>>>>> 374be27e9384a3577149be3d53b73721dc3dde6e
 	}
 
 

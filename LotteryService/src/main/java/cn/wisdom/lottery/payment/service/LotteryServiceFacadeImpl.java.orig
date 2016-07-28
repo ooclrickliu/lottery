@@ -60,12 +60,18 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade {
 
 	@Override
 	public List<Lottery> getMyLottery(String openid,
-			LotteryType lotteryType, int limit) throws ServiceException {
+<<<<<<< HEAD
+			LotteryType lotteryType) {
 		
 		return lotteryService.getMyLottery(openid, lotteryType);
+=======
+			LotteryType lotteryType, int limit) throws ServiceException {
+		
+		LotteryOpenData currentPeriod = lotteryPrizeService.getCurrentPeriod(LotteryType.SSQ);
 		int period = Integer.parseInt(currentPeriod.getExpect());
 		
 		return lotteryService.getMyLottery(openid, lotteryType, period, limit);
+>>>>>>> 374be27e9384a3577149be3d53b73721dc3dde6e
 	}
 
 	@Override

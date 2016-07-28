@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-    <title>WeUI</title>
+    <title>双色球</title>
     <link rel="stylesheet" href="css/weui.css"/>
     <link rel="stylesheet" href="css/main.css"/>
 </head>
 <body ontouchstart>
 <div class="container" id="container">
-    <div style="display: flex;">
+    <div style="display: flex;border-bottom: 1px solid #cccccc">
         <div class="col-xs-6" style="padding: 10px;">
             <a href="javascript:;" class="weui_btn weui_btn_default" id="selectBall"><span
                     class="icon">+</span>
@@ -21,12 +21,12 @@
                 <span>机选五注</span></a>
         </div>
     </div>
-    <div class="content" style="margin-bottom: 132px;">
+    <div class="content" style="margin-bottom: 160px;">
         <div class="ball_list" id="ball_list">
         </div>
     </div>
     <div class="footer">
-        <div style="padding: 0 8px;border-bottom: 1px solid #cccccc">
+        <div style="border-bottom: 1px solid #cccccc">
             <div class="col-xs-6">
                 <div class="spinner" style="border-right: 1px solid #dddddd;">
                     <span class="text-light">追</span>
@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="col-xs-6">
-                <div class="spinner" style="text-align: center;padding: 12px 2px">
+                <div class="spinner" >
                     <span class="text-light">投</span>
                     <a class="button" id="multipleMinus">-</a>
                     <input type="text" id="multiple" class="text" value="1"/>
@@ -65,14 +65,5 @@
 <script src="js/zepto.js"></script>
 <script src="js/main.js"></script>
 <script src="js/buy.js"></script>
-<script>
-    $('.ball_list_item').each(function (index, item) {
-        var left = $(item).find('.ball_list_item_left');
-        var right = $(item).find('.ball_list_item_right');
-        if (left.height() > right.height()) {
-            right.css("padding-top", Math.floor((left.height() - right.height()) / 2));
-        }
-    });
-</script>
 </body>
 </html>

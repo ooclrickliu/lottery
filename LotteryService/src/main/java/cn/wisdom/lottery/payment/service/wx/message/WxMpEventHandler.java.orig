@@ -84,34 +84,54 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		
 		WxMpXmlOutMessage response = null;
 		
-		//开奖公�
+		//开奖公告
 		if (StringUtils.equalsIgnoreCase(menuKey, "draw_notice")) {
 			response = getDrawNotice(wxMessage);
 		}
 		//我的彩票
 		else if (StringUtils.equalsIgnoreCase(menuKey, "my_lottery")) {
-			response = getMyLottery(wxMessage);
-		}
-		
-		return response;
+<<<<<<< HEAD
+			String openid = wxMessage.getFromUserName();
+			
+			// 将最近一期的彩票发送给用户
 //			List<Lottery> lotteries = lotteryServiceFacade.getMyLatestLottery(openid, LotteryType.SSQ);
 //			
 //			WxMpCustomMessage wxCustomeMessage = new WxMpCustomMessage();
 //			if (CollectionUtils.isEmpty(lotteries)) {
-		
-		try {
-			List<Lottery> lotteries = lotteryServiceFacade.getMyLottery(wxMessage.getFromUserName(), LotteryType.SSQ, 1);
-			
-			if (CollectionUtils.isNotEmpty(lotteries)) {
-//				String description = "您没有投注记�";
+//				wxCustomeMessage.setTitle(title);
+//				wxCustomeMessage.setDescription(description);
+//				wxCustomeMessage.setContent(content);
+//				wxCustomeMessage.setToUser(toUser);
+//				wxCustomeMessage.setMsgType(msgType);
+//				String description = "您没有投注记录!";
 //			}
 //			else {
 //				
 ////				wxService.getWxMpService().customMessageSend(message);
 //			}
+=======
+			response = getMyLottery(wxMessage);
+		}
+		
+		return response;
+	}
+
+	private WxMpXmlOutMessage getMyLottery(WxMpXmlMessage wxMessage) {
+		WxMpXmlOutMessage response = null;
+		
+		try {
+			List<Lottery> lotteries = lotteryServiceFacade.getMyLottery(wxMessage.getFromUserName(), LotteryType.SSQ, 1);
+			
+			if (CollectionUtils.isNotEmpty(lotteries)) {
+				Lottery myLottery = lotteries.get(0);
+				
+				int period = myLottery.getPeriods().get(0);
+				LotteryOpenData openInfo = lotteryServiceFacade.getOpenInfo(LotteryType.SSQ, period);
+				
+				NewsBuilder builder = WxMpXmlOutMessage.NEWS().toUser(wxMessage.getFromUserName()).fromUser(wxMessage.getToUserName());
 				
 				WxMpXmlOutNewsMessage.Item title = new WxMpXmlOutNewsMessage.Item();
-				title.setTitle("您的最新投注记�);
+				title.setTitle("您的最新投注记录");
 				title.setDescription("");
 				title.setPicUrl("");
 				title.setUrl("");
@@ -122,9 +142,9 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 				content.setDescription("");
 				content.setPicUrl("");
 				content.setUrl("");
-				String titleStr = "双色�� + period + "�\n";
+				String titleStr = "双色球 第" + period + "期 \n";
 				titleStr += "购买日期: " + DateTimeUtils.formatSqlDateTime(myLottery.getCreateTime()) + "\n";
-				titleStr += "开奖日� " + openInfo.getOpentime();
+				titleStr += "开奖日期: " + openInfo.getOpentime();
 				titleStr += "中奖结果: " + getLotteryState(myLottery);
 				titleStr += "投注号码: \n";
 				for (LotteryNumber lotteryNumber : myLottery.getNumbers()) {
@@ -138,20 +158,25 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+>>>>>>> 374be27e9384a3577149be3d53b73721dc3dde6e
+		}
 		return response;
 	}
 
 	private String getLotteryState(Lottery lottery) {
 		String stateStr = "";
 		
-		// 已出�
+		// 已出奖
 		if (lottery.getTicketState() == TicketState.Prized) {
 			if (StringUtils.isNotBlank(lottery.getPrizeInfo()) && lottery.getPrizeBonus() > 0) {
 //				stateStr += "中奖结果: " + getLotteryState(myLottery);
 				stateStr = "中奖";
 			}
 		}
-		// 未出�
+		// 未出奖
+		else {
+			
+		}
 //		lottery.getTicketState().getName() + ((StringUtils.isBlank(lottery.getPrizeInfo())) ? )
 		return null;
 	}
@@ -163,11 +188,11 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 			
 			WxMpXmlOutNewsMessage.Item article = new WxMpXmlOutNewsMessage.Item();
 			article = new WxMpXmlOutNewsMessage.Item();
-			article.setTitle("双色�� +latestOpenInfo.getExpect() + "期开奖公�);
+			article.setTitle("双色球 第" +latestOpenInfo.getExpect() + "期开奖公告");
 			
 			String desc = latestOpenInfo.getOpencode().replaceAll("+", " + ").replaceAll(",", " ");
 			desc += "\n\n";
-			desc += "开奖时� " + latestOpenInfo.getOpentime();
+			desc += "开奖时间: " + latestOpenInfo.getOpentime();
 			article.setDescription(desc);
 			article.setPicUrl("");
 			article.setUrl("");
