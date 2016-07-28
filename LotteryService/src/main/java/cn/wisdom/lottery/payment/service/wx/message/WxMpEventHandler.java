@@ -76,21 +76,21 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 			String openid = wxMessage.getFromUserName();
 			
 			// 将最近一期的彩票发送给用户
-			List<Lottery> lotteries = lotteryServiceFacade.getMyLatestLottery(openid, LotteryType.SSQ);
-			
-			WxMpCustomMessage wxCustomeMessage = new WxMpCustomMessage();
-			if (CollectionUtils.isEmpty(lotteries)) {
+//			List<Lottery> lotteries = lotteryServiceFacade.getMyLatestLottery(openid, LotteryType.SSQ);
+//			
+//			WxMpCustomMessage wxCustomeMessage = new WxMpCustomMessage();
+//			if (CollectionUtils.isEmpty(lotteries)) {
 //				wxCustomeMessage.setTitle(title);
 //				wxCustomeMessage.setDescription(description);
 //				wxCustomeMessage.setContent(content);
 //				wxCustomeMessage.setToUser(toUser);
 //				wxCustomeMessage.setMsgType(msgType);
-				String description = "您没有投注记录!";
-			}
-			else {
-				
-//				wxService.getWxMpService().customMessageSend(message);
-			}
+//				String description = "您没有投注记录!";
+//			}
+//			else {
+//				
+////				wxService.getWxMpService().customMessageSend(message);
+//			}
 		}
 	}
 

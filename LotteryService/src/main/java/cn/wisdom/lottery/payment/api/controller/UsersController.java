@@ -56,10 +56,10 @@ public class UsersController
      */
     @RequestMapping(method = RequestMethod.GET, value = "/current")
     @ResponseBody
-    public JsonDocument getCurrentUser(@RequestParam String code) throws ServiceException
+    public JsonDocument getCurrentUser() throws ServiceException
     {
-    	WxMpUser wxMpUser = wxService.getWxMpUserByOauthCode(code);
-        return new DoorbellPaymentAPIResult(wxMpUser);
+    	User currentUser = SessionContext.getCurrentUser();
+        return new DoorbellPaymentAPIResult(currentUser);
     }
 
 }

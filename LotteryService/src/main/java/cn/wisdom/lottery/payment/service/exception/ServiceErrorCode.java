@@ -75,5 +75,6 @@ public class ServiceErrorCode
     
     //WX
     public static final String OAUTH_FAIL = "OAuthFail";
+    public static final String NOT_SUBSCRIBE = "NotSubscribe";
     
 }

@@ -7,8 +7,11 @@
  */
 package cn.wisdom.lottery.payment.service;
 
+import java.text.MessageFormat;
 import java.util.List;
 
+import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ import cn.wisdom.lottery.payment.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.payment.service.exception.ServiceException;
 import cn.wisdom.lottery.payment.service.manager.UserManager;
 import cn.wisdom.lottery.payment.service.manager.UserTokenManager;
+import cn.wisdom.lottery.payment.service.wx.WXService;
 
 /**
  * UserServiceImpl
@@ -46,6 +50,9 @@ public class UserServiceImpl implements UserService
     
     @Autowired
     private UserDao userDao;
+
+	@Autowired
+	private WXService wxService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class.getName());
 
@@ -289,16 +296,49 @@ public class UserServiceImpl implements UserService
 	}
 
 	@Override
-	public void updateUserInfo(WxMpUser wxMpUser) throws ServiceException {
-		// TODO Auto-generated method stub
+	public User getUserByOpenId(String openId) {
 		
+		return userDao.getUserByOpenid(openId);
 	}
 
 	@Override
-	public User getUserByOpenId(String openId) {
-		
-		
-		return userDao.getUserByOpenid(openId);
+	public void updateUserWxInfo(WxMpUser wxMpUser) throws ServiceException {
+		User user = new User();
+		user.setOpenid(wxMpUser.getOpenId());
+		user.setNickName(wxMpUser.getNickname());
+		user.setHeadImgUrl(wxMpUser.getHeadImgUrl());
+
+		userDao.updateUserWxInfo(user);
+	}
+
+	@Override
+	public User getUserByOauthCode(String oauthCode) {
+		User user = null;
+		try {
+			WxMpOAuth2AccessToken oauth2getAccessToken = wxService.getWxMpService().oauth2getAccessToken(oauthCode);
+			
+//			WxMpUser wxMpUser = wxService.getWxMpService().oauth2getUserInfo(oauth2getAccessToken, null);
+			WxMpUser wxMpUser = wxService.getWxMpService().userInfo(oauth2getAccessToken.getOpenId(), null);
+			
+			user = userDao.getUserByOpenid(wxMpUser.getOpenId());
+			if (user != null && !(StringUtils.equals(user.getNickName(), wxMpUser.getNickname()) &&
+					StringUtils.equals(user.getHeadImgUrl(), wxMpUser.getHeadImgUrl()))) {
+				user.setNickName(wxMpUser.getNickname());
+				user.setHeadImgUrl(wxMpUser.getHeadImgUrl());
+				
+				userDao.updateUserWxInfo(user);
+			}
+		} catch (WxErrorException e) {
+			String errMsg = MessageFormat.format("failed pass wx oauth and get user info, code: [{0}]", oauthCode);
+			logger.error(errMsg, e);
+		}
+		return user;
+	}
+
+	@Override
+	public User getUserById(long userId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

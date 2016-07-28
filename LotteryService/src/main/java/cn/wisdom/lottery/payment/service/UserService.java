@@ -39,7 +39,7 @@ public interface UserService
 	 * @param wxMpUser
 	 * @throws ServiceException
 	 */
-	void updateUserInfo(WxMpUser wxMpUser) throws ServiceException;
+	void updateUserWxInfo(WxMpUser wxMpUser) throws ServiceException;
 
 	/**
 	 * 查询用户
@@ -49,25 +49,30 @@ public interface UserService
 	 */
 	User getUserByOpenId(String openId);
 	
-	/////////////////////////////////////////////
-	
-    /**
-     * check email format and unique.
-     * 
-     * @param email
-     * @return
-     * @throws ServiceException
-     */
-    boolean checkName(String name) throws ServiceException;
+	/**
+	 * 通过OAuth获取用户信息
+	 * 
+	 * @param oauthCode
+	 * @return
+	 */
+	User getUserByOauthCode(String oauthCode);
 
-    /**
-     * Get user by access token.
-     * 
-     * @param accessToken
-     * @return
-     * @throws ServiceException
-     */
-    User getUserByAccessToken(String accessToken) throws ServiceException;
+	/**
+	 * 通过ID获取用户信息
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	User getUserById(long userId);
+	
+	/**
+	 * 通过AccessToken获取用户信息
+	 * 
+	 * @param userId
+	 * @return
+	 * @throws ServiceException 
+	 */
+	User getUserByAccessToken(String accessToken) throws ServiceException;
 
     /**
      * Login.

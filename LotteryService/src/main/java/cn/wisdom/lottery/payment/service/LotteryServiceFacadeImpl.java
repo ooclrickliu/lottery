@@ -59,10 +59,10 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade {
 	}
 
 	@Override
-	public List<Lottery> getMyLatestLottery(String openid,
+	public List<Lottery> getMyLottery(String openid,
 			LotteryType lotteryType) {
 		
-		return lotteryService.getMyLatestLottery(openid, lotteryType);
+		return lotteryService.getMyLottery(openid, lotteryType);
 	}
 
 	@Override

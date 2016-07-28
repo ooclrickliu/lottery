@@ -199,10 +199,9 @@ public class LotteryServiceImpl implements LotteryService {
 
 
 	@Override
-	public List<Lottery> getMyLatestLottery(String openid,
+	public List<Lottery> getMyLottery(String openid,
 			LotteryType lotteryType) {
-		// TODO Auto-generated method stub
-		return null;
+		return lotteryDao.getLottery(orderNo, queryNumber, queryPeriod);
 	}
 
 
