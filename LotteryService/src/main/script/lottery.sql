@@ -312,19 +312,6 @@ INSERT INTO `prize_no_ssq` (`id`, `period`, `open_time`, `number`, `create_time`
 
 -- --------------------------------------------------------
 
---
--- 表的结构 `global_variable`
---
-
-CREATE TABLE IF NOT EXISTS `global_variable` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `key` varchar(50) NOT NULL,
-  `value` varchar(500) NOT NULL,
-  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

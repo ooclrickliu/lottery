@@ -38,7 +38,7 @@ public class WXServiceImpl implements WXService {
 	@PostConstruct
 	public void init() {
 		InputStream is1 = this.getClass().getResourceAsStream("/wx-config.xml");
-		WxMpWisdomInMemoryConfigStorage config = WxMpWisdomInMemoryConfigStorage
+		WxMpLotteryInMemoryConfigStorage config = WxMpLotteryInMemoryConfigStorage
 				.fromXml(is1);
 
 		wxConfig = config;

@@ -7,13 +7,10 @@
  */
 package cn.wisdom.lottery.api.controller;
 
-import me.chanjar.weixin.mp.bean.result.WxMpUser;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.wisdom.lottery.api.response.DoorbellPaymentAPIResult;
@@ -43,10 +40,11 @@ public class UsersController
     
     @Autowired
     private WXService wxService;
-
-    private static final JsonDocument SUCCESS = DoorbellPaymentAPIResult.SUCCESS;
+    
     @Autowired
     private AppProperty appProperties;
+
+//    private static final JsonDocument SUCCESS = DoorbellPaymentAPIResult.SUCCESS;
 
     /**
      * Get current User by oauth code.

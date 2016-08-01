@@ -14,7 +14,7 @@
                http://www.springframework.org/schema/mvc
                http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
                ">
-	<context:component-scan base-package="cn.wisdom.lottery.payment" />
+	<context:component-scan base-package="cn.wisdom.lottery" />
 
 	<mvc:annotation-driven />
 	
@@ -28,13 +28,13 @@
 	<!-- Interceptor -->
 	<mvc:interceptors>
 		<mvc:interceptor>
-			<mvc:mapping path="/*/**" />
-			<mvc:exclude-mapping path="/user/login" />
+			<mvc:mapping path="/user/**" />
+			<mvc:mapping path="/lottery/**" />
 			<mvc:exclude-mapping path="/lottery/currentPeriod" />
 			<mvc:exclude-mapping path="/lottery/order/paid" />
 			<mvc:exclude-mapping path="/prize/lastOpen" />
 			<mvc:exclude-mapping path="/prize/reopen" />
-			<bean class="cn.wisdom.lottery.payment.api.interceptor.PlatformAccessInterceptor" />
+			<bean class="cn.wisdom.lottery.api.interceptor.UserAccessInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
 </beans>

@@ -9,6 +9,9 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class WxMpTextHandler implements WxMpMessageHandler {
 
 	@Override
