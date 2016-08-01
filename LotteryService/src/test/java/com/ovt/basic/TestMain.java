@@ -15,7 +15,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 
 import me.chanjar.weixin.common.util.crypto.SHA1;
 import me.chanjar.weixin.common.util.http.URIUtil;
-import cn.wisdom.lottery.payment.dao.mapper.UserMapper;
+import cn.wisdom.lottery.dao.mapper.UserMapper;
 
 
 /**

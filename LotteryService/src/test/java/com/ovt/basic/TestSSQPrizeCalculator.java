@@ -1,6 +1,6 @@
 package com.ovt.basic;
 
-import cn.wisdom.lottery.payment.service.SSQPrizeCalculator;
+import cn.wisdom.lottery.service.SSQPrizeCalculator;
 
 public class TestSSQPrizeCalculator {
 	public static void main(String[] args) {
