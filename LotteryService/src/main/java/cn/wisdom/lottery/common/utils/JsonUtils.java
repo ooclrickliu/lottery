@@ -12,8 +12,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cn.wisdom.lottery.common.exception.OVTErrorCode;
 import cn.wisdom.lottery.common.exception.OVTException;
-import cn.wisdom.lottery.common.log.Logger;
-import cn.wisdom.lottery.common.log.LoggerFactory;
 
 /**
  * JsonUtils
@@ -31,9 +29,6 @@ public class JsonUtils
     {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
-
-    private static final Logger logger = LoggerFactory
-            .getLogger(JsonUtils.class.getName());
 
     /**
      * Convert object to json.
@@ -55,7 +50,6 @@ public class JsonUtils
             catch (JsonProcessingException e)
             {
                 final String errMsg = "Failed to convert object to json!";
-                logger.error(errMsg, e);
                 throw new OVTException(OVTErrorCode.JSON_CONVERT_ERROR, errMsg,
                         e);
             }
@@ -85,7 +79,6 @@ public class JsonUtils
             catch (Exception e)
             {
                 final String errMsg = "Failed to convert json to object!";
-                logger.error(errMsg, e);
                 throw new OVTException(OVTErrorCode.JSON_CONVERT_ERROR, errMsg,
                         e);
             }

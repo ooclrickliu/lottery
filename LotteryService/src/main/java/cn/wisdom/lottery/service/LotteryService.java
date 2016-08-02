@@ -30,7 +30,7 @@ public interface LotteryService
 	 * @param orderRequest
 	 * @return
 	 */
-	Lottery createPrivateOrder(Lottery lottery)
+	Lottery createLottery(Lottery lottery)
 			throws ServiceException;
 
 	/**

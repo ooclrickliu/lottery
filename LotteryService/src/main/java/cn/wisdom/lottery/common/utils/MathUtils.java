@@ -29,4 +29,11 @@ public class MathUtils {
 		
 		return result;
 	}
+	
+	public static void main(String[] args)
+    {
+        System.out.println(System.currentTimeMillis());
+        Cn_m(33, 16);
+        System.out.println(System.currentTimeMillis());
+    }
 }

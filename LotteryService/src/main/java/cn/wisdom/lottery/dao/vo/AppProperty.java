@@ -29,4 +29,7 @@ public class AppProperty
 	
 	@Value("${payment.debug}")
 	public boolean debugPay;
+	
+	@Value("${wxPay.notify_url}")
+    public String wxPayNotifyUrl;
 }

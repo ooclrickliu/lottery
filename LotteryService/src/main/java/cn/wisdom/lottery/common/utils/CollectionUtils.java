@@ -10,6 +10,7 @@ package cn.wisdom.lottery.common.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -179,12 +180,28 @@ public class CollectionUtils
      * @param items
      * @return
      */
-    public static <T extends Comparable<? super T>> List<T> sort(Collection<T> items)
+    public static <T extends Comparable<? super T>> List<T> sort(
+            Collection<T> items)
     {
         List<T> list = toList(items);
         Collections.sort(list);
-        
+
         return list;
     }
-    
+
+    /**
+     * Sort the collection and return as list.
+     * 
+     * @param items
+     * @return
+     */
+    public static <T> List<T> sort(
+            Collection<T> items, Comparator<? super T> c)
+    {
+        List<T> list = toList(items);
+        Collections.sort(list, c);
+
+        return list;
+    }
+
 }

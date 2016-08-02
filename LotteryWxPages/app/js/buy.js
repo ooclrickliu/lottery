@@ -115,7 +115,7 @@
 
     });
 
-    var lottery;
+    var payInfo;
     submitDoubleBallSelect.on('tap', function () {
         if (!submitDoubleBallSelect.hasClass('weui_btn_disabled')) {
             //调用支付接口
@@ -129,7 +129,7 @@
                     times: multipleInput.val()
                 }),
                 success: function (response) {
-                    lottery = response.data;
+                    payInfo = response.data;
                     pay();
                 }
             });
@@ -139,12 +139,12 @@
     function onBridgeReady() {
         WeixinJSBridge.invoke(
             'getBrandWCPayRequest', {
-                "appId": lottery.appId,
-                "timeStamp": lottery.timestamp,
-                "nonceStr": lottery.nonceStr,
-                "package": "prepay_id=" + lottery.pg,
-                "signType": lottery.signType,
-                "paySign": lottery.paySign
+                "appId": payInfo.appId,
+                "timeStamp": payInfo.timestamp,
+                "nonceStr": payInfo.nonceStr,
+                "package": payInfo.package,
+                "signType": payInfo.signType,
+                "paySign": payInfo.paySign
             },
             function (res) {
                 if (res.err_msg == "get_brand_wcpay_request:ok") {
