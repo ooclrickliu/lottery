@@ -15,232 +15,295 @@ import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.TicketState;
 
 /**
- * Lottery代表一张彩票，一张彩票可包含多组数，每组数可以是单式，也可以是复式.
- * 例如：
- * 02,04,11,16,27,29+14  <单式>
- * 05,06,10,17,19,23,25,29,32+03,18  <复式>
+ * Lottery代表一张彩票，一张彩票可包含多组数，每组数可以是单式，也可以是复式. 例如： 02,04,11,16,27,29+14 <单式>
+ * 05,06,10,17,19,23,25,29,32+03,18 <复式>
  * 
  * @author zhi.liu
- *
+ * 
  */
-public class Lottery extends BaseEntity {
+public class Lottery extends BaseEntity
+{
+    @Column("order_no")
+    private String orderNo;
 
-	@Column("order_no")
-	private String orderNo;
+    @Column("total_fee")
+    private float totalFee;
 
-	@Column("lotter_type")
-	private String lotteryTypeValue;
-	private LotteryType lotteryType;
+    @Column("remark")
+    private String remark;
 
-	@Column("business_type")
-	private String businessTypeValue;
-	private BusinessType businessType;
+    @Column("lotter_type")
+    private String lotteryTypeValue;
+    private LotteryType lotteryType;
 
-	private List<Integer> periods = new ArrayList<Integer>();
+    // public(红包,无owner) , private(自己购买)
+    @Column("business_type")
+    private String businessTypeValue;
+    private BusinessType businessType;
 
-	@Column("times")
-	private int times;
-	
-	private List<LotteryNumber> numbers = new ArrayList<LotteryNumber>();
+    private List<Integer> periods = new ArrayList<Integer>();
 
-	@Column("ticket_state")
-	private String ticketStateValue;
-	private TicketState ticketState;
+    @Column("times")
+    private int times;
 
-	private boolean fetched;
+    private List<LotteryNumber> numbers = new ArrayList<LotteryNumber>();
 
-	@Column("owner")
-	private long owner;
+    @Column("ticket_state")
+    private String ticketStateValue;
+    private TicketState ticketState;
 
-	@Column("merchant")
-	private long merchant;
+    private boolean fetched;
 
-	@Column("distribute_time")
-	private Timestamp distributeTime;
+    @Column("owner")
+    private long owner;
 
-	@Column("ticket_print_time")
-	private Timestamp ticketPrintTime;
+    @Column("merchant")
+    private long merchant;
 
-	@Column("ticket_fetch_time")
-	private Timestamp ticketFetchTime;
+    @Column("distribute_time")
+    private Timestamp distributeTime;
 
-	@Column("prize_info")
-	private String prizeInfo;
+    @Column("ticket_print_time")
+    private Timestamp ticketPrintTime;
 
-	@Column("prize_bonus")
-	private int prizeBonus;
-	
-	public static void main(String[] args) {
-		Lottery lottery = new Lottery();
-		lottery.setOrderNo("2016062910012001");
-		lottery.setLotteryType(LotteryType.SSQ);
-		lottery.setBusinessType(BusinessType.Private);
-		lottery.setTimes(5);
-		lottery.setTicketState(TicketState.Paid);
-		lottery.setFetched(false);
-		lottery.setOwner(10001);
-		lottery.setMerchant(1203);
-		lottery.setDistributeTime(DateTimeUtils.getCurrentTimestamp());
-		lottery.setTicketPrintTime(DateTimeUtils.getCurrentTimestamp());
-		lottery.setPrizeBonus(9200);
-		
-		List<Integer> periods = new ArrayList<Integer>();
-		periods.add(2016067);
-		lottery.setPeriods(periods);
-		
-		List<LotteryNumber> numbers = new ArrayList<LotteryNumber>();
-		numbers.add(new LotteryNumber("08,10,11,20,21,27+11"));
-		numbers.add(new LotteryNumber("06,14,15,19,24,28,32+05,10"));
-		lottery.setNumbers(numbers);
-		
-		try {
-			Map<Long, Map<Integer, Integer>> prizeInfo = new HashMap<Long, Map<Integer,Integer>>();
-			Map<Integer, Integer> hitInfo = new HashMap<Integer, Integer>();
-			hitInfo.put(3, 5);
-			hitInfo.put(4, 16);
-			prizeInfo.put(230L, hitInfo);
-			lottery.setPrizeInfo(JsonUtils.toJson(prizeInfo));
-		} catch (OVTException e) {
-		}
-		
-		System.out.println(lottery);
-	}
+    @Column("ticket_fetch_time")
+    private Timestamp ticketFetchTime;
 
-	public String getOrderNo() {
-		return orderNo;
-	}
+    @Column("prize_info")
+    private String prizeInfo;
 
-	public void setOrderNo(String orderNo) {
-		this.orderNo = orderNo;
-	}
+    @Column("prize_bonus")
+    private int prizeBonus;
 
-	public TicketState getTicketState() {
-		if (ticketState == null) {
-			ticketState = TicketState.valueOf(ticketStateValue);
-		}
-		
-		return ticketState;
-	}
+    public static void main(String[] args)
+    {
+        Lottery lottery = new Lottery();
+        lottery.setOrderNo("2016062910012001");
+        lottery.setLotteryType(LotteryType.SSQ);
+        lottery.setBusinessType(BusinessType.Private);
+        lottery.setTimes(5);
+        lottery.setTicketState(TicketState.Paid);
+        lottery.setFetched(false);
+        lottery.setOwner(10001);
+        lottery.setMerchant(1203);
+        lottery.setDistributeTime(DateTimeUtils.getCurrentTimestamp());
+        lottery.setTicketPrintTime(DateTimeUtils.getCurrentTimestamp());
+        lottery.setPrizeBonus(9200);
 
-	public void setTicketState(TicketState ticketState) {
-		this.ticketState = ticketState;
-		this.ticketStateValue = ticketState.toString();
-	}
+        List<Integer> periods = new ArrayList<Integer>();
+        periods.add(2016067);
+        lottery.setPeriods(periods);
 
-	public long getOwner() {
-		return owner;
-	}
+        List<LotteryNumber> numbers = new ArrayList<LotteryNumber>();
+        numbers.add(new LotteryNumber("08,10,11,20,21,27+11"));
+        numbers.add(new LotteryNumber("06,14,15,19,24,28,32+05,10"));
+        lottery.setNumbers(numbers);
 
-	public void setOwner(long owner) {
-		this.owner = owner;
-	}
+        try
+        {
+            Map<Long, Map<Integer, Integer>> prizeInfo = new HashMap<Long, Map<Integer, Integer>>();
+            Map<Integer, Integer> hitInfo = new HashMap<Integer, Integer>();
+            hitInfo.put(3, 5);
+            hitInfo.put(4, 16);
+            prizeInfo.put(230L, hitInfo);
+            lottery.setPrizeInfo(JsonUtils.toJson(prizeInfo));
+        }
+        catch (OVTException e)
+        {
+        }
 
-	public Timestamp getTicketPrintTime() {
-		return ticketPrintTime;
-	}
+        System.out.println(lottery);
+    }
 
-	public void setTicketPrintTime(Timestamp ticketPrintTime) {
-		this.ticketPrintTime = ticketPrintTime;
-	}
+    public String getOrderNo()
+    {
+        return orderNo;
+    }
 
-	public int getPrizeBonus() {
-		return prizeBonus;
-	}
+    public void setOrderNo(String orderNo)
+    {
+        this.orderNo = orderNo;
+    }
 
-	public void setPrizeBonus(int prizeBonus) {
-		this.prizeBonus = prizeBonus;
-	}
+    public float getTotalFee()
+    {
+        return totalFee;
+    }
 
-	public BusinessType getBusinessType() {
-		if (businessType == null) {
-			businessType = BusinessType.valueOf(businessTypeValue);
-		}
-		return businessType;
-	}
+    public void setTotalFee(float totalFee)
+    {
+        this.totalFee = totalFee;
+    }
 
-	public void setBusinessType(BusinessType businessType) {
-		this.businessType = businessType;
-		this.businessTypeValue = businessType.toString();
-	}
+    public String getRemark()
+    {
+        return remark;
+    }
 
-	public Timestamp getDistributeTime() {
-		return distributeTime;
-	}
+    public void setRemark(String remark)
+    {
+        this.remark = remark;
+    }
 
-	public void setDistributeTime(Timestamp distributeTime) {
-		this.distributeTime = distributeTime;
-	}
+    public TicketState getTicketState()
+    {
+        if (ticketState == null)
+        {
+            ticketState = TicketState.valueOf(ticketStateValue);
+        }
 
-	public Timestamp getTicketFetchTime() {
-		return ticketFetchTime;
-	}
+        return ticketState;
+    }
 
-	public void setTicketFetchTime(Timestamp ticketFetchTime) {
-		this.ticketFetchTime = ticketFetchTime;
-		this.fetched = true;
-	}
+    public void setTicketState(TicketState ticketState)
+    {
+        this.ticketState = ticketState;
+        this.ticketStateValue = ticketState.toString();
+    }
 
-	public boolean isFetched() {
-		if (!fetched && ticketFetchTime != null) {
-			fetched = true;
-		}
-		
-		return fetched;
-	}
+    public long getOwner()
+    {
+        return owner;
+    }
 
-	public void setFetched(boolean fetched) {
-		this.fetched = fetched;
-	}
+    public void setOwner(long owner)
+    {
+        this.owner = owner;
+    }
 
-	public long getMerchant() {
-		return merchant;
-	}
+    public Timestamp getTicketPrintTime()
+    {
+        return ticketPrintTime;
+    }
 
-	public void setMerchant(long merchant) {
-		this.merchant = merchant;
-	}
+    public void setTicketPrintTime(Timestamp ticketPrintTime)
+    {
+        this.ticketPrintTime = ticketPrintTime;
+    }
 
-	public String getPrizeInfo() {
-		return prizeInfo;
-	}
+    public int getPrizeBonus()
+    {
+        return prizeBonus;
+    }
 
-	public void setPrizeInfo(String prizeInfo) {
-		this.prizeInfo = prizeInfo;
-	}
+    public void setPrizeBonus(int prizeBonus)
+    {
+        this.prizeBonus = prizeBonus;
+    }
 
-	public List<LotteryNumber> getNumbers() {
-		return numbers;
-	}
+    public BusinessType getBusinessType()
+    {
+        if (businessType == null)
+        {
+            businessType = BusinessType.valueOf(businessTypeValue);
+        }
+        return businessType;
+    }
 
-	public void setNumbers(List<LotteryNumber> numbers) {
-		this.numbers = numbers;
-	}
+    public void setBusinessType(BusinessType businessType)
+    {
+        this.businessType = businessType;
+        this.businessTypeValue = businessType.toString();
+    }
 
-	public int getTimes() {
-		return times;
-	}
+    public Timestamp getDistributeTime()
+    {
+        return distributeTime;
+    }
 
-	public void setTimes(int times) {
-		this.times = times;
-	}
+    public void setDistributeTime(Timestamp distributeTime)
+    {
+        this.distributeTime = distributeTime;
+    }
 
-	public List<Integer> getPeriods() {
-		return periods;
-	}
+    public Timestamp getTicketFetchTime()
+    {
+        return ticketFetchTime;
+    }
 
-	public void setPeriods(List<Integer> periods) {
-		this.periods = periods;
-	}
+    public void setTicketFetchTime(Timestamp ticketFetchTime)
+    {
+        this.ticketFetchTime = ticketFetchTime;
+        this.fetched = true;
+    }
 
-	public LotteryType getLotteryType() {
-		if (lotteryType == null) {
-			lotteryType = LotteryType.valueOf(lotteryTypeValue);
-		}
-		return lotteryType;
-	}
+    public boolean isFetched()
+    {
+        if (!fetched && ticketFetchTime != null)
+        {
+            fetched = true;
+        }
 
-	public void setLotteryType(LotteryType lotteryType) {
-		this.lotteryType = lotteryType;
-		this.lotteryTypeValue = lotteryType.toString();
-	}
+        return fetched;
+    }
+
+    public void setFetched(boolean fetched)
+    {
+        this.fetched = fetched;
+    }
+
+    public long getMerchant()
+    {
+        return merchant;
+    }
+
+    public void setMerchant(long merchant)
+    {
+        this.merchant = merchant;
+    }
+
+    public String getPrizeInfo()
+    {
+        return prizeInfo;
+    }
+
+    public void setPrizeInfo(String prizeInfo)
+    {
+        this.prizeInfo = prizeInfo;
+    }
+
+    public List<LotteryNumber> getNumbers()
+    {
+        return numbers;
+    }
+
+    public void setNumbers(List<LotteryNumber> numbers)
+    {
+        this.numbers = numbers;
+    }
+
+    public int getTimes()
+    {
+        return times;
+    }
+
+    public void setTimes(int times)
+    {
+        this.times = times;
+    }
+
+    public List<Integer> getPeriods()
+    {
+        return periods;
+    }
+
+    public void setPeriods(List<Integer> periods)
+    {
+        this.periods = periods;
+    }
+
+    public LotteryType getLotteryType()
+    {
+        if (lotteryType == null)
+        {
+            lotteryType = LotteryType.valueOf(lotteryTypeValue);
+        }
+        return lotteryType;
+    }
+
+    public void setLotteryType(LotteryType lotteryType)
+    {
+        this.lotteryType = lotteryType;
+        this.lotteryTypeValue = lotteryType.toString();
+    }
 }

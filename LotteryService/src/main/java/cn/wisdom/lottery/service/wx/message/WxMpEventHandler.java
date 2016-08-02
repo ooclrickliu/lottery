@@ -31,7 +31,7 @@ import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 import cn.wisdom.lottery.service.wx.WXService;
 
-import com.ovt.order.util.entity.StringUtils;
+import cn.wisdom.lottery.common.utils.StringUtils;
 
 @Component
 public class WxMpEventHandler implements WxMpMessageHandler {

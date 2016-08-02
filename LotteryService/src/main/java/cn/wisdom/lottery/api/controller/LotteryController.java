@@ -1,6 +1,10 @@
 package cn.wisdom.lottery.api.controller;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,7 +17,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import cn.wisdom.lottery.api.model.CurrentPeriodInfo;
 import cn.wisdom.lottery.api.model.LotteryJsonDocument;
 import cn.wisdom.lottery.api.request.LotteryOrderRequest;
+import cn.wisdom.lottery.common.exception.OVTException;
 import cn.wisdom.lottery.common.model.JsonDocument;
+import cn.wisdom.lottery.common.utils.JsonUtils;
 import cn.wisdom.lottery.dao.constant.BusinessType;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.TicketState;
@@ -27,100 +33,128 @@ import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 
 @RequestMapping("/lottery")
 @Controller
-public class LotteryController {
+public class LotteryController
+{
 
-	@Autowired
-	private LotteryServiceFacade lotteryServiceFacade;
+    @Autowired
+    private LotteryServiceFacade lotteryServiceFacade;
 
-	///////////////////Customer//////////////////////
+    // /////////////////Customer//////////////////////
 
-    @RequestMapping(method = RequestMethod.GET, value = "/currentPeriod")
+    @RequestMapping(method = RequestMethod.GET, value = "/period/current")
     @ResponseBody
-	public JsonDocument getCurrentPeriodInfo(@RequestParam String lotteryType)
-			throws ServiceException {
+    public JsonDocument getCurrentPeriodInfo(@RequestParam String lotteryType)
+            throws ServiceException
+    {
 
-		LotteryOpenData currentPeriod = lotteryServiceFacade
-				.getCurrentPeriod(LotteryType.valueOf(lotteryType.toUpperCase()));
+        LotteryOpenData currentPeriod = lotteryServiceFacade
+                .getCurrentPeriod(LotteryType.valueOf(lotteryType.toUpperCase()));
 
-		CurrentPeriodInfo currentPeriodInfo = new CurrentPeriodInfo(
-				currentPeriod);
+        CurrentPeriodInfo currentPeriodInfo = new CurrentPeriodInfo(
+                currentPeriod);
 
-		return new LotteryJsonDocument(currentPeriodInfo);
-	}
+        return new LotteryJsonDocument(currentPeriodInfo);
+    }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/order/create/ssq")
+    @RequestMapping(method = RequestMethod.POST, value = "/ssq/create")
     @ResponseBody
-	public JsonDocument submitSSQPrivateOrder(@RequestBody LotteryOrderRequest request)
-			throws ServiceException {
+    public JsonDocument createSSQLottery(HttpServletRequest httpRequest,
+            @RequestBody LotteryOrderRequest request,
+            @RequestParam String tradeType, @RequestParam String body)
+            throws ServiceException
+    {
+        User user = SessionContext.getCurrentUser();
 
-		Lottery lottery = new Lottery();
-		lottery.setBusinessType(BusinessType.Private);
-		lottery.setLotteryType(LotteryType.SSQ);
-		lottery.setTimes(request.getTimes()); //倍数
-		
-		for (String number : request.getNumbers()) {
-			lottery.getNumbers().add(new LotteryNumber(number));
-		}
-		
-		//追号
-		List<Integer> nextNPeriods = lotteryServiceFacade
-				.getNextNPeriods(LotteryType.SSQ, request.getPeriods());
-		lottery.setPeriods(nextNPeriods);
-		
-		lottery.setTicketState(TicketState.UnPaid);
+        Lottery lottery = new Lottery();
+        lottery.setBusinessType(BusinessType.Private);
+        lottery.setLotteryType(LotteryType.SSQ);
+        lottery.setTimes(request.getTimes()); // 倍数
 
-		lottery = lotteryServiceFacade.createPrivateOrder(LotteryType.SSQ,
-				lottery);
+        for (String number : request.getNumbers())
+        {
+            lottery.getNumbers().add(new LotteryNumber(number));
+        }
 
-		return new LotteryJsonDocument(lottery);
-	}
+        // 追号
+        List<Integer> nextNPeriods = lotteryServiceFacade.getNextNPeriods(
+                LotteryType.SSQ, request.getPeriods());
+        lottery.setPeriods(nextNPeriods);
+        lottery.setTicketState(TicketState.UnPaid);
 
-    @RequestMapping(method = RequestMethod.POST, value = "/order/paid")
+        lottery = lotteryServiceFacade.createLottery(LotteryType.SSQ, lottery);
+
+        Map<String, String> wxPayInfoMap = lotteryServiceFacade.unifiedOrder(
+                lottery, user.getOpenid(), httpRequest.getRemoteAddr(),
+                tradeType, body);
+
+        return new LotteryJsonDocument(wxPayInfoMap);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/paid")
     @ResponseBody
-	public JsonDocument onOrderPaid(@RequestParam String orderNo) throws ServiceException {
+    public JsonDocument onOrderPaid(@RequestParam String orderNo)
+            throws ServiceException
+    {
 
-		User user = SessionContext.getCurrentUser();
-		
-		lotteryServiceFacade.onPaidSuccess("" + user.getId(), orderNo);
-		
-		return LotteryJsonDocument.SUCCESS;
-	}
+        User user = SessionContext.getCurrentUser();
 
-    @RequestMapping(method = RequestMethod.GET, value = "/order/detail")
+        lotteryServiceFacade.onPaidSuccess("" + user.getId(), orderNo);
+
+        return LotteryJsonDocument.SUCCESS;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/detail")
     @ResponseBody
-	public JsonDocument viewOrder(@RequestParam String orderNo) throws ServiceException {
-		Lottery lottery = lotteryServiceFacade.getLottery(orderNo);
+    public JsonDocument viewLottery(@RequestParam String orderNo)
+            throws ServiceException
+    {
+        Lottery lottery = lotteryServiceFacade.getLottery(orderNo);
 
-		return new LotteryJsonDocument(lottery);
-	}
+        return new LotteryJsonDocument(lottery);
+    }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/order/fetch")
+    @RequestMapping(method = RequestMethod.POST, value = "/fetch")
     @ResponseBody
-	public JsonDocument fetchTicket(@RequestParam String orderNo) throws ServiceException {
-		lotteryServiceFacade.fetchTicket(orderNo);
+    public JsonDocument fetchTicket(@RequestParam String orderNo)
+            throws ServiceException
+    {
+        lotteryServiceFacade.fetchTicket(orderNo);
 
-		return LotteryJsonDocument.SUCCESS;
-	}
+        return LotteryJsonDocument.SUCCESS;
+    }
 
-	////////////////////////Merchant///////////////////////////
+    // //////////////////////Merchant///////////////////////////
 
-    @RequestMapping(method = RequestMethod.POST, value = "/order/print")
+    @RequestMapping(method = RequestMethod.POST, value = "/print")
     @ResponseBody
-	public JsonDocument printTickets(@RequestParam List<String> orderNos) throws ServiceException {
-		long userId = SessionContext.getCurrentUser().getId();
-		lotteryServiceFacade.printTickets(orderNos, userId);
+    public JsonDocument printTickets(@RequestParam List<String> orderNos)
+            throws ServiceException
+    {
+        long userId = SessionContext.getCurrentUser().getId();
+        lotteryServiceFacade.printTickets(orderNos, userId);
 
-		return new LotteryJsonDocument();
-	}
+        return new LotteryJsonDocument();
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/query")
     @ResponseBody
-	public JsonDocument queryLottery(@RequestParam String lotteryType, 
-			@RequestParam int period) throws ServiceException {
-		//按中奖金额由大到小排序
-		long userId = SessionContext.getCurrentUser().getId();
-		List<Lottery> lotteries = lotteryServiceFacade.queryLottery(LotteryType.valueOf(lotteryType), period, userId);
-		
-		return new LotteryJsonDocument(lotteries);
-	}
+    public JsonDocument queryLottery(@RequestParam String lotteryType,
+            @RequestParam int period) throws ServiceException
+    {
+        // 按中奖金额由大到小排序
+        long userId = SessionContext.getCurrentUser().getId();
+        List<Lottery> lotteries = lotteryServiceFacade.queryLottery(
+                LotteryType.valueOf(lotteryType), period, userId);
+
+        return new LotteryJsonDocument(lotteries);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/wxnotify")
+    @ResponseBody
+    public String wxPayNotify(HttpServletRequest request,
+            HttpServletResponse response) throws OVTException
+    {
+        System.out.println(JsonUtils.toJson(request.getParameterMap()));
+        return "failed";
+    }
 }

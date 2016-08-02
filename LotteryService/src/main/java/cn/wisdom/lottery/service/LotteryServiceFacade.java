@@ -9,43 +9,59 @@ import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 
-public interface LotteryServiceFacade {
+public interface LotteryServiceFacade
+{
 
-	///////////Customer///////////
-	
-	LotteryOpenData getCurrentPeriod(LotteryType lotteryType) throws ServiceException;
-	
-	List<Integer> getNextNPeriods(LotteryType lotteryType, int n) throws ServiceException;
+    // /////////Customer///////////
 
-	Lottery createPrivateOrder(LotteryType ssq, Lottery lottery) throws ServiceException;
+    LotteryOpenData getCurrentPeriod(LotteryType lotteryType)
+            throws ServiceException;
 
-	LotteryOpenData getLatestOpenInfo(LotteryType lotteryType) throws ServiceException;
-	
-	LotteryOpenData getOpenInfo(LotteryType lotteryType, int period) throws ServiceException;
+    List<Integer> getNextNPeriods(LotteryType lotteryType, int n)
+            throws ServiceException;
 
-	void onPaidSuccess(String userId, String orderNo) throws ServiceException;
-	
-	Lottery getLottery(String orderNo) throws ServiceException;
+    Lottery createLottery(LotteryType ssq, Lottery lottery)
+            throws ServiceException;
 
-	void fetchTicket(String orderNo) throws ServiceException;
+    LotteryOpenData getLatestOpenInfo(LotteryType lotteryType)
+            throws ServiceException;
 
-	List<Lottery> getMyLottery(String openid, LotteryType lotteryType, int limit) throws ServiceException;
+    LotteryOpenData getOpenInfo(LotteryType lotteryType, int period)
+            throws ServiceException;
 
-	///////////Merchant///////////
-	
-	void printTickets(List<String> orderNos, long merchantId) throws ServiceException;
+    void onPaidSuccess(String userId, String orderNo) throws ServiceException;
 
-	List<Lottery> queryLottery(LotteryType lotteryType, int period, long merchantId) throws ServiceException;
+    Lottery getLottery(String orderNo) throws ServiceException;
 
-	///////////Other////////////////
-	void savePrizeLottery(PrizeLotterySSQ prizeLotterySSQ, LotteryType lotteryType) throws ServiceException;
+    void fetchTicket(String orderNo) throws ServiceException;
 
-	List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period) throws ServiceException;
+    List<Lottery> getMyLottery(String openid, LotteryType lotteryType, int limit)
+            throws ServiceException;
 
-	Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery,
-			PrizeLotterySSQ prizeLotterySSQ) throws ServiceException;
+    // /////////Merchant///////////
 
-	int getPrizeBonus(Map<Long, Map<Integer, Integer>> prizeInfo);
+    void printTickets(List<String> orderNos, long merchantId)
+            throws ServiceException;
 
-	void updatePrizeInfo(List<Lottery> prizeLotteries);
+    List<Lottery> queryLottery(LotteryType lotteryType, int period,
+            long merchantId) throws ServiceException;
+
+    // /////////Other////////////////
+    void savePrizeLottery(PrizeLotterySSQ prizeLotterySSQ,
+            LotteryType lotteryType) throws ServiceException;
+
+    List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
+            throws ServiceException;
+
+    Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery,
+            PrizeLotterySSQ prizeLotterySSQ) throws ServiceException;
+
+    int getPrizeBonus(Map<Long, Map<Integer, Integer>> prizeInfo);
+
+    void updatePrizeInfo(List<Lottery> prizeLotteries);
+
+    // /////////WxPay////////////////
+    Map<String, String> unifiedOrder(Lottery lottery, String openId,
+            String spbillCreateIp, String tradeType, String body)
+            throws ServiceException;
 }

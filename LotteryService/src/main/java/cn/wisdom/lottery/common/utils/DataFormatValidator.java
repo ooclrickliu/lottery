@@ -251,23 +251,4 @@ public class DataFormatValidator
     {
         return isStrLengthValid(serviceUrl, 1, 50);
     }
-    
-    /**
-     * color: red-0, blue-1
-     * 
-     * @param ball
-     * @param color
-     * @return
-     */
-    public static boolean isValidBall(int color, int ball)
-    {
-    	if (color == 0) {
-			return ball >= 1 && ball <= 33;
-		}
-    	else if (color == 1) {
-    		return ball >= 1 && ball <= 16;
-		}
-    	
-    	return false;
-    }
 }

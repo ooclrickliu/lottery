@@ -38,9 +38,25 @@ public class StringUtils
 
     public static final String CHARSET_UTF8 = "UTF-8";
 
-    public static final String SPACE = "space";
+    public static final String DOLLAR = "$";
 
-    public static final String FLOW = "flow";
+    public static final String BLANK = "";
+
+    public static final String HASH = "#";
+
+    public static final String DOUBLE_SLASH = "\\";
+
+    public static final String CARET = "^";
+
+    public static final String SUCCESS = "SUCCESS";
+
+    public static final String QUOTE = "\"";
+
+    public static final String SINGLE_QUOTE = "\'";
+
+    public static final String SQL_AND = " AND ";
+
+    public static final String SQL_EQUAL = " = ";
 
     public static boolean isBlank(Object str)
     {
@@ -50,6 +66,11 @@ public class StringUtils
     public static boolean isNotBlank(Object str)
     {
         return !isBlank(str);
+    }
+
+    public static boolean isNotEmpty(String[] str)
+    {
+        return (str != null) && (str.length > 0);
     }
 
     public static String trim(String str)

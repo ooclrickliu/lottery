@@ -14,114 +14,147 @@ import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 
 @Service
-public class LotteryServiceFacadeImpl implements LotteryServiceFacade {
+public class LotteryServiceFacadeImpl implements LotteryServiceFacade
+{
 
-	@Autowired
-	private LotteryService lotteryService;
-	
-	@Autowired
-	private LotteryPrizeService lotteryPrizeService;
-	
-	@Override
-	public LotteryOpenData getCurrentPeriod(LotteryType lotteryType) throws ServiceException {
-		return lotteryPrizeService.getCurrentPeriod(lotteryType);
-	}
+    @Autowired
+    private LotteryService lotteryService;
 
-	@Override
-	public List<Integer> getNextNPeriods(LotteryType lotteryType, int n)
-			throws ServiceException {
-		return lotteryPrizeService.getNextNPeriods(lotteryType, n);
-	}
+    @Autowired
+    private LotteryPrizeService lotteryPrizeService;
 
-	@Override
-	public Lottery createPrivateOrder(LotteryType ssq, Lottery lottery) throws ServiceException {
-		return lotteryService.createPrivateOrder(lottery);
-	}
+    @Autowired
+    private LotteryWxPayService lotteryWxPayService;
 
-	@Override
-	public LotteryOpenData getLatestOpenInfo(LotteryType lotteryType)
-			throws ServiceException {
-		
-		return lotteryPrizeService.getLatestOpenInfo(lotteryType);
-	}
+    @Override
+    public LotteryOpenData getCurrentPeriod(LotteryType lotteryType)
+            throws ServiceException
+    {
+        return lotteryPrizeService.getCurrentPeriod(lotteryType);
+    }
 
-	@Override
-	public LotteryOpenData getOpenInfo(LotteryType lotteryType, int period)
-			throws ServiceException {
-		
-		return lotteryPrizeService.getOpenInfo(lotteryType, period);
-	}
+    @Override
+    public List<Integer> getNextNPeriods(LotteryType lotteryType, int n)
+            throws ServiceException
+    {
+        return lotteryPrizeService.getNextNPeriods(lotteryType, n);
+    }
 
-	@Override
-	public Lottery getLottery(String orderNo) throws ServiceException {
-		
-		return lotteryService.getLottery(orderNo);
-	}
+    @Override
+    public Lottery createLottery(LotteryType ssq, Lottery lottery)
+            throws ServiceException
+    {
+        return lotteryService.createLottery(lottery);
+    }
 
-	@Override
-	public List<Lottery> getMyLottery(String openid,
-			LotteryType lotteryType, int limit) throws ServiceException {
-		
-		//TODO
-//		int period = Integer.parseInt(currentPeriod.getExpect());
-//		
-//		return lotteryService.getMyLottery(openid, lotteryType, period, limit);
-		
-		return null;
-	}
+    @Override
+    public LotteryOpenData getLatestOpenInfo(LotteryType lotteryType)
+            throws ServiceException
+    {
 
-	@Override
-	public void onPaidSuccess(String userId, String orderNo)
-			throws ServiceException {
-		lotteryService.onPaidSuccess(userId, orderNo);
-	}
+        return lotteryPrizeService.getLatestOpenInfo(lotteryType);
+    }
 
-	@Override
-	public void fetchTicket(String orderNo) throws ServiceException {
-		long userId = SessionContext.getCurrentUser().getId();
-		lotteryService.fetchTicket(orderNo, userId);
-	}
+    @Override
+    public LotteryOpenData getOpenInfo(LotteryType lotteryType, int period)
+            throws ServiceException
+    {
 
-	////////////////////////////////////
-	
-	@Override
-	public void printTickets(List<String> orderNos, long merchantId) throws ServiceException {
-		lotteryService.printTickets(orderNos, merchantId);
-	}
+        return lotteryPrizeService.getOpenInfo(lotteryType, period);
+    }
 
-	@Override
-	public List<Lottery> queryLottery(LotteryType lotteryType, int period, long merchantId)
-			throws ServiceException {
-		return lotteryService.queryLottery(lotteryType, period, merchantId);
-	}
+    @Override
+    public Lottery getLottery(String orderNo) throws ServiceException
+    {
 
-	@Override
-	public void savePrizeLottery(PrizeLotterySSQ prizeLotterySSQ,
-			LotteryType lotteryType) {
-		
-		lotteryPrizeService.savePrizeLottery(prizeLotterySSQ, lotteryType);
-	}
+        return lotteryService.getLottery(orderNo);
+    }
 
-	@Override
-	public List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
-			throws ServiceException {
-		return lotteryService.getPrintedLotteries(lotteryType, period);
-	}
+    @Override
+    public List<Lottery> getMyLottery(String openid, LotteryType lotteryType,
+            int limit) throws ServiceException
+    {
 
-	@Override
-	public Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery,
-			PrizeLotterySSQ prizeLotterySSQ) throws ServiceException {
-		return lotteryPrizeService.getPrizeInfo(lottery, prizeLotterySSQ);
-	}
+        // TODO
+        // int period = Integer.parseInt(currentPeriod.getExpect());
+        //
+        // return lotteryService.getMyLottery(openid, lotteryType, period,
+        // limit);
 
-	@Override
-	public int getPrizeBonus(Map<Long, Map<Integer, Integer>> prizeInfo) {
-		return lotteryPrizeService.getPrizeBonus(prizeInfo);
-	}
+        return null;
+    }
 
-	@Override
-	public void updatePrizeInfo(List<Lottery> prizeLotteries) {
-		lotteryService.updatePrizeInfo(prizeLotteries);
-	}
+    @Override
+    public void onPaidSuccess(String userId, String orderNo)
+            throws ServiceException
+    {
+        lotteryService.onPaidSuccess(userId, orderNo);
+    }
+
+    @Override
+    public void fetchTicket(String orderNo) throws ServiceException
+    {
+        long userId = SessionContext.getCurrentUser().getId();
+        lotteryService.fetchTicket(orderNo, userId);
+    }
+
+    // //////////////////////////////////
+
+    @Override
+    public void printTickets(List<String> orderNos, long merchantId)
+            throws ServiceException
+    {
+        lotteryService.printTickets(orderNos, merchantId);
+    }
+
+    @Override
+    public List<Lottery> queryLottery(LotteryType lotteryType, int period,
+            long merchantId) throws ServiceException
+    {
+        return lotteryService.queryLottery(lotteryType, period, merchantId);
+    }
+
+    @Override
+    public void savePrizeLottery(PrizeLotterySSQ prizeLotterySSQ,
+            LotteryType lotteryType)
+    {
+
+        lotteryPrizeService.savePrizeLottery(prizeLotterySSQ, lotteryType);
+    }
+
+    @Override
+    public List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
+            throws ServiceException
+    {
+        return lotteryService.getPrintedLotteries(lotteryType, period);
+    }
+
+    @Override
+    public Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery,
+            PrizeLotterySSQ prizeLotterySSQ) throws ServiceException
+    {
+        return lotteryPrizeService.getPrizeInfo(lottery, prizeLotterySSQ);
+    }
+
+    @Override
+    public int getPrizeBonus(Map<Long, Map<Integer, Integer>> prizeInfo)
+    {
+        return lotteryPrizeService.getPrizeBonus(prizeInfo);
+    }
+
+    @Override
+    public void updatePrizeInfo(List<Lottery> prizeLotteries)
+    {
+        lotteryService.updatePrizeInfo(prizeLotteries);
+    }
+
+    @Override
+    public Map<String, String> unifiedOrder(Lottery lottery, String openId,
+            String spbillCreateIp, String tradeType, String body)
+            throws ServiceException
+    {
+        return lotteryWxPayService.unifiedOrder(lottery, openId,
+                spbillCreateIp, tradeType, body);
+    }
 
 }

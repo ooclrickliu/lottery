@@ -6,7 +6,6 @@
  * May 11, 2015
  */
 package cn.wisdom.lottery.common.utils;
-
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
