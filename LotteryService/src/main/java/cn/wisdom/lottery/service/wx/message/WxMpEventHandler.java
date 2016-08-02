@@ -1,5 +1,6 @@
 package cn.wisdom.lottery.service.wx.message;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
+import me.chanjar.weixin.mp.bean.WxMpXmlOutTextMessage;
 import me.chanjar.weixin.mp.bean.outxmlbuilder.NewsBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,6 @@ import cn.wisdom.lottery.service.UserService;
 import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 import cn.wisdom.lottery.service.wx.WXService;
-
 import cn.wisdom.lottery.common.utils.StringUtils;
 
 @Component
@@ -45,18 +46,17 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 	@Autowired
 	private LotteryServiceFacade lotteryServiceFacade;
 
-	// private static final String EVENT_KEY_SCAN = "qrscene_";
-
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-
+	
+	public static final WxMpXmlOutTextMessage success = new WxMpXmlOutTextMessage();
+	static {
+		success.setContent("success");
+	}
+	
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
 			Map<String, Object> context, WxMpService wxMpService,
 			WxSessionManager sessionManager) throws WxErrorException {
-
-		logger.info("====== Fired event ======");
-		logger.info(wxMessage.toString());
-		logger.info("=========================");
 
 		WxMpXmlOutMessage response = null;
 
@@ -69,6 +69,7 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		else if (StringUtils.equalsIgnoreCase(wxMessage.getEvent(),
 				WxConsts.EVT_UNSUBSCRIBE)) {
 			// do nothing
+			response = success;
 		}
 		// 点击菜单
 		else if (StringUtils.equalsIgnoreCase(wxMessage.getEvent(),
@@ -80,11 +81,12 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 	}
 
 	private WxMpXmlOutMessage handleMenuClick(WxMpXmlMessage wxMessage) {
+		System.out.println(wxMessage);
 		String menuKey = wxMessage.getEventKey();
 
 		WxMpXmlOutMessage response = null;
 
-		// 开奖公�
+		// 开奖公告
 		if (StringUtils.equalsIgnoreCase(menuKey, "draw_notice")) {
 			response = getDrawNotice(wxMessage);
 		}
@@ -131,21 +133,20 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 						+ DateTimeUtils.formatSqlDateTime(myLottery
 								.getCreateTime()) + "\n";
 				titleStr += "开奖日期" + openInfo.getOpentime();
-				titleStr += "中奖结果: " + getLotteryState(myLottery);
+				titleStr += "中奖结果: " + this.getLotteryState(myLottery);
 				titleStr += "投注号码: \n";
 				for (LotteryNumber lotteryNumber : myLottery.getNumbers()) {
 					titleStr += "    "
 							+ lotteryNumber.getNumber().replaceAll(",", " ")
-									.replaceAll("+", " + ") + "\n";
+									.replaceAll("\\+", " \\+ ") + "\n";
 				}
 
 				content.setTitle(titleStr);
 
-				// response = builder.addArticle(article).build();
+				response = builder.addArticle(content).build();
 			}
 		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Failed to get my lottery.", e);
 		}
 		return response;
 	}
@@ -153,18 +154,22 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 	private String getLotteryState(Lottery lottery) {
 		String stateStr = "";
 
-		// 已出�
+		// 已出奖
 		if (lottery.getTicketState() == TicketState.Prized) {
 			if (StringUtils.isNotBlank(lottery.getPrizeInfo())
 					&& lottery.getPrizeBonus() > 0) {
-				// stateStr += "中奖结果: " + getLotteryState(myLottery);
+//				 stateStr += "中奖结果: " + getLotteryState(myLottery);s
 				stateStr = "中奖";
 			}
+			else {
+				stateStr = "未中奖";
+			}
 		}
-		// 未出�
-		// lottery.getTicketState().getName() +
-		// ((StringUtils.isBlank(lottery.getPrizeInfo())) ? )
-		return null;
+		// 未出奖
+		else {
+			stateStr = "未出奖";
+		}
+		return stateStr;
 	}
 
 	private WxMpXmlOutMessage getDrawNotice(WxMpXmlMessage wxMessage) {
@@ -177,7 +182,7 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 			article = new WxMpXmlOutNewsMessage.Item();
 			article.setTitle("双色球" + latestOpenInfo.getExpect() + "期开奖公告");
 
-			String desc = latestOpenInfo.getOpencode().replaceAll("+", " + ")
+			String desc = latestOpenInfo.getOpencode().replaceAll("\\+", " \\+ ")
 					.replaceAll(",", " ");
 			desc += "\n\n";
 			desc += "开奖时间 " + latestOpenInfo.getOpentime();
@@ -185,26 +190,26 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 			article.setPicUrl("");
 			article.setUrl("");
 
-			WxMpXmlOutMessage.NEWS().toUser(wxMessage.getFromUserName())
+			response = WxMpXmlOutMessage.NEWS().toUser(wxMessage.getFromUserName())
 					.fromUser(wxMessage.getToUserName()).addArticle(article)
 					.build();
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			logger.error("Get draw notice failed!", e);
 		}
 
 		return response;
 	}
 
 	private WxMpXmlOutMessage handleSubscribe(WxMpXmlMessage wxMessage) {
+		logger.info(MessageFormat.format("New user subscribe: {0}", wxMessage.getFromUserName()));
+		
 		// 保存用户
 		try {
-			userService.createUser(wxMessage.getFromUserName(),
-					RoleType.CUSTOMER);
+			userService.createUser(wxMessage.getFromUserName(), RoleType.CUSTOMER);
 		} catch (ServiceException e) {
-
+			logger.error("failed handle subscribe event.", e);
 		}
-
-		return null;
+		return success;
 
 	}
 

@@ -30,8 +30,8 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/user/**" />
 			<mvc:mapping path="/lottery/**" />
-			<mvc:exclude-mapping path="/lottery/currentPeriod" />
-			<mvc:exclude-mapping path="/lottery/order/paid" />
+			<mvc:exclude-mapping path="/lottery/period/current" />
+			<mvc:exclude-mapping path="/lottery/paid" />
 			<mvc:exclude-mapping path="/prize/lastOpen" />
 			<mvc:exclude-mapping path="/prize/reopen" />
 			<bean class="cn.wisdom.lottery.api.interceptor.UserAccessInterceptor" />

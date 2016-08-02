@@ -54,7 +54,7 @@ public class LotteryServiceImpl implements LotteryService
             lottery.setOwner(SessionContext.getCurrentUser().getId());
         }
 
-        if (!appProperties.debugPay)
+        if (!appProperties.wxPaydebug)
         {
             lottery.setTotalFee(lotteryPriceService
                     .calculateLotteryTotalFee(lottery));

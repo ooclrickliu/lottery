@@ -25,7 +25,7 @@ public class LotteryDaoImpl implements LotteryDao {
 	@Autowired
 	private DaoHelper daoHelper;
 
-	private static final String SAVE_LOTTERY = "insert into lottery(order_no, lotter_type, business_type, times, ticket_state, owner, create_by, update_time) "
+	private static final String SAVE_LOTTERY = "insert into lottery(order_no, lottery_type, business_type, times, ticket_state, owner, create_by, update_time) "
 			+ "values (?, ?, ?, ?, ?, ?, ?, current_timestamp)";
 
 	private static final String SAVE_LOTTERY_NUMBER = "insert into lottery_number(lottery_id, number) "
@@ -38,10 +38,10 @@ public class LotteryDaoImpl implements LotteryDao {
 	
 	private static final String GET_LOTTERY_JOIN_PREFIX = "select l.*, p.period from lottery_period p join lottery l on p.lottery_id = l.id ";
 	
-	private static final String GET_LOTTERY_ID_PREFIX = "select l.id, l.lotter_type from lottery_period p join lottery l on p.lottery_id = l.id ";
+	private static final String GET_LOTTERY_ID_PREFIX = "select l.id, l.lottery_type from lottery_period p join lottery l on p.lottery_id = l.id ";
 	
 	private static final String GET_LOTTERY_BY_TICKET_STATE = GET_LOTTERY_ID_PREFIX
-			+ " where period = ? and lotter_type = ? and ticket_state = ?";
+			+ " where period = ? and lottery_type = ? and ticket_state = ?";
 
 	private static final String GET_LOTTERY_BY_ORDER = GET_LOTTERY_PREFIX
 			+ " where order_no in( {0})";
@@ -53,10 +53,10 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ " where lottery_id in(?) order by id";
 
 	private static final String GET_LOTTERY_BY_MERCHANT = GET_LOTTERY_JOIN_PREFIX
-			+ " where lotter_type = ? and period = ? and merchant = ?";
+			+ " where lottery_type = ? and period = ? and merchant = ?";
 	
 	private static final String GET_LOTTERY_BY_USER = GET_LOTTERY_JOIN_PREFIX
-			+ " where openid = ? and lotter_type = ? and period <= ? and ticket_state <> 'UnPaid' order by id desc, period desc limit ?";
+			+ " where openid = ? and lottery_type = ? and period <= ? and ticket_state <> 'UnPaid' order by id desc, period desc limit ?";
 
 	private static final String UPDATE_LOTTERY_TICKET_STATE = "update lottery set ticket_state = ?, update_time = current_timestamp "
 			+ "where order_no = ?";

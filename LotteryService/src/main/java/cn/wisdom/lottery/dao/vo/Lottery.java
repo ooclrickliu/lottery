@@ -32,7 +32,7 @@ public class Lottery extends BaseEntity
     @Column("remark")
     private String remark;
 
-    @Column("lotter_type")
+    @Column("lottery_type")
     private String lotteryTypeValue;
     private LotteryType lotteryType;
 

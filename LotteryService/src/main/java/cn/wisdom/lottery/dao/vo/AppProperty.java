@@ -24,11 +24,8 @@ public class AppProperty
 	@Value("${cookie.access_token.age}")
 	public int cookieAccessTokenAge;
 	
-	@Value("${payment.service_url}")
-	public String paymentServiceUrl;
-	
-	@Value("${payment.debug}")
-	public boolean debugPay;
+	@Value("${wxPay.debug}")
+	public boolean wxPaydebug;
 	
 	@Value("${wxPay.notify_url}")
     public String wxPayNotifyUrl;
