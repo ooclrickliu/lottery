@@ -12,7 +12,6 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutTextMessage;
 import me.chanjar.weixin.mp.bean.outxmlbuilder.NewsBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
 import cn.wisdom.lottery.common.utils.CollectionUtils;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
+import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.RoleType;
 import cn.wisdom.lottery.dao.constant.TicketState;
@@ -32,7 +32,6 @@ import cn.wisdom.lottery.service.UserService;
 import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 import cn.wisdom.lottery.service.wx.WXService;
-import cn.wisdom.lottery.common.utils.StringUtils;
 
 @Component
 public class WxMpEventHandler implements WxMpMessageHandler {
@@ -48,9 +47,11 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 	
-	public static final WxMpXmlOutTextMessage success = new WxMpXmlOutTextMessage();
-	static {
-		success.setContent("success");
+	private static WxMpXmlOutMessage buildSuccessOutMessage(WxMpXmlMessage wxMessage)
+	{
+		return WxMpXmlOutMessage.TEXT().content("success")
+		.toUser(wxMessage.getFromUserName())
+		.fromUser(wxMessage.getToUserName()).build();
 	}
 	
 	@Override
@@ -69,7 +70,7 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		else if (StringUtils.equalsIgnoreCase(wxMessage.getEvent(),
 				WxConsts.EVT_UNSUBSCRIBE)) {
 			// do nothing
-			response = success;
+			response = buildSuccessOutMessage(wxMessage);
 		}
 		// 点击菜单
 		else if (StringUtils.equalsIgnoreCase(wxMessage.getEvent(),
@@ -145,6 +146,13 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 
 				response = builder.addArticle(content).build();
 			}
+			else 
+			{
+				logger.info("您没有购买记录!");
+				response = WxMpXmlOutMessage.TEXT().content("您没有购买记录!")
+						.toUser(wxMessage.getFromUserName())
+						.fromUser(wxMessage.getToUserName()).build();
+			}
 		} catch (ServiceException e) {
 			logger.error("Failed to get my lottery.", e);
 		}
@@ -209,8 +217,7 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		} catch (ServiceException e) {
 			logger.error("failed handle subscribe event.", e);
 		}
-		return success;
-
+		return buildSuccessOutMessage(wxMessage);
 	}
 
 }

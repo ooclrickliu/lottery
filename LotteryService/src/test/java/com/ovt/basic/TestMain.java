@@ -170,6 +170,9 @@ public class TestMain
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+    	
+    	String input = "http://www.southwisdom.cn/#/select";
+		System.out.println(URIUtil.encodeURIComponent(input));
     }
     
     public static String formatNumber(double num,int maxFractionDigits) {
