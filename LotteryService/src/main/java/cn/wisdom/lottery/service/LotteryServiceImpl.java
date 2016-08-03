@@ -76,7 +76,7 @@ public class LotteryServiceImpl implements LotteryService
         {
             String errMsg = MessageFormat.format(
                     "Failed to create lottery order {0}", lottery);
-            throw new ServiceException(e.getErrorCode(), errMsg);
+            throw new ServiceException(e.getErrorCode(), errMsg, e);
         }
 
         return lottery;

@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `lottery` (
   `ticket_fetch_time` timestamp NULL DEFAULT NULL,
   `prize_info` varchar(200) DEFAULT '''''',
   `prize_bonus` int(11) DEFAULT NULL,
-  `remark` varchar(1000) NOT NULL,
+  `remark` varchar(1000) DEFAULT NULL,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NULL,
   `create_by` bigint(20) DEFAULT NULL,
