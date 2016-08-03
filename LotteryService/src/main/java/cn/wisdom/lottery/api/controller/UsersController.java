@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cn.wisdom.lottery.api.response.DoorbellPaymentAPIResult;
+import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.model.JsonDocument;
 import cn.wisdom.lottery.dao.vo.AppProperty;
 import cn.wisdom.lottery.dao.vo.User;
@@ -44,8 +44,6 @@ public class UsersController
     @Autowired
     private AppProperty appProperties;
 
-//    private static final JsonDocument SUCCESS = DoorbellPaymentAPIResult.SUCCESS;
-
     /**
      * Get current User by oauth code.
      * 
@@ -57,7 +55,7 @@ public class UsersController
     public JsonDocument getCurrentUser() throws ServiceException
     {
     	User currentUser = SessionContext.getCurrentUser();
-        return new DoorbellPaymentAPIResult(currentUser);
+        return new LotteryAPIResult(currentUser);
     }
 
 }

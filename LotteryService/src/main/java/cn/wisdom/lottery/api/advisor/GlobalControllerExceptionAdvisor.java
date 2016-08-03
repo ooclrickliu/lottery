@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cn.wisdom.lottery.api.response.DoorbellPaymentAPIResult;
+import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
 import cn.wisdom.lottery.common.model.JsonDocument;
@@ -38,7 +38,7 @@ public class GlobalControllerExceptionAdvisor
     public JsonDocument handleServiceException(ServiceException serviceException)
     {
         LOGGER.error("Controller catches service exception!", serviceException);
-        return new DoorbellPaymentAPIResult(serviceException.getErrorCode());
+        return new LotteryAPIResult(serviceException.getErrorCode());
     }
 
     @ExceptionHandler
@@ -46,6 +46,6 @@ public class GlobalControllerExceptionAdvisor
     public JsonDocument handleRuntimeException(RuntimeException runtimeException)
     {
         LOGGER.error("Controller catches runtime exception!", runtimeException);
-        return new DoorbellPaymentAPIResult(ServiceErrorCode.SYSTEM_UNEXPECTED);
+        return new LotteryAPIResult(ServiceErrorCode.SYSTEM_UNEXPECTED);
     }
 }

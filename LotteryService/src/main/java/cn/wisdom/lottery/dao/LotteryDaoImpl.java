@@ -25,8 +25,8 @@ public class LotteryDaoImpl implements LotteryDao {
 	@Autowired
 	private DaoHelper daoHelper;
 
-	private static final String SAVE_LOTTERY = "insert into lottery(order_no, lottery_type, business_type, times, ticket_state, owner, create_by, update_time) "
-			+ "values (?, ?, ?, ?, ?, ?, ?, current_timestamp)";
+	private static final String SAVE_LOTTERY = "insert into lottery(order_no, total_fee, lottery_type, business_type, times, ticket_state, owner, remark, create_by, update_time) "
+			+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp)";
 
 	private static final String SAVE_LOTTERY_NUMBER = "insert into lottery_number(lottery_id, number) "
 			+ "values (?, ?)";
@@ -85,14 +85,16 @@ public class LotteryDaoImpl implements LotteryDao {
 
 	@Override
 	public void saveLottery(Lottery lottery) {
-		Object[] args = new Object[7];
+		Object[] args = new Object[9];
 		args[0] = lottery.getOrderNo();
-		args[1] = lottery.getLotteryType().toString();
-		args[2] = lottery.getBusinessType().toString();
-		args[3] = lottery.getTimes();
-		args[4] = lottery.getTicketState().toString();
-		args[5] = lottery.getOwner();
-		args[6] = lottery.getCreateBy();
+		args[1] = lottery.getTotalFee();
+		args[2] = lottery.getLotteryType().toString();
+		args[3] = lottery.getBusinessType().toString();
+		args[4] = lottery.getTimes();
+		args[5] = lottery.getTicketState().toString();
+		args[6] = lottery.getOwner();
+		args[7] = lottery.getRemark();
+		args[8] = lottery.getCreateBy();
 
 		String errMsg = MessageFormat
 				.format("Failed to save lottery!", lottery);
