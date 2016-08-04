@@ -36,7 +36,7 @@ public class LotteryDaoImpl implements LotteryDao {
 
 	private static final String GET_LOTTERY_PREFIX = "select * from lottery";
 	
-	private static final String GET_LOTTERY_JOIN_PREFIX = "select l.*, p.period from lottery_period p join lottery l on p.lottery_id = l.id ";
+	private static final String GET_LOTTERY_JOIN_PREFIX = "select l.* from lottery l join lottery_period p on l.id = p.lottery_id ";
 	
 	private static final String GET_LOTTERY_ID_PREFIX = "select l.id, l.lottery_type from lottery_period p join lottery l on p.lottery_id = l.id ";
 	
@@ -56,7 +56,7 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ " where lottery_type = ? and period = ? and merchant = ?";
 	
 	private static final String GET_LOTTERY_BY_USER = GET_LOTTERY_JOIN_PREFIX
-			+ " where openid = ? and lottery_type = ? and period <= ? and ticket_state <> 'UnPaid' order by id desc, period desc limit ?";
+			+ " where openid = ? and ticket_state <> 'UnPaid' group by l.id order by id desc limit ?";
 
 	private static final String UPDATE_LOTTERY_TICKET_STATE = "update lottery set ticket_state = ?, update_time = current_timestamp "
 			+ "where order_no = ?";
@@ -250,15 +250,33 @@ public class LotteryDaoImpl implements LotteryDao {
 	}
 
 	@Override
-	public List<Lottery> getLottery(String openid, LotteryType lotteryType, int period,
-			int limit) {
+	public Lottery getLatestLottery(String openid) {
+		String errMsg = MessageFormat.format(
+				"Failed to query the last lottery by openid [{0}]",
+				openid);
+		Lottery lottery = daoHelper.queryForObject(
+				GET_LOTTERY_BY_USER, lotteryMapper, errMsg, openid, 1);
+
+		List<Lottery> lotteries = new ArrayList<Lottery>();
+		lotteries.add(lottery);
+		
+		getLotteryPeriods(lotteries);
+		
+		getLotteryNumbers(lotteries);
+		
+		return lottery;
+	}
+	
+	@Override
+	public List<Lottery> getLotteries(String openid, int limit) {
 		String errMsg = MessageFormat.format(
 				"Failed to query lottery by openid [{0}], limit [{1}]",
 				openid, limit);
 		List<Lottery> lotteries = daoHelper.queryForList(
-				GET_LOTTERY_BY_USER, lotteryMapper, errMsg, openid, lotteryType.toString(), period,
-				limit);
-
+				GET_LOTTERY_BY_USER, lotteryMapper, errMsg, openid, limit);
+		
+		getLotteryPeriods(lotteries);
+		
 		getLotteryNumbers(lotteries);
 		
 		return lotteries;

@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.dao.vo.AppProperty;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.service.exception.ServiceException;
@@ -28,8 +27,7 @@ public class LotteryWxPayServiceImpl implements LotteryWxPayService
     {
         Map<String, String> params = new HashMap<String, String>();
         params.put("out_trade_no", lottery.getOrderNo());
-        params.put("total_fee",
-                DataConvertUtils.toString(lottery.getTotalFee()));
+        params.put("total_fee", "1");
         params.put("body", body);
         params.put("spbill_create_ip", spbillCreateIp);
         params.put("notify_url", appProperty.wxPayNotifyUrl);
@@ -41,5 +39,4 @@ public class LotteryWxPayServiceImpl implements LotteryWxPayService
 
         return retMap;
     }
-
 }

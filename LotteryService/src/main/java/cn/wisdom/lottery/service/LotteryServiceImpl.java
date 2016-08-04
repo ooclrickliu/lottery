@@ -6,13 +6,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.wisdom.lottery.common.utils.DataConvertUtils;
-import cn.wisdom.lottery.common.utils.NumberGeneratorUtil;
-
 import cn.wisdom.lottery.common.exception.OVTRuntimeException;
 import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
+import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
+import cn.wisdom.lottery.common.utils.NumberGeneratorUtil;
 import cn.wisdom.lottery.dao.LotteryDao;
 import cn.wisdom.lottery.dao.constant.BusinessType;
 import cn.wisdom.lottery.dao.constant.LotteryType;
@@ -201,10 +200,14 @@ public class LotteryServiceImpl implements LotteryService
     }
 
     @Override
-    public List<Lottery> getMyLottery(String openid, LotteryType lotteryType,
-            int period, int limit)
+    public Lottery getMyLatestLottery(String openid)
     {
-         return lotteryDao.getLottery(openid, lotteryType, period, limit);
+         return lotteryDao.getLatestLottery(openid);
     }
 
+    @Override
+    public List<Lottery> getLotteries(String openid, int limit) {
+    	
+    	return lotteryDao.getLotteries(openid, limit);
+    }
 }

@@ -1,7 +1,6 @@
 package cn.wisdom.lottery.service.wx.message;
 
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Map;
 
 import me.chanjar.weixin.common.api.WxConsts;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
-import cn.wisdom.lottery.common.utils.CollectionUtils;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
@@ -93,23 +91,20 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		}
 		// 我的彩票
 		else if (StringUtils.equalsIgnoreCase(menuKey, "my_lottery")) {
-			response = getMyLottery(wxMessage);
+			response = getMyLatestLottery(wxMessage);
 		}
 
 		return response;
 	}
 
-	private WxMpXmlOutMessage getMyLottery(WxMpXmlMessage wxMessage) {
+	private WxMpXmlOutMessage getMyLatestLottery(WxMpXmlMessage wxMessage) {
 		WxMpXmlOutMessage response = null;
 
 		try {
-			List<Lottery> lotteries = lotteryServiceFacade.getMyLottery(
-					wxMessage.getFromUserName(), LotteryType.SSQ, -1, 1);
+			Lottery lottery = lotteryServiceFacade.getMyLatestLottery(wxMessage.getFromUserName());
 
-			if (CollectionUtils.isNotEmpty(lotteries)) {
-				Lottery myLottery = lotteries.get(0);
-
-				int period = myLottery.getPeriods().get(0);
+			if (lottery != null) {
+				int period = lottery.getPeriods().get(0);
 				LotteryOpenData openInfo = lotteryServiceFacade.getOpenInfo(
 						LotteryType.SSQ, period);
 
@@ -130,12 +125,12 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 				content.setPicUrl("");
 				String titleStr = "双色球" + period + "期\n";
 				titleStr += "购买日期: "
-						+ DateTimeUtils.formatSqlDateTime(myLottery
+						+ DateTimeUtils.formatSqlDateTime(lottery
 								.getCreateTime()) + "\n";
 				titleStr += "开奖日期" + openInfo.getOpentime();
-				titleStr += "中奖结果: " + this.getLotteryState(myLottery);
+				titleStr += "中奖结果: " + this.getLotteryState(lottery);
 				titleStr += "投注号码: \n";
-				for (LotteryNumber lotteryNumber : myLottery.getNumbers()) {
+				for (LotteryNumber lotteryNumber : lottery.getNumbers()) {
 					titleStr += "    "
 							+ lotteryNumber.getNumber().replaceAll(",", " ")
 									.replaceAll("\\+", " \\+ ") + "\n";

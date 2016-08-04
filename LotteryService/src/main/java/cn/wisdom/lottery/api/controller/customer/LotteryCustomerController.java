@@ -1,5 +1,7 @@
 package cn.wisdom.lottery.api.controller.customer;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,13 +21,15 @@ import cn.wisdom.lottery.api.request.LotteryOrderRequest;
 import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.exception.OVTException;
 import cn.wisdom.lottery.common.model.JsonDocument;
-import cn.wisdom.lottery.common.utils.JsonUtils;
+import cn.wisdom.lottery.common.utils.JaxbUtil;
+import cn.wisdom.lottery.common.utils.JaxbUtil.CollectionWrapper;
 import cn.wisdom.lottery.dao.constant.BusinessType;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.TicketState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryNumber;
 import cn.wisdom.lottery.dao.vo.User;
+import cn.wisdom.lottery.dao.vo.WxPayLog;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceException;
@@ -36,6 +41,9 @@ public class LotteryCustomerController
 
     @Autowired
     private LotteryServiceFacade lotteryServiceFacade;
+    
+    private static JaxbUtil xml2WxPayLog = new JaxbUtil(WxPayLog.class,
+            CollectionWrapper.class);
 
     @RequestMapping(method = RequestMethod.POST, value = "/ssq/create")
     @ResponseBody
@@ -65,7 +73,7 @@ public class LotteryCustomerController
         lottery = lotteryServiceFacade.createLottery(LotteryType.SSQ, lottery);
 
         Map<String, String> wxPayInfoMap = lotteryServiceFacade.unifiedOrder(
-                lottery, user.getOpenid(), httpRequest.getRemoteAddr(),
+                lottery, user.getOpenid(), httpRequest.getHeader("X-Real-IP"),
                 tradeType, body);
 
         return new LotteryAPIResult(wxPayInfoMap);
@@ -104,38 +112,35 @@ public class LotteryCustomerController
         return LotteryAPIResult.SUCCESS;
     }
 
-    // //////////////////////Merchant///////////////////////////
-
-    @RequestMapping(method = RequestMethod.POST, value = "/print")
+    @RequestMapping(method = RequestMethod.GET, value = "/list")
     @ResponseBody
-    public JsonDocument printTickets(@RequestParam List<Long> lotteryIds)
-            throws ServiceException
+    public JsonDocument getMyLotteries(@RequestParam int limit) 
+    		throws ServiceException
     {
-        long userId = SessionContext.getCurrentUser().getId();
-        lotteryServiceFacade.printTickets(lotteryIds, userId);
-
-        return new LotteryAPIResult();
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/query")
-    @ResponseBody
-    public JsonDocument queryLottery(@RequestParam String lotteryType,
-            @RequestParam int period) throws ServiceException
-    {
-        // 按中奖金额由大到小排序
-        long userId = SessionContext.getCurrentUser().getId();
-        List<Lottery> lotteries = lotteryServiceFacade.queryLottery(
-                LotteryType.valueOf(lotteryType), period, userId);
+        String openId = SessionContext.getCurrentUser().getOpenid();
+        List<Lottery> lotteries = lotteryServiceFacade.getLotteries(openId, limit);
 
         return new LotteryAPIResult(lotteries);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/wxnotify")
+    @RequestMapping(method = RequestMethod.POST, value = "/wxnotify")
     @ResponseBody
     public String wxPayNotify(HttpServletRequest request,
-            HttpServletResponse response) throws OVTException
+            HttpServletResponse response) throws OVTException, IOException
     {
-        System.out.println(JsonUtils.toJson(request.getParameterMap()));
-        return "failed";
+
+        String xml = StreamUtils.copyToString(request.getInputStream(),
+                Charset.defaultCharset());
+        WxPayLog wxPayLog = xml2WxPayLog.fromXml(xml);
+
+        if (wxPayLog.getResultCode().equalsIgnoreCase("SUCCESS"))
+        {
+            
+            return "success";
+        }
+        else
+        {
+            return "fail";
+        }
     }
 }

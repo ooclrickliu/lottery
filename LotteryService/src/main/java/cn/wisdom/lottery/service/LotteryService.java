@@ -93,10 +93,18 @@ public interface LotteryService
 	 * Get customer's latest lottery.
 	 * 
 	 * @param openid
-	 * @param lotteryType
 	 * @return
 	 */
-	List<Lottery> getMyLottery(String openid, LotteryType lotteryType, int period, int limit);
+	Lottery getMyLatestLottery(String openid);
+	
+	/**
+	 * Get customer's lotteries.
+	 * 
+	 * @param openid
+	 * @param limit
+	 * @return
+	 */
+	List<Lottery> getLotteries(String openid, int limit);
 	
 	/*********************************************************************************/
 //	
