@@ -296,19 +296,13 @@ public class UserServiceImpl implements UserService
 	}
 
 	@Override
-	public User getUserByOpenId(String openId) {
-		
-		return userDao.getUserByOpenid(openId);
-	}
-
-	@Override
 	public void updateUserWxInfo(WxMpUser wxMpUser) throws ServiceException {
 		User user = new User();
 		user.setOpenid(wxMpUser.getOpenId());
 		user.setNickName(wxMpUser.getNickname());
 		user.setHeadImgUrl(wxMpUser.getHeadImgUrl());
 
-//		userDao.updateUserWxInfo(user);
+		userDao.updateUserWxInfo(user);
 	}
 
 	@Override
@@ -342,9 +336,14 @@ public class UserServiceImpl implements UserService
 	}
 
 	@Override
+	public User getUserByOpenId(String openId) {
+		
+		return userDao.getUserByOpenid(openId);
+	}
+
+	@Override
 	public User getUserById(long userId) {
-		// TODO Auto-generated method stub
-		return null;
+		return userDao.getUser(userId);
 	}
 
 }
