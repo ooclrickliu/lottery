@@ -325,8 +325,14 @@ public class UserServiceImpl implements UserService
 					StringUtils.equals(user.getHeadImgUrl(), wxMpUser.getHeadImgUrl()))) {
 				user.setNickName(wxMpUser.getNickname());
 				user.setHeadImgUrl(wxMpUser.getHeadImgUrl());
+				user.setCountry(wxMpUser.getCountry());
+				user.setProvince(wxMpUser.getProvince());
+				user.setCity(wxMpUser.getCity());
+				user.setSex(wxMpUser.getSex());
+				user.setSubscribeTime(wxMpUser.getSubscribeTime());
+				user.setUnionid(wxMpUser.getUnionId());
 				
-//				userDao.updateUserWxInfo(user);
+				userDao.updateUserWxInfo(user);
 			}
 		} catch (WxErrorException e) {
 			String errMsg = MessageFormat.format("failed pass wx oauth and get user info, code: [{0}]", oauthCode);

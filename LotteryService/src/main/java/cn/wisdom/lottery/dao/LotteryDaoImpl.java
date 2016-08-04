@@ -56,7 +56,7 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ " where lottery_type = ? and period = ? and merchant = ?";
 	
 	private static final String GET_LOTTERY_BY_USER = GET_LOTTERY_JOIN_PREFIX
-			+ " where openid = ? and ticket_state <> 'UnPaid' group by l.id order by id desc limit ?";
+			+ " where owner = ? and ticket_state <> 'UnPaid' group by l.id order by id desc limit ?";
 
 	private static final String UPDATE_LOTTERY_TICKET_STATE = "update lottery set ticket_state = ?, update_time = current_timestamp "
 			+ "where order_no = ?";
@@ -250,12 +250,12 @@ public class LotteryDaoImpl implements LotteryDao {
 	}
 
 	@Override
-	public Lottery getLatestLottery(String openid) {
+	public Lottery getLatestLottery(long userId) {
 		String errMsg = MessageFormat.format(
 				"Failed to query the last lottery by openid [{0}]",
-				openid);
+				userId);
 		Lottery lottery = daoHelper.queryForObject(
-				GET_LOTTERY_BY_USER, lotteryMapper, errMsg, openid, 1);
+				GET_LOTTERY_BY_USER, lotteryMapper, errMsg, userId, 1);
 
 		List<Lottery> lotteries = new ArrayList<Lottery>();
 		lotteries.add(lottery);

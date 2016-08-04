@@ -45,13 +45,10 @@ public class UserDaoImpl implements UserDao
     private static final String SQL_GET_USER = SQL_GET_PREFIX
     		+ "WHERE id = ? LIMIT 1";
 
-    // private static final String SQL_GET_USER_LIST = SQL_GET_PREFIX
-    // + "order by {0} {1} LIMIT {2}, {3}";
-
     private static final String SQL_GET_USER_BY_NAME = SQL_GET_PREFIX
             + "WHERE admin_name = ? LIMIT 1";
 
-    private static final String SQL_UPDATE_PASSWORD = "UPDATE admin SET admin_pwd = ?, update_time = CURRENT_TIMESTAMP "
+    private static final String SQL_UPDATE_WX_INFO = "UPDATE user SET country = ?, province = ?, city = ?, nick_name = ?, head_img_url = ?, sex = ?, subscribe_time = ?, unionid = ?, update_time = CURRENT_TIMESTAMP "
             + "WHERE id = ?";
 
     private static final String SQL_DELETE = "DELETE FROM admin WHERE id = ?";
@@ -137,7 +134,7 @@ public class UserDaoImpl implements UserDao
         String errMsg = MessageFormat
                 .format("Failed to update user [{0}] password !", userId);
 
-        daoHelper.update(SQL_UPDATE_PASSWORD, errMsg, newPassword, userId);
+//        daoHelper.update(SQL_UPDATE_PASSWORD, errMsg, newPassword, userId);
     }
 
     /*
@@ -212,4 +209,19 @@ public class UserDaoImpl implements UserDao
         return user;
 	}
 
+	@Override
+	public void updateUserWxInfo(User user) {
+		String errMsg = MessageFormat
+                .format("Failed to update user wx info [{0}] !", user.getId());
+
+        daoHelper.update(SQL_UPDATE_WX_INFO, errMsg, 
+        		user.getCountry(), 
+        		user.getProvince(), 
+        		user.getCity(), 
+        		user.getNickName(), 
+        		user.getHeadImgUrl(), 
+        		user.getSex(), 
+        		user.getSubscribeTime(), 
+        		user.getId());
+	}
 }

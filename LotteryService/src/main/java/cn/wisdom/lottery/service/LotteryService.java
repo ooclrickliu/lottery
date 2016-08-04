@@ -92,10 +92,10 @@ public interface LotteryService
 	/**
 	 * Get customer's latest lottery.
 	 * 
-	 * @param openid
+	 * @param userId
 	 * @return
 	 */
-	Lottery getMyLatestLottery(String openid);
+	Lottery getMyLatestLottery(long userId);
 	
 	/**
 	 * Get customer's lotteries.
