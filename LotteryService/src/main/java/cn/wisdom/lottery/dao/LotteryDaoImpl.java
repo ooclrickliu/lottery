@@ -43,8 +43,8 @@ public class LotteryDaoImpl implements LotteryDao {
 	private static final String GET_LOTTERY_BY_TICKET_STATE = GET_LOTTERY_ID_PREFIX
 			+ " where period = ? and lottery_type = ? and ticket_state = ?";
 
-	private static final String GET_LOTTERY_BY_ORDER = GET_LOTTERY_PREFIX
-			+ " where order_no in( {0})";
+	private static final String GET_LOTTERY_BY_ID = GET_LOTTERY_PREFIX
+			+ " where id in( {0})";
 	
 	private static final String GET_LOTTERY_NUMBER = "select id, lottery_id, number from lottery_number "
 			+ " where lottery_id in(?) order by id";
@@ -135,18 +135,18 @@ public class LotteryDaoImpl implements LotteryDao {
 	}
 
 	@Override
-	public Lottery getLottery(String orderNo) {
+	public Lottery getLottery(long lotteryId) {
 		
-		return this.getLottery(orderNo, true, true);
+		return this.getLottery(lotteryId, true, true);
 	}
 	
 	@Override
-	public Lottery getLottery(String orderNo, boolean queryNumber, boolean queryPeriod) {
+	public Lottery getLottery(long lotteryId, boolean queryNumber, boolean queryPeriod) {
 
-		String sql = MessageFormat.format(GET_LOTTERY_BY_ORDER, orderNo);
+		String sql = MessageFormat.format(GET_LOTTERY_BY_ID, lotteryId);
 		
 		String errMsg = MessageFormat.format(
-				"Failed to query lottery by orderNo [{0}]", orderNo);
+				"Failed to query lottery by orderNo [{0}]", lotteryId);
 		Lottery lottery = daoHelper.queryForObject(sql,
 				lotteryMapper, errMsg);
 		
@@ -171,13 +171,13 @@ public class LotteryDaoImpl implements LotteryDao {
 	}
 
 	@Override
-	public List<Lottery> getLottery(List<String> orderNos, boolean queryNumber, boolean queryPeriod) {
-		String orderNosCSV = StringUtils.getCSV(orderNos, true);
+	public List<Lottery> getLottery(List<Long> lotteryIds, boolean queryNumber, boolean queryPeriod) {
+		String lotteryIdsCSV = StringUtils.getCSV(lotteryIds);
 		
-		String sql = MessageFormat.format(GET_LOTTERY_BY_ORDER, orderNosCSV);
+		String sql = MessageFormat.format(GET_LOTTERY_BY_ID, lotteryIdsCSV);
 
 		String errMsg = MessageFormat.format(
-				"Failed to query lottery by orderNos [{0}]", orderNosCSV);
+				"Failed to query lottery by ids [{0}]", lotteryIdsCSV);
 		List<Lottery> lotteries = daoHelper.queryForList(sql,
 				lotteryMapper, errMsg);
 

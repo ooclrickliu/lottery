@@ -9,11 +9,11 @@ public interface LotteryDao {
 	
 	void saveLottery(Lottery lottery);
 
-	Lottery getLottery(String orderNo);
+	Lottery getLottery(long lotteryId);
 	
-	Lottery getLottery(String orderNo, boolean queryNumber, boolean queryPeriod);
+	Lottery getLottery(long lotteryId, boolean queryNumber, boolean queryPeriod);
 	
-	List<Lottery> getLottery(List<String> orderNos, boolean queryNumber, boolean queryPeriod);
+	List<Lottery> getLottery(List<Long> lotteryIds, boolean queryNumber, boolean queryPeriod);
 	
 	List<Lottery> getLottery(LotteryType lotteryType, int period, long merchantId);
 

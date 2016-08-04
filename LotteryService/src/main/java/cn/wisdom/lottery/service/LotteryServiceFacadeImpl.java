@@ -65,10 +65,10 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     }
 
     @Override
-    public Lottery getLottery(String orderNo) throws ServiceException
+    public Lottery getLottery(long lotteryId) throws ServiceException
     {
 
-        return lotteryService.getLottery(orderNo);
+        return lotteryService.getLottery(lotteryId);
     }
 
     @Override
@@ -85,26 +85,26 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     }
 
     @Override
-    public void onPaidSuccess(String userId, String orderNo)
+    public void onPaidSuccess(String userId, long lotteryId)
             throws ServiceException
     {
-        lotteryService.onPaidSuccess(userId, orderNo);
+        lotteryService.onPaidSuccess(userId, lotteryId);
     }
 
     @Override
-    public void fetchTicket(String orderNo) throws ServiceException
+    public void fetchTicket(long lotteryId) throws ServiceException
     {
         long userId = SessionContext.getCurrentUser().getId();
-        lotteryService.fetchTicket(orderNo, userId);
+        lotteryService.fetchTicket(lotteryId, userId);
     }
 
     // //////////////////////////////////
 
     @Override
-    public void printTickets(List<String> orderNos, long merchantId)
+    public void printTickets(List<Long> lotteryIds, long merchantId)
             throws ServiceException
     {
-        lotteryService.printTickets(orderNos, merchantId);
+        lotteryService.printTickets(lotteryIds, merchantId);
     }
 
     @Override

@@ -83,17 +83,17 @@ public class LotteryServiceImpl implements LotteryService
     }
 
     @Override
-    public Lottery getLottery(String orderNo) throws ServiceException
+    public Lottery getLottery(long lotteryId) throws ServiceException
     {
-        return lotteryDao.getLottery(orderNo);
+        return lotteryDao.getLottery(lotteryId);
     }
 
     @Override
-    public void distributeTicket(String orderNo, long merchantId)
+    public void distributeTicket(long lotteryId, long merchantId)
             throws ServiceException
     {
         // change lottery ticket_state to 'Distributed' and set merchant
-        Lottery lotteryProfile = lotteryDao.getLottery(orderNo);
+        Lottery lotteryProfile = lotteryDao.getLottery(lotteryId);
 
         if (lotteryProfile.getTicketState() != TicketState.Paid)
         {
@@ -119,11 +119,11 @@ public class LotteryServiceImpl implements LotteryService
     }
 
     @Override
-    public void printTickets(List<String> orderNos, long merchantId)
+    public void printTickets(List<Long> lotteryIds, long merchantId)
             throws ServiceException
     {
         // change lottery ticket_state to 'print' and set print time
-        List<Lottery> lotteries = lotteryDao.getLottery(orderNos, false, false);
+        List<Lottery> lotteries = lotteryDao.getLottery(lotteryIds, false, false);
         for (Lottery lottery : lotteries)
         {
             if (lottery.getTicketState() != TicketState.Distributed)
@@ -147,11 +147,11 @@ public class LotteryServiceImpl implements LotteryService
     }
 
     @Override
-    public void fetchTicket(String orderNo, long userId)
+    public void fetchTicket(long lotteryId, long userId)
             throws ServiceException
     {
 
-        Lottery lottery = lotteryDao.getLottery(orderNo);
+        Lottery lottery = lotteryDao.getLottery(lotteryId);
         if (lottery.getTicketState() != TicketState.Printed)
         {
             String errMsg = MessageFormat.format(
@@ -171,17 +171,17 @@ public class LotteryServiceImpl implements LotteryService
     }
 
     @Override
-    public void onPaidSuccess(String userId, String orderNo)
+    public void onPaidSuccess(String userId, long lotteryId)
             throws ServiceException
     {
-        Lottery lottery = lotteryDao.getLottery(orderNo, false, false);
+        Lottery lottery = lotteryDao.getLottery(lotteryId, false, false);
 
         lottery.setTicketState(TicketState.Paid);
 
         lotteryDao.updateTicketState(lottery);
 
         // default distribute to sb.
-        this.distributeTicket(orderNo, 2);
+        this.distributeTicket(lotteryId, 2);
 
         // notify merchants
     }

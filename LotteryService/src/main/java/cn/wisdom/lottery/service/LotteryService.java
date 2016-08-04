@@ -38,7 +38,7 @@ public interface LotteryService
 	 * 
 	 * @return
 	 */
-	Lottery getLottery(String orderNo) throws ServiceException;
+	Lottery getLottery(long lotteryId) throws ServiceException;
 	
 	/**
 	 * Distribute ticket to merchant.
@@ -46,7 +46,7 @@ public interface LotteryService
 	 * @param orderNo
 	 * @param merchantId
 	 */
-	void distributeTicket(String orderNo, long merchantId) throws ServiceException;
+	void distributeTicket(long lotteryId, long merchantId) throws ServiceException;
 	
 	/**
 	 * Get all lotteries that distribute current merchant.
@@ -63,14 +63,14 @@ public interface LotteryService
 	 * @param orderNo
 	 * @throws ServiceException
 	 */
-	void printTickets(List<String> orderNos, long merchantId) throws ServiceException;
+	void printTickets(List<Long> lotteryIds, long merchantId) throws ServiceException;
 	
 	/**
 	 * Owner get ticket from merchant by self.
 	 * 
 	 * @param orderNo
 	 */
-	void fetchTicket(String orderNo, long userId) throws ServiceException;
+	void fetchTicket(long lotteryId, long userId) throws ServiceException;
 	
 	/**
 	 * Get all printed tickets by type and time.
@@ -97,6 +97,7 @@ public interface LotteryService
 	 * @return
 	 */
 	List<Lottery> getMyLottery(String openid, LotteryType lotteryType, int period, int limit);
+	
 	/*********************************************************************************/
 //	
 //    /**
@@ -120,7 +121,7 @@ public interface LotteryService
      * 
      * @return
      */
-    void onPaidSuccess(String userId, String orderNo) throws ServiceException;
+    void onPaidSuccess(String userId, long lotteryId) throws ServiceException;
 //
 //    /**
 //     * Handle refund success order.

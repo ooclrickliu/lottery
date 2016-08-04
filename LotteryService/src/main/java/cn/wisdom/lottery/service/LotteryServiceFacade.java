@@ -29,18 +29,18 @@ public interface LotteryServiceFacade
     LotteryOpenData getOpenInfo(LotteryType lotteryType, int period)
             throws ServiceException;
 
-    void onPaidSuccess(String userId, String orderNo) throws ServiceException;
+    void onPaidSuccess(String userId, long lotteryId) throws ServiceException;
 
-    Lottery getLottery(String orderNo) throws ServiceException;
+    Lottery getLottery(long lotteryId) throws ServiceException;
 
-    void fetchTicket(String orderNo) throws ServiceException;
+    void fetchTicket(long lotteryId) throws ServiceException;
 
     List<Lottery> getMyLottery(String openid, LotteryType lotteryType, int period, int limit)
             throws ServiceException;
 
     // /////////Merchant///////////
 
-    void printTickets(List<String> orderNos, long merchantId)
+    void printTickets(List<Long> lotteryIds, long merchantId)
             throws ServiceException;
 
     List<Lottery> queryLottery(LotteryType lotteryType, int period,
