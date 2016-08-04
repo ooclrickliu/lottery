@@ -30,7 +30,7 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/lottery/customer/**" />
 			<mvc:exclude-mapping path="/lottery/customer/wxnotify" />
-			<bean class="cn.wisdom.lottery.api.interceptor.UserAccessInterceptor" />
+			<bean class="cn.wisdom.lottery.api.interceptor.CustomerAccessInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
 </beans>
