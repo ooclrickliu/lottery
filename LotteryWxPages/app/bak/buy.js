@@ -15,15 +15,14 @@
         var ballListInner = '';
         singlePeriodAndOneMultipleFee = 0;
         $.each(savedBalls, function (i, ball) {
-            ballListInner += '<div class="ball_list_item"><div class="ball_list_item_left">';
+            ballListInner += '<div class="ball_list_item">';
             $.each(ball.red, function (j, red) {
                 ballListInner += '<p class="text-red">' + red + '</p>';
             });
             $.each(ball.blue, function (j, blue) {
                 ballListInner += '<p class="text-info">' + blue + '</p>';
             });
-            ballListInner += '</div><div class="ball_list_item_right remove" data-index="' + i +
-                '"><a href="javascript:;" class="text-light" ></a></div><div style="clear:both;height:0;"></div></div>';
+            ballListInner += '</div>';
 
             singlePeriodAndOneMultipleFee += getCombineNum(ball.red.length, 6) * getCombineNum(ball.blue.length, 1) * 2;
         });
@@ -106,13 +105,13 @@
     periodInput.bind('input', updateTotalFee);
     multipleInput.bind('input', updateTotalFee);
 
+    //同意协议
     $('#confirmProto').bind('change', function () {
         if ($(this).attr('checked')) {
             submitDoubleBallSelect.removeClass('weui_btn_disabled');
         } else {
             submitDoubleBallSelect.addClass('weui_btn_disabled');
         }
-
     });
 
     var payInfo;

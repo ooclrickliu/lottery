@@ -4,7 +4,7 @@
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var del = require('del');
-
+var runSequence = require('run-sequence');
 
 gulp.task('html', function (){
     return gulp.src('app/*.html')
@@ -15,17 +15,11 @@ gulp.task('html', function (){
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('browser-sync', function() {//注册任务
-    browserSync({//调用API
-        files: "**",//监听整个项目
-        server: {
-            baseDir: "./app"
-        }
-    });
-});
-
 gulp.task('clean', function () {
     return del('dist');
 });
 
-gulp.task('build', ['clean', 'html']);
+gulp.task('build', function () {
+    runSequence('clean',
+        ['html']);
+});
