@@ -204,10 +204,7 @@ public class LotteryServiceImpl implements LotteryService
     public List<Lottery> getMyLottery(String openid, LotteryType lotteryType,
             int period, int limit)
     {
-
-        // TODO
-        // return lotteryDao.getLottery(orderNo, queryNumber, queryPeriod);
-        return null;
+         return lotteryDao.getLottery(openid, lotteryType, period, limit);
     }
 
 }

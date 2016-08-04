@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.wisdom.lottery.api.model.CurrentPeriodInfo;
-import cn.wisdom.lottery.api.model.LotteryJsonDocument;
 import cn.wisdom.lottery.api.request.LotteryOrderRequest;
+import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.exception.OVTException;
 import cn.wisdom.lottery.common.model.JsonDocument;
 import cn.wisdom.lottery.common.utils.JsonUtils;
@@ -53,7 +53,7 @@ public class LotteryController
         CurrentPeriodInfo currentPeriodInfo = new CurrentPeriodInfo(
                 currentPeriod);
 
-        return new LotteryJsonDocument(currentPeriodInfo);
+        return new LotteryAPIResult(currentPeriodInfo);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/ssq/create")
@@ -87,7 +87,7 @@ public class LotteryController
                 lottery, user.getOpenid(), httpRequest.getRemoteAddr(),
                 tradeType, body);
 
-        return new LotteryJsonDocument(wxPayInfoMap);
+        return new LotteryAPIResult(wxPayInfoMap);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/paid")
@@ -100,7 +100,7 @@ public class LotteryController
 
         lotteryServiceFacade.onPaidSuccess("" + user.getId(), orderNo);
 
-        return LotteryJsonDocument.SUCCESS;
+        return LotteryAPIResult.SUCCESS;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/detail")
@@ -110,7 +110,7 @@ public class LotteryController
     {
         Lottery lottery = lotteryServiceFacade.getLottery(orderNo);
 
-        return new LotteryJsonDocument(lottery);
+        return new LotteryAPIResult(lottery);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/fetch")
@@ -120,7 +120,7 @@ public class LotteryController
     {
         lotteryServiceFacade.fetchTicket(orderNo);
 
-        return LotteryJsonDocument.SUCCESS;
+        return LotteryAPIResult.SUCCESS;
     }
 
     // //////////////////////Merchant///////////////////////////
@@ -133,7 +133,7 @@ public class LotteryController
         long userId = SessionContext.getCurrentUser().getId();
         lotteryServiceFacade.printTickets(orderNos, userId);
 
-        return new LotteryJsonDocument();
+        return new LotteryAPIResult();
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/query")
@@ -146,7 +146,7 @@ public class LotteryController
         List<Lottery> lotteries = lotteryServiceFacade.queryLottery(
                 LotteryType.valueOf(lotteryType), period, userId);
 
-        return new LotteryJsonDocument(lotteries);
+        return new LotteryAPIResult(lotteries);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/wxnotify")

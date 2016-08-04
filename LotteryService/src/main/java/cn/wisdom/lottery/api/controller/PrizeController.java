@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.wisdom.lottery.api.model.LatestOpenInfo;
-import cn.wisdom.lottery.api.model.LotteryJsonDocument;
+import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.model.JsonDocument;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
@@ -46,7 +46,7 @@ public class PrizeController {
 		;
 		ssqPeriodGenerator.generatePeriod(year, exceptFromDate, exceptToDate);
 
-		return LotteryJsonDocument.SUCCESS;
+		return LotteryAPIResult.SUCCESS;
 	}
 
     @RequestMapping(method = RequestMethod.GET, value = "/lastOpen")
@@ -59,7 +59,7 @@ public class PrizeController {
 
 		LatestOpenInfo latestOpenInfo = new LatestOpenInfo(openInfo);
 
-		return new LotteryJsonDocument(latestOpenInfo);
+		return new LotteryAPIResult(latestOpenInfo);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/open")
@@ -69,7 +69,7 @@ public class PrizeController {
 		
 		lotteryOpenPrizeTask.openSSQPrize();
 		
-		return LotteryJsonDocument.SUCCESS;
+		return LotteryAPIResult.SUCCESS;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/reopen")
@@ -79,6 +79,6 @@ public class PrizeController {
 		
 		lotteryOpenPrizeTask.reopenSSQPrize(period);
 		
-		return LotteryJsonDocument.SUCCESS;
+		return LotteryAPIResult.SUCCESS;
 	}
 }

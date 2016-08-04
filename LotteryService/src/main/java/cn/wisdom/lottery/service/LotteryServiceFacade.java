@@ -35,7 +35,7 @@ public interface LotteryServiceFacade
 
     void fetchTicket(String orderNo) throws ServiceException;
 
-    List<Lottery> getMyLottery(String openid, LotteryType lotteryType, int limit)
+    List<Lottery> getMyLottery(String openid, LotteryType lotteryType, int period, int limit)
             throws ServiceException;
 
     // /////////Merchant///////////

@@ -104,7 +104,7 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 
 		try {
 			List<Lottery> lotteries = lotteryServiceFacade.getMyLottery(
-					wxMessage.getFromUserName(), LotteryType.SSQ, 1);
+					wxMessage.getFromUserName(), LotteryType.SSQ, -1, 1);
 
 			if (CollectionUtils.isNotEmpty(lotteries)) {
 				Lottery myLottery = lotteries.get(0);
@@ -128,7 +128,6 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 				WxMpXmlOutNewsMessage.Item content = new WxMpXmlOutNewsMessage.Item();
 				content.setDescription("");
 				content.setPicUrl("");
-				content.setUrl("");
 				String titleStr = "双色球" + period + "期\n";
 				titleStr += "购买日期: "
 						+ DateTimeUtils.formatSqlDateTime(myLottery
@@ -143,6 +142,10 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 				}
 
 				content.setTitle(titleStr);
+				
+				//TODO
+				String url = "?openid=" + wxMessage.getFromUserName();
+				content.setUrl(url);
 
 				response = builder.addArticle(content).build();
 			}

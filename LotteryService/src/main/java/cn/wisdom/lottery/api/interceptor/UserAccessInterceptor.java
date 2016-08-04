@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import cn.wisdom.lottery.api.exception.NoAccessException;
-import cn.wisdom.lottery.api.model.LotteryJsonDocument;
+import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.model.JsonDocument;
 import cn.wisdom.lottery.common.utils.HttpUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
@@ -98,7 +98,7 @@ public class UserAccessInterceptor extends HandlerInterceptorAdapter
 
     private void writeResponse(HttpServletResponse response, String errCode) throws Exception
     {
-        JsonDocument respBody = new LotteryJsonDocument(errCode);
+        JsonDocument respBody = new LotteryAPIResult(errCode);
 
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.write(respBody, MediaType.APPLICATION_JSON, new ServletServerHttpResponse(

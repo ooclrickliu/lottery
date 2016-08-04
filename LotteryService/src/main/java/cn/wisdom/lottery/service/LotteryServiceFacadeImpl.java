@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
@@ -72,16 +73,15 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
 
     @Override
     public List<Lottery> getMyLottery(String openid, LotteryType lotteryType,
-            int limit) throws ServiceException
+    		int period, int limit) throws ServiceException
     {
-
-        // TODO
-        // int period = Integer.parseInt(currentPeriod.getExpect());
-        //
-        // return lotteryService.getMyLottery(openid, lotteryType, period,
-        // limit);
-
-        return null;
+    	if (period < 0) {
+			LotteryOpenData currentPeriod = lotteryPrizeService.getCurrentPeriod(lotteryType);
+			if (currentPeriod != null) {
+				period = DataConvertUtils.toInt(currentPeriod.getExpect());
+			}
+		}
+        return lotteryService.getMyLottery(openid, lotteryType, period, limit);
     }
 
     @Override

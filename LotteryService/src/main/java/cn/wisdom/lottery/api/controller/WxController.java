@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cn.wisdom.lottery.api.model.LotteryJsonDocument;
+import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.model.JsonDocument;
 import cn.wisdom.lottery.service.wx.WXService;
 
@@ -100,6 +100,6 @@ public class WxController {
 			e.printStackTrace();
 		}
 		
-		return new LotteryJsonDocument(jsapiSignature);
+		return new LotteryAPIResult(jsapiSignature);
 	}
 }
