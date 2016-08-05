@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
+import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
@@ -19,6 +20,9 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
 
     @Autowired
     private LotteryService lotteryService;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private LotteryPrizeService lotteryPrizeService;
@@ -73,7 +77,9 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     @Override
     public Lottery getMyLatestLottery(String openid) throws ServiceException
     {
-        return lotteryService.getMyLatestLottery(openid);
+    	User user = userService.getUserByOpenId(openid);
+    	
+        return lotteryService.getMyLatestLottery(user.getId());
     }
     
     @Override

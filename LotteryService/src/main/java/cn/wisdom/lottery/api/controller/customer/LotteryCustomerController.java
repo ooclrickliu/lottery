@@ -31,6 +31,7 @@ import cn.wisdom.lottery.dao.vo.LotteryNumber;
 import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.dao.vo.WxPayLog;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
+import cn.wisdom.lottery.service.WxPayLogService;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceException;
 
@@ -41,6 +42,9 @@ public class LotteryCustomerController
 
     @Autowired
     private LotteryServiceFacade lotteryServiceFacade;
+    
+    @Autowired
+    private WxPayLogService wxPayLogService;
     
     private static JaxbUtil xml2WxPayLog = new JaxbUtil(WxPayLog.class,
             CollectionWrapper.class);
@@ -135,7 +139,11 @@ public class LotteryCustomerController
 
         if (wxPayLog.getResultCode().equalsIgnoreCase("SUCCESS"))
         {
-            
+        	if(wxPayLogService.getWxPayLogByTradeNo(wxPayLog.getOutTradeNo()) == null)
+        	{
+        		wxPayLogService.saveWxPayLog(wxPayLog);
+        	}
+        	
             return "success";
         }
         else

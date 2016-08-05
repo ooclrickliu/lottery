@@ -200,9 +200,9 @@ public class LotteryServiceImpl implements LotteryService
     }
 
     @Override
-    public Lottery getMyLatestLottery(String openid)
+    public Lottery getMyLatestLottery(long userId)
     {
-         return lotteryDao.getLatestLottery(openid);
+         return lotteryDao.getLatestLottery(userId);
     }
 
     @Override

@@ -139,7 +139,7 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 				content.setTitle(titleStr);
 				
 				//TODO
-				String url = "?openid=" + wxMessage.getFromUserName();
+				String url = "http://cai.southwisdom.cn/....?openid=" + wxMessage.getFromUserName();
 				content.setUrl(url);
 
 				response = builder.addArticle(content).build();

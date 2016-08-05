@@ -1,99 +1,283 @@
 /**
- * Created by Administrator on 2016/6/25.
+ * Created by leo.liu on 2016/8/2.
  */
-"use strict";
+(function ($) {
+    "use strict";
 
-function GetQueryString(name) {
-    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-    var r = window.location.search.substr(1).match(reg);
-    if (r != null)return unescape(r[2]);
-    return null;
-}
-
-var Cookie = {
-    get: function (name) {
-        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
-        if (arr = document.cookie.match(reg))
-            return unescape(arr[2]);
-        else
-            return null;
-    },
-    set: function (name, value) {
-        document.cookie = name + "=" + value;
-    },
-    getFromJson: function (name) {
-        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
-        if (arr = document.cookie.match(reg))
-            return JSON.parse(unescape(arr[2]));
-        else
-            return null;
-    },
-    setToJson: function (name, value) {
-        document.cookie = name + "=" + JSON.stringify(value);
-    }
-};
-
-var getCombineNum = function (total, select) {
-    if (total <= 0 || select <= 0 || total < select) {
-        return 0;
-    }
-
-    var length = select;
-    if (total < select * 2) {
-        length = total - select;
-    }
-
-    if (length == 0) {
-        return 1;
-    }
-
-    var combineNum = 1;
-    for (var i = 0; i < length; i++) {
-        combineNum *= (total - i);
-    }
-    var sub = 1;
-    for (var j = length; j >= 1; j--) {
-        sub *= j;
-    }
-    combineNum /= sub;
-
-    return combineNum;
-};
-
-var ballsText = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33"];
-
-var genRandom = function (max) {
-    return parseInt(max * Math.random());
-};
-
-var getRandomReds = function () {
-    var red = [];
-    var tempBalls = [].concat(ballsText);
-    for (var i = 0; i < 6; i++) {
-        var index = genRandom(33 - i);
-        red[i] = tempBalls[index];
-        tempBalls.splice(index, 1);
-    }
-    return red.sort();
-};
-
-var getRandomBlue = function () {
-    return [ballsText[genRandom(16)]];
-};
-
-var stringifyBalls = function (balls) {
-    return balls.map(function (ball) {
-        return ball.red.toString() + '+' + ball.blue.toString();
+    var router = new Router({
+        container: '#container'
     });
-};
 
-var week = ['日', '一', '二', '三', '四', '五', '六'];
-var getTimeStr = function (time) {
-    var date = new Date(time);
-    var retStr = '周'+week[date.getDay()] + ' ';
-    retStr += date.getHours() + ':';
-    var minute = date.getMinutes();
-    if(minute < 10) minute = '0'+minute;
-    retStr += minute;
-    return retStr;
-};
+    var serverBusy = "<p style=\"margin-top: 50%;text-align: center;\">Sorry! 服务器繁忙,请稍后再试</p>";
+
+    var ssqSelect = {
+        url: '/select',
+        className: 'ssq-select',
+        render: function () {
+            return new Promise(function (resolve, reject) {
+                $.getJSON('/api/lottery/period/current?lotteryType=ssq', function (response) {
+                    if (response.stateCode == "SUCCESS") {
+                        resolve(template('ssqSelect', {lottery: response.data}));
+                        adjustPage();
+                    } else {
+                        resolve(serverBusy);
+                    }
+                }, function () {resolve(serverBusy);});
+            })
+        },
+        bind: ssqSelectController
+    };
+
+    var ssqBuy = {
+        url: '/buy',
+        className: 'ssq-buy',
+        render: function () {
+            var savedBalls = Cookie.getFromJson('balls') || [];
+            return new Promise(function (resolve, reject) {
+                resolve(template('ssqBuy', {list: savedBalls}));
+            })
+        },
+        bind: ssqBuyController
+    };
+
+    router.push(ssqSelect)
+        .push(ssqBuy)
+        .setDefault('/select').init();
+
+    Cookie.set('openid', 'olz_hvsELAlrfI_0715gnh8un04Q');
+    $.getJSON('/api/user/current?code=' + GetQueryString('code') + '&openid=' + Cookie.get('openid'),
+        function (response) {
+            if(response.stateCode == 'SUCCESS'){
+                var user = response.data;
+                Cookie.set('openid', user.openid);
+            } else {
+                $('#container').html(serverBusy);
+            }
+        },
+        function (response) {
+            $('#container').html(serverBusy);
+        }
+    );
+
+    if (/Android/gi.test(navigator.userAgent)) {
+        window.addEventListener('resize', function () {
+            if (document.activeElement.tagName == 'INPUT' || document.activeElement.tagName == 'TEXTAREA') {
+                window.setTimeout(function () {
+                    document.activeElement.scrollIntoViewIfNeeded();
+                }, 0);
+            }
+        })
+    }
+
+    function adjustPage() {
+        var deviceWidth = window.outerWidth;
+        if (deviceWidth >= 320) {
+            $('.ball_row').css("padding-left", Math.floor((deviceWidth - 320) % 51 / 2));
+        }
+    }
+
+    function ssqSelectController() {
+        var selectBalls = {red: [], blue: []};
+        var savedBallsCopy = Cookie.getFromJson('balls') || [];
+        var savedBalls = [];
+
+        updateStateNum();
+
+        $('#container').off().on('tap', '.ball_red', function () {
+            var length = $('.ball_red.active').length,
+                target = $(this);
+            if (target.hasClass('active')) {
+                target.removeClass('active');
+                selectBalls.red.splice(selectBalls.red.indexOf(target.text()), 1);
+            } else {
+                target.addClass('active');
+                selectBalls.red[length] = target.text();
+            }
+            updateStateNum();
+        }).on('tap', '.ball_blue', function () {
+            var length = $('.ball_blue.active').length,
+                target = $(this);
+            if (target.hasClass('active')) {
+                target.removeClass('active');
+                selectBalls.blue.splice(selectBalls.blue.indexOf(target.text()), 1);
+            } else {
+                target.addClass('active');
+                selectBalls.blue[length] = target.text();
+            }
+            updateStateNum();
+        }).on('tap', '#random', function () {
+            selectBalls = {red: getRandomReds(), blue: getRandomBlue()};
+            updateView(selectBalls);
+            updateStateNum();
+        }).on('tap', '#submitDoubleBallSelect', function () {
+            if (savedBalls.length > 0 && $('#stakeNum').text() > 0) {
+                Cookie.setToJson('balls', savedBalls);
+                window.location.hash = '#/buy';
+            }
+        });
+
+        function updateStateNum() {
+            savedBalls = $.extend([], savedBallsCopy);
+            if (selectBalls.red.length >= 6 && selectBalls.blue.length >= 1) {
+                if (JSON.stringify(savedBalls).indexOf(JSON.stringify(selectBalls)) < 0) {
+                    savedBalls.push(selectBalls);
+                }
+            }
+            var stake = 0;
+            $.each(savedBalls, function (index, ball) {
+                stake += getCombineNum(ball.red.length, 6) * getCombineNum(ball.blue.length, 1);
+            });
+            $('#stakeNum').text(stake);
+        }
+
+        function updateView(balls) {
+            var red_balls = $('.ball_red'), blue_balls = $('.ball_blue');
+            red_balls.removeClass('active');
+            blue_balls.removeClass('active');
+
+            red_balls.each(function (index, ballItem) {
+                if (balls.red.indexOf($(ballItem).text()) >= 0) {
+                    $(ballItem).addClass('active');
+                }
+            });
+            blue_balls.each(function (index, ballItem) {
+                if (balls.blue.indexOf($(ballItem).text()) >= 0) {
+                    $(ballItem).addClass('active');
+                }
+            });
+        }
+    }
+
+    function ssqBuyController() {
+        var periodInput = $('#period'),
+            multipleInput = $('#multiple');
+        var savedBalls = Cookie.getFromJson('balls') || [];
+        var singlePeriodAndOneMultipleFee = 0;
+
+        updateView();
+        $('#container').off()
+        .on('tap', '#randomFive', function () {
+            for (var i = 0; i < 5;) {
+                var param = {red: getRandomReds(), blue: getRandomBlue()};
+                if (savedBalls.indexOf(param) < 0) {
+                    savedBalls.push(param);
+                    i++;
+                }
+            }
+            Cookie.setToJson('balls', savedBalls);
+            updateView();
+        })
+        .on('tap', '#selectBall', function () {
+            history.go(-1);
+        })
+        .on('input', ['#period', '#multiple'], updateTotalFee)
+        .on('tap', '#periodMinus', function () {
+            var period = periodInput.val();
+            if (period > 1) {
+                $('#period').val(--period);
+                updateTotalFee();
+            }
+        })
+        .on('tap', '#periodAdd', function () {
+            var period = periodInput.val();
+            $('#period').val(++period);
+            updateTotalFee();
+        })
+        .on('tap', '#multipleMinus', function () {
+            var multiple = multipleInput.val();
+            if (multiple > 1) {
+                $('#multiple').val(--multiple);
+                updateTotalFee();
+            }
+        })
+        .on('tap', '#multipleAdd', function () {
+            var multiple = multipleInput.val();
+            $('#multiple').val(++multiple);
+            updateTotalFee();
+        })
+        .on('change', '#confirmProto', function () {
+            var submitDoubleBallSelect = $('#submitDoubleBallSelect');
+            if ($(this).attr('checked')) {
+                submitDoubleBallSelect.removeClass('weui_btn_disabled');
+            } else {
+                submitDoubleBallSelect.addClass('weui_btn_disabled');
+            }
+        })
+        .on('tap', '.ball_list_item', function () {
+            var _this = $(this);
+            _this.hide();
+            savedBalls.splice(_this.attr('data-index'), 1);
+            Cookie.setToJson('balls', savedBalls);
+            updateView();
+        })
+        .on('tap', '#submitDoubleBallSelect', function () {
+            if (!$('#submitDoubleBallSelect').hasClass('weui_btn_disabled')) {
+                //调用支付接口
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/lottery/ssq/create?tradeType=JSAPI&body=test',
+                    contentType: "application/json",
+                    dataType:'json',
+                    data: JSON.stringify({
+                        numbers: stringifyBalls(savedBalls),
+                        periods: periodInput.val(),
+                        times: multipleInput.val()
+                    }),
+                    success: function (response) {
+                        alert(JSON.stringify(response));
+                        var payInfo = response.data;
+                        pay(generatePayHandle(payInfo));
+                    },
+                    error: function (response) {
+                        alert(JSON.stringify(response));
+                    }
+                });
+            }
+        });
+
+        function updateView() {
+            $('#ball_list').html(template('ssqBuyList', {list: savedBalls}));
+            singlePeriodAndOneMultipleFee = 0;
+            $.each(savedBalls, function (i, ball) {
+                singlePeriodAndOneMultipleFee += getCombineNum(ball.red.length, 6) * getCombineNum(ball.blue.length, 1) * 2;
+            });
+            updateTotalFee();
+        }
+        function updateTotalFee() {
+            $('#totalFee').text(singlePeriodAndOneMultipleFee * periodInput.val() * multipleInput.val());
+        }
+    }
+
+    function generatePayHandle(payInfo) {
+      return function () {
+          WeixinJSBridge.invoke(
+              'getBrandWCPayRequest', {
+                  "appId": payInfo.appId,
+                  "timeStamp": payInfo.timeStamp,
+                  "nonceStr": payInfo.nonceStr,
+                  "package": payInfo.package,
+                  "signType": payInfo.signType,
+                  "paySign": payInfo.paySign
+              },
+              function (res) {
+                  if (res.err_msg == "get_brand_wcpay_request:ok") {
+                      alert("支付成功");
+                  }
+              }
+          );
+      }
+    }
+
+    function pay(payHandle) {
+        if (typeof WeixinJSBridge == "undefined") {
+            if (document.addEventListener) {
+                document.addEventListener('WeixinJSBridgeReady', payHandle, false);
+            } else if (document.attachEvent) {
+                document.attachEvent('WeixinJSBridgeReady', payHandle);
+                document.attachEvent('onWeixinJSBridgeReady', payHandle);
+            }
+        } else {
+            payHandle();
+        }
+    }
+})(Zepto);

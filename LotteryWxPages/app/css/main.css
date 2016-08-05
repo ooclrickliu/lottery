@@ -1,6 +1,10 @@
 body, html {
     height: 100%;
     -webkit-tap-highlight-color: transparent;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -o-user-select:none;
+    user-select:none;
 }
 
 body {
@@ -136,45 +140,31 @@ body {
 }
 
 .ball_list_item {
-    width: 100%;
     font-weight: bold;
     border: 1px solid #dadada;
     border-radius: 2px;
     background-color: #FFFFFF;
     margin-bottom: 12px;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
-.ball_list_item_left {
-    width: 84%;
-    float: left;
-    padding: 10px 5px;
-}
-
-.ball_list_item_right {
-    width: 12%;
-    float: right;
-    text-align: center;
-    padding: 10px 0;
-    border-left: 1px solid #dadada;
-    background: #FFFFFF;
-}
-
-.ball_list_item_right:active {
+.ball_list_item:active {
     background: #dadada;
 }
 
-.ball_list_item_left > p {
+.ball_list_item > p {
     padding-left: 5px;
     padding-right: 5px;
-    float: left;
 }
 
-.remove::after {
-    content: 'X';
-}
+/*.remove::after {*/
+    /*content: 'X';*/
+/*}*/
 
 .footer {
-    position: fixed;
+    position: absolute;
     left: 0;
     bottom: 0;
     border-top: 1px solid #cdcbcf;

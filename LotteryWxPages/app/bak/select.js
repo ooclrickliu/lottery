@@ -4,6 +4,11 @@
 "use strict";
 ;
 (function ($) {
+    var deviceWidth = window.outerWidth;
+    if (deviceWidth >= 320) {
+        $('.ball_row').css("padding-left", Math.floor((deviceWidth - 320) % 51 / 2));
+    }
+
     var selectBalls = {red: [], blue: []};
     var savedBallsCopy = Cookie.getFromJson('balls') || [];
     var savedBalls = [];

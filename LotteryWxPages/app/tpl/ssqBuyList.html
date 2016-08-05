@@ -1,0 +1,11 @@
+{{each list as item i }}
+<div class="ball_list_item" data-index="{{i}}">
+    {{each item.red as red j}}
+    <p class="text-red">{{red}}</p>
+    {{/each}}
+    {{each item.blue as red j}}
+    <p class="text-info">{{red}}</p>
+    {{/each}}
+</div>
+{{/each}}
+

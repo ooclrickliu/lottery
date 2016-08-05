@@ -92,5 +92,12 @@ public interface UserDao
      * @return
      */
 	User getUserByOpenid(String openId);
+
+	/**
+	 * Update user wx info.
+	 * 
+	 * @param user
+	 */
+	void updateUserWxInfo(User user);
      
 }
