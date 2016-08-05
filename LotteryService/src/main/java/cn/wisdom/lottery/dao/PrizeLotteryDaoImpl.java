@@ -1,5 +1,6 @@
 package cn.wisdom.lottery.dao;
 
+import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -79,7 +80,13 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 	public LotteryOpenData getLastestOpenInfo(LotteryType lotteryType) {
 		String errMsg = MessageFormat.format("Failed to query {0} latest open info.", lotteryType);
 		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_LAST_PERIOD, ssqPrizeInfoMapper, errMsg);
-		
+
+		if (prizeLottery != null && prizeLottery.getOpenTime() != null) {
+			Timestamp openTime = prizeLottery.getOpenTime();
+			openTime.setHours(21);
+			openTime.setMinutes(15);
+			prizeLottery.setOpenTime(openTime);
+		}
 		return new LotteryOpenData(prizeLottery);
 	}
 
@@ -87,6 +94,13 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 	public LotteryOpenData getOpenInfo(LotteryType lotteryType, int period) {
 		String errMsg = MessageFormat.format("Failed to query {0} open info of period {1}.", lotteryType, period);
 		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_PERIOD, ssqPrizeInfoMapper, errMsg, period);
+		
+		if (prizeLottery != null && prizeLottery.getOpenTime() != null) {
+			Timestamp openTime = prizeLottery.getOpenTime();
+			openTime.setHours(21);
+			openTime.setMinutes(15);
+			prizeLottery.setOpenTime(openTime);
+		}
 		
 		return new LotteryOpenData(prizeLottery);
 	}
