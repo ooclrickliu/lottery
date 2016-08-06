@@ -23,7 +23,7 @@ public class LotteryOpenData {
 	{
 		this.setExpect(DataConvertUtils.toString(prizeLottery.getPeriod()));
 		this.setOpentime(DateTimeUtils.formatSqlDateTime(prizeLottery.getOpenTime()));
-		this.setOpentimestamp(DateTimeUtils.formatSqlDateTime(prizeLottery.getUpdateTime()));
+		this.setOpentimestamp("" + prizeLottery.getOpenTime().getTime());
 		this.setOpencode(prizeLottery.getNumber());
 	}
 

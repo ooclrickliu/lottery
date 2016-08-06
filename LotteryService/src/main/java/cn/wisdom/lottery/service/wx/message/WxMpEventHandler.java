@@ -146,7 +146,6 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 			}
 			else 
 			{
-				logger.info("您没有购买记录!");
 				response = WxMpXmlOutMessage.TEXT().content("您没有购买记录!")
 						.toUser(wxMessage.getFromUserName())
 						.fromUser(wxMessage.getToUserName()).build();
