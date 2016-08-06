@@ -111,6 +111,6 @@ public interface LotteryService
      * 
      * @return
      */
-    void onPaidSuccess(String orderNo) throws ServiceException;
+    void onPaidSuccess(String orderNo, String openid) throws ServiceException;
 	
 }

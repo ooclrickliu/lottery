@@ -131,7 +131,7 @@ public class LotteryCustomerController
         		wxPayLogService.saveWxPayLog(wxPayLog);
         		
         		// update lottery state
-        		lotteryServiceFacade.onPaidSuccess(wxPayLog.getOutTradeNo());
+        		lotteryServiceFacade.onPaidSuccess(wxPayLog.getOutTradeNo(), wxPayLog.getOpenId());
         	}
         	
             return "success";

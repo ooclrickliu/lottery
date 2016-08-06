@@ -23,6 +23,7 @@ import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.service.exception.ServiceException;
+import cn.wisdom.lottery.service.wx.MessageNotifier;
 
 @Service
 public class LotteryServiceImpl implements LotteryService
@@ -39,6 +40,9 @@ public class LotteryServiceImpl implements LotteryService
     
     @Autowired
     private LotteryDistributeService lotteryDistributeService;
+    
+    @Autowired
+    private MessageNotifier messageNotifier;
 
     @Autowired
     private LotteryDao lotteryDao;
@@ -178,7 +182,7 @@ public class LotteryServiceImpl implements LotteryService
     }
 
     @Override
-    public void onPaidSuccess(String orderNo)
+    public void onPaidSuccess(String orderNo, String openid)
             throws ServiceException
     {
     	logger.info("Receive order paid notification from wx: order[{}]", orderNo);
@@ -193,14 +197,9 @@ public class LotteryServiceImpl implements LotteryService
             distribute(lottery);
             
             // notify customer
-            notifyCustomer(lottery);
+            messageNotifier.notifyCustomerPaidSuccess(lottery, openid);
 		}
     }
-
-	private void notifyCustomer(Lottery lottery) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	private void distribute(final Lottery lottery) {
 		// distribute to merchant.

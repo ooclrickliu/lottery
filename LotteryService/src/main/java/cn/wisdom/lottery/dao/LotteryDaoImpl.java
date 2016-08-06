@@ -260,6 +260,15 @@ public class LotteryDaoImpl implements LotteryDao {
 		Lottery lottery = daoHelper.queryForObject(
 				GET_LOTTERY_BY_ORDER, lotteryMapper, errMsg, orderNo);
 		
+		if (lottery != null) {
+			List<Lottery> lotteries = new ArrayList<Lottery>();
+			lotteries.add(lottery);
+			
+			getLotteryPeriods(lotteries);
+			
+			getLotteryNumbers(lotteries);
+		}
+		
 		return lottery;
 	}
 

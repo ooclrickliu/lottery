@@ -15,6 +15,7 @@ import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.service.exception.ServiceException;
+import cn.wisdom.lottery.service.wx.MessageNotifier;
 
 @Service
 public class LotteryDistributeServiceImpl implements LotteryDistributeService {
@@ -24,6 +25,9 @@ public class LotteryDistributeServiceImpl implements LotteryDistributeService {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private MessageNotifier messageNotifier;
     
     @Autowired
     private AppProperty appProperties;
@@ -64,7 +68,7 @@ public class LotteryDistributeServiceImpl implements LotteryDistributeService {
         lotteryDao.updateDistributeState(lottery);
         
         // notify merchant
-		
+        messageNotifier.notifyMerchantDistributed(lottery, merchant.getOpenid());
 	}
 
 	private User getTargetMerchant()

@@ -1,20 +1,16 @@
 package cn.wisdom.lottery.service.wx;
 
-import java.text.MessageFormat;
-import java.util.List;
-
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.bean.WxMpCustomMessage;
+import me.chanjar.weixin.mp.bean.WxMpCustomMessage.WxArticle;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
-import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.dao.vo.AppProperty;
 import cn.wisdom.lottery.dao.vo.Lottery;
-import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.UserService;
 
 @Service
@@ -32,82 +28,84 @@ public class MessageNotifierImpl implements MessageNotifier {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageNotifierImpl.class.getName());
 
 	private void sendTextMessage(String content, String openid)
-			throws WxErrorException {
+	{
 		WxMpCustomMessage message = WxMpCustomMessage.TEXT()
 				.content(content).toUser(openid).build();
-		wxService.getWxMpService().customMessageSend(message);
+		try {
+			wxService.getWxMpService().customMessageSend(message);
+		} catch (WxErrorException e) {
+			LOGGER.error("Failed to send text messages", message);
+		}
+	}
+	
+	private void sendNewsMessage(WxArticle article, String openid)
+	{
+		WxMpCustomMessage message = WxMpCustomMessage.NEWS().addArticle(article)
+				.toUser(openid).build();
+		try {
+			wxService.getWxMpService().customMessageSend(message);
+		} catch (WxErrorException e) {
+			LOGGER.error("Failed to send news messages", message);
+		}
 	}
 	
 	@Override
-	public void notifyCustomerPaidSuccess(Lottery lottery)
-			throws WxErrorException {
-		String content = MessageFormat.format("支付成功!您的投注(金额：{0})已审批通过!",
-				creditApply.getAmount());
-
-		User user = userService.getUserById(creditApply.getUserId());
-		
-		sendTextMessage(content, user.getOpenid());
-	}
-
-	@Override
-	public void notifyBossNewApply(CreditApply creditApply)
+	public void notifyCustomerPaidSuccess(Lottery lottery, String openid)
 	{
-
-		String content = MessageFormat.format("Boss, 有新借款申请(金额：{0})，请尽快审批!",
-				creditApply.getAmount());
-
-		List<String> bossOpenidList = appProperty.getBossOpenidList();
-		for (String bossOpenid : bossOpenidList) {
-			try {
-				sendTextMessage(content, bossOpenid);
-			} catch (WxErrorException e) {
-				String errMsg = MessageFormat.format("Failed to notify boss [{0}]", bossOpenid);
-				LOGGER.error(errMsg, e);
-			}
+		WxArticle news = new WxArticle();
+		news.setTitle("投注成功");
+		news.setPicUrl("");
+		
+		int period = lottery.getPeriods().get(0);
+		String descStr = lottery.getLotteryType().getTypeName() + "-" + period + "期\n";
+		descStr += "倍数: " + lottery.getTimes();
+		if (lottery.getPeriods().size() > 1) {
+			descStr += "        追号: " + lottery.getPeriods() + "期";
 		}
+		descStr += "\n投注号码:\n";
+		
+		int num = lottery.getNumbers().size();
+		for (int i = 0; i < num && i < 5; i++) { // 最多显示5组号码
+			descStr += "    "
+					+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
+					.replaceAll("\\+", " \\+ ") + "\n";
+		}
+		if (num > 5) {
+			descStr += "    ...";
+		}
+		news.setUrl("http://cai.southwisdom.cn/lottery_detail.html?openid=" + openid);
+		
+		news.setDescription(descStr);
+		
+		sendNewsMessage(news, openid);
 	}
 
 	@Override
-	public void notifyUserApplyApproved(CreditApply creditApply) throws WxErrorException {
-		String content = MessageFormat.format("您好, 您的借款申请(金额：{0})已审批通过!",
-				creditApply.getAmount());
-
-		User user = userService.getUserById(creditApply.getUserId());
+	public void notifyMerchantDistributed(Lottery lottery, String openid)
+	{
+		WxArticle news = new WxArticle();
+		news.setTitle("新投注通知");
+		news.setPicUrl("");
 		
-		sendTextMessage(content, user.getOpenid());
-	}
-
-	@Override
-	public void notifyUserReturnSuccess(CreditApply apply, CreditPayRecord payRecord) throws WxErrorException {
-		
-		String content = "";
-		
-		if (apply.getRemainBase() > 0) {
-			content = MessageFormat.format("还款成功！\n\n您借款总额: {0}元 \n应还本金: {1}元 \n利息: {2}元 \n本次还款: {3}元 \n剩余应还本金: {4}元 \n还款时间: {5}",
-					apply.getAmount(), payRecord.getCreditBase(), payRecord.getInterest(), 
-					payRecord.getReturnedAmount(), apply.getRemainBase(), 
-					DateTimeUtils.formatSqlDateTime(payRecord.getReturnTime()));
+		int period = lottery.getPeriods().get(0);
+		String descStr = lottery.getLotteryType().getTypeName() + "-" + period + "期\n";
+		descStr += "倍数: " + lottery.getTimes();
+		if (lottery.getPeriods().size() > 1) {
+			descStr += "        追号: " + lottery.getPeriods() + "期";
 		}
-		else {
-			content = MessageFormat.format("还款成功！\n\n您借款总额: {0}元 \n应还本金: {1}元 \n利息: {2}元 \n本次还款: {3}元 \n还款时间: {4} \n\n本单借款已还清!",
-					apply.getAmount(), payRecord.getCreditBase(), payRecord.getInterest(), payRecord.getReturnedAmount(),
-					DateTimeUtils.formatSqlDateTime(payRecord.getReturnTime()));
+		descStr += "\n投注号码:\n";
+		
+		for (int i = 0; i < lottery.getNumbers().size(); i++) {
+			descStr += "    "
+					+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
+					.replaceAll("\\+", " \\+ ") + "\n";
 		}
-
-		User user = userService.getUserById(apply.getUserId());
+		descStr += "\n金额: " + lottery.getTotalFee() + "元";
 		
-		sendTextMessage(content, user.getOpenid());
-	}
-
-	@Override
-	public void notifyUserReturnFailed(CreditApply apply, CreditPayRecord payRecord)
-			throws WxErrorException {
-		String content = MessageFormat.format("还款失败! \n您于{0} 还款{1}元未成功。",
-				DateTimeUtils.formatSqlDateTime(payRecord.getReturnTime()), payRecord.getReturnedAmount());
-
-		User user = userService.getUserById(apply.getUserId());
+		news.setDescription(descStr);
+		news.setUrl("http://cai.southwisdom.cn/lottery_detail.html?openid=" + openid);
 		
-		sendTextMessage(content, user.getOpenid());
+		sendNewsMessage(news, openid);
 	}
 
 }
