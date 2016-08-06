@@ -100,11 +100,11 @@ public interface LotteryService
 	/**
 	 * Get customer's lotteries.
 	 * 
-	 * @param openid
+	 * @param owner
 	 * @param limit
 	 * @return
 	 */
-	List<Lottery> getLotteries(String openid, int limit);
+	List<Lottery> getLotteries(long owner);
 	
     /**
      * Handle paid success order.

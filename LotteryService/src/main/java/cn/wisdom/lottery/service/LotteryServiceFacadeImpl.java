@@ -83,10 +83,10 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     }
     
     @Override
-    public List<Lottery> getLotteries(String openid, int limit)
+    public List<Lottery> getLotteries(long owner)
     		throws ServiceException {
     	
-    	return lotteryService.getLotteries(openid, limit);
+    	return lotteryService.getLotteries(owner);
     }
 
     @Override

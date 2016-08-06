@@ -105,11 +105,11 @@ public class LotteryCustomerController
 
     @RequestMapping(method = RequestMethod.GET, value = "/list")
     @ResponseBody
-    public JsonDocument getMyLotteries(@RequestParam int limit) 
+    public JsonDocument getMyLotteries() 
     		throws ServiceException
     {
-        String openId = SessionContext.getCurrentUser().getOpenid();
-        List<Lottery> lotteries = lotteryServiceFacade.getLotteries(openId, limit);
+        long owner = SessionContext.getCurrentUser().getId();
+        List<Lottery> lotteries = lotteryServiceFacade.getLotteries(owner);
 
         return new LotteryAPIResult(lotteries);
     }

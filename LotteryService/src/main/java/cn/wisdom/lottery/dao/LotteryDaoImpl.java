@@ -284,12 +284,12 @@ public class LotteryDaoImpl implements LotteryDao {
 	}
 	
 	@Override
-	public List<Lottery> getLotteries(String openid, int limit) {
+	public List<Lottery> getLotteries(long owner) {
 		String errMsg = MessageFormat.format(
-				"Failed to query lottery by openid [{0}], limit [{1}]",
-				openid, limit);
+				"Failed to query lottery by openid [{0}]",
+				owner);
 		List<Lottery> lotteries = daoHelper.queryForList(
-				GET_LOTTERY_BY_USER, lotteryMapper, errMsg, openid, limit);
+				GET_LOTTERY_BY_USER, lotteryMapper, errMsg, owner, 100);
 		
 		getLotteryPeriods(lotteries);
 		

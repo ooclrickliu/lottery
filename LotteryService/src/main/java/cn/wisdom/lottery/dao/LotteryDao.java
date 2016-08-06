@@ -21,7 +21,7 @@ public interface LotteryDao {
 
 	Lottery getLatestLottery(long userId);
 
-	List<Lottery> getLotteries(String openid, int limit);
+	List<Lottery> getLotteries(long owner);
 
 	void updateTicketState(Lottery lottery);
 

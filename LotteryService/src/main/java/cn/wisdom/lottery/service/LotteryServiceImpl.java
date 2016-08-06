@@ -234,8 +234,8 @@ public class LotteryServiceImpl implements LotteryService
     }
 
     @Override
-    public List<Lottery> getLotteries(String openid, int limit) {
+    public List<Lottery> getLotteries(long owner) {
     	
-    	return lotteryDao.getLotteries(openid, limit);
+    	return lotteryDao.getLotteries(owner);
     }
 }
