@@ -16,6 +16,8 @@ import cn.wisdom.lottery.dao.LotteryDao;
 import cn.wisdom.lottery.dao.constant.BusinessType;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.TicketState;
+import cn.wisdom.lottery.dao.threadpool.OVTask;
+import cn.wisdom.lottery.dao.threadpool.OVThreadPoolExecutor;
 import cn.wisdom.lottery.dao.vo.AppProperty;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.service.context.SessionContext;
@@ -34,9 +36,15 @@ public class LotteryServiceImpl implements LotteryService
 
     @Autowired
     private LotteryPriceService lotteryPriceService;
+    
+    @Autowired
+    private LotteryDistributeService lotteryDistributeService;
 
     @Autowired
     private LotteryDao lotteryDao;
+    
+    @Autowired
+    private OVThreadPoolExecutor executor;
 
     private Logger logger = LoggerFactory.getLogger(LotteryService.class
             .getName());
@@ -170,20 +178,40 @@ public class LotteryServiceImpl implements LotteryService
     }
 
     @Override
-    public void onPaidSuccess(String userId, long lotteryId)
+    public void onPaidSuccess(String orderNo)
             throws ServiceException
     {
-        Lottery lottery = lotteryDao.getLottery(lotteryId, false, false);
+    	logger.info("Receive order paid notification from wx: order[{}]", orderNo);
+        final Lottery lottery = lotteryDao.getLotteryByOrder(orderNo);
 
-        lottery.setTicketState(TicketState.Paid);
+        if (lottery != null && lottery.getTicketState() == TicketState.UnPaid) {
+            lottery.setTicketState(TicketState.Paid);
 
-        lotteryDao.updateTicketState(lottery);
+            lotteryDao.updateTicketState(lottery);
 
-        // default distribute to sb.
-        this.distributeTicket(lotteryId, 2);
-
-        // notify merchants
+            distribute(lottery);
+		}
     }
+
+	private void distribute(final Lottery lottery) {
+		// distribute to merchant.
+		executor.submitTask(new OVTask() {
+			
+			@Override
+			public void run() {
+		        try {
+					lotteryDistributeService.distribute(lottery);
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			@Override
+			public String getDescption() {
+				return "LotteryDistribute";
+			}
+		});
+	}
 
     @Override
     public List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)

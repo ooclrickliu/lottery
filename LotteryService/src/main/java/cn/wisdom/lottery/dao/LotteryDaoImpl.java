@@ -57,6 +57,9 @@ public class LotteryDaoImpl implements LotteryDao {
 	
 	private static final String GET_LOTTERY_BY_USER = GET_LOTTERY_JOIN_PREFIX
 			+ " where owner = ? and ticket_state <> 'UnPaid' group by l.id order by id desc limit ?";
+	
+	private static final String GET_LOTTERY_BY_ORDER = GET_LOTTERY_PREFIX
+			+ " where order_no = ? limit 1";
 
 	private static final String UPDATE_LOTTERY_TICKET_STATE = "update lottery set ticket_state = ?, update_time = current_timestamp "
 			+ "where order_no = ?";
@@ -247,6 +250,17 @@ public class LotteryDaoImpl implements LotteryDao {
 		getLotteryNumbers(lotteries);
 
 		return lotteries;
+	}
+	
+	@Override
+	public Lottery getLotteryByOrder(String orderNo) {
+		String errMsg = MessageFormat.format(
+				"Failed to get lottery by orderNo [{0}]",
+				orderNo);
+		Lottery lottery = daoHelper.queryForObject(
+				GET_LOTTERY_BY_ORDER, lotteryMapper, errMsg, orderNo);
+		
+		return lottery;
 	}
 
 	@Override

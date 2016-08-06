@@ -83,19 +83,6 @@ public class LotteryCustomerController
         return new LotteryAPIResult(wxPayInfoMap);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/paid")
-    @ResponseBody
-    public JsonDocument onOrderPaid(@RequestParam long lotteryId)
-            throws ServiceException
-    {
-
-        User user = SessionContext.getCurrentUser();
-
-        lotteryServiceFacade.onPaidSuccess("" + user.getId(), lotteryId);
-
-        return LotteryAPIResult.SUCCESS;
-    }
-
     @RequestMapping(method = RequestMethod.GET, value = "/detail")
     @ResponseBody
     public JsonDocument viewLottery(@RequestParam long lotteryId)
@@ -142,6 +129,9 @@ public class LotteryCustomerController
         	if(wxPayLogService.getWxPayLogByTradeNo(wxPayLog.getOutTradeNo()) == null)
         	{
         		wxPayLogService.saveWxPayLog(wxPayLog);
+        		
+        		// update lottery state
+        		lotteryServiceFacade.onPaidSuccess(wxPayLog.getOutTradeNo());
         	}
         	
             return "success";

@@ -106,98 +106,11 @@ public interface LotteryService
 	 */
 	List<Lottery> getLotteries(String openid, int limit);
 	
-	/*********************************************************************************/
-//	
-//    /**
-//     * Get all orders.
-//     * 
-//     * @param deviceId
-//     * @throws ServiceException
-//     */
-//    List<Order> getOrderList(String deviceId) throws ServiceException;
-//
-//    /**
-//     * Get all unpaid orders of current user.
-//     * 
-//     * @param deviceId
-//     * @return
-//     */
-//    List<Order> getUnpaidOrderList(String deviceId) throws ServiceException;
-//
     /**
      * Handle paid success order.
      * 
      * @return
      */
-    void onPaidSuccess(String userId, long lotteryId) throws ServiceException;
-//
-//    /**
-//     * Handle refund success order.
-//     * 
-//     * @return
-//     */
-//    void onRefundSuccess(Collection<Long> refundRequestIds) throws ServiceException;
-//
-//    /**
-//     * Get order detail.
-//     * 
-//     * @return
-//     */
-//    Order getOrderDetail(String orderNo) throws ServiceException;
-//
-//    /**
-//     * Delete order.
-//     * 
-//     * @return
-//     */
-//    boolean deleteOrder(String deviceId, String orderNo) throws ServiceException;
-//
-//    /**
-//     * Cancel wait for pay order.
-//     * 
-//     * @param deviceId
-//     * @param orderNo
-//     */
-//    boolean cancelOrder(String deviceId, String orderNo) throws ServiceException;
-//
-//    /**
-//     * Convert payment order to doorbell order.
-//     * 
-//     * @param paymentOrder
-//     * @return
-//     * @throws ServiceException
-//     */
-//    Order createLotterySSQ(com.ovt.order.util.entity.Order paymentOrder) throws ServiceException;
-//
-//    /**
-//     * 
-//     * @param map
-//     * @return
-//     * @throws ServiceException
-//     */
-//    com.ovt.order.util.entity.Order appAliNotify(Map<String, String[]> map) throws ServiceException;
-//
-//    /**
-//     * Just for test
-//     * 
-//     * @param orderNo
-//     * @param totalFee
-//     * @return
-//     * @throws ServiceException
-//     */
-//    String asyncAliNotify(String orderNo, float totalFee) throws ServiceException;
-//
-//    /**
-//     * Just for test
-//     * 
-//     * @param orderNo
-//     * @param totalFee
-//     * @param time
-//     * @return
-//     * @throws ServiceException
-//     */
-//    String asyncAliNotify(String orderNo, float totalFee, String time) throws ServiceException;
-
-
+    void onPaidSuccess(String orderNo) throws ServiceException;
 	
 }

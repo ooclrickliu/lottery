@@ -90,10 +90,10 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     }
 
     @Override
-    public void onPaidSuccess(String userId, long lotteryId)
+    public void onPaidSuccess(String orderNo)
             throws ServiceException
     {
-        lotteryService.onPaidSuccess(userId, lotteryId);
+        lotteryService.onPaidSuccess(orderNo);
     }
 
     @Override

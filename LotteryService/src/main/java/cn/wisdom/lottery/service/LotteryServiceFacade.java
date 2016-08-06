@@ -29,7 +29,7 @@ public interface LotteryServiceFacade
     LotteryOpenData getOpenInfo(LotteryType lotteryType, int period)
             throws ServiceException;
 
-    void onPaidSuccess(String userId, long lotteryId) throws ServiceException;
+    void onPaidSuccess(String orderNo) throws ServiceException;
 
     Lottery getLottery(long lotteryId) throws ServiceException;
 
