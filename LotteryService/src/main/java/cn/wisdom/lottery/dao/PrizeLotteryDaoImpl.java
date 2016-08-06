@@ -65,6 +65,12 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 		String errMsg = MessageFormat.format("Failed to query {0} current period info.", lotteryType);
 		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_CURRENT_PERIOD, ssqPrizeInfoMapper, errMsg);
 		
+		if (prizeLottery != null && prizeLottery.getOpenTime() != null) {
+			Timestamp openTime = prizeLottery.getOpenTime();
+			openTime.setHours(21);
+			openTime.setMinutes(15);
+			prizeLottery.setOpenTime(openTime);
+		}
 		return new LotteryOpenData(prizeLottery);
 	}
 

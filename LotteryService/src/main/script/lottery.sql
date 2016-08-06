@@ -34,7 +34,8 @@ CREATE TABLE IF NOT EXISTS `user` (
   `phone` varchar(20) DEFAULT NULL,
   `card_no` varchar(20) DEFAULT NULL,`nick_name` varchar(50) NOT NULL,
 
-  `sex` bit(1) NULL,
+  `nick_name` varchar(200) DEFAULT NULL,
+  `sex` varchar(20) NULL,
   `province` varchar(50) NULL,
   `city` varchar(50) NULL,
   `country` varchar(50) NULL,
@@ -292,6 +293,27 @@ INSERT INTO `prize_no_ssq` (`id`, `period`, `open_time`, `number`, `create_time`
 (154, 2016153, '2016-12-29 11:00:00', NULL, '2016-07-11 14:07:48', '2016-07-11 14:07:48');
 
 -- --------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `wx_pay_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `appid` varchar(32) NOT NULL,
+  `bank_type` varchar(16) NOT NULL,
+  `cash_fee` int NOT NULL,
+  `fee_type` varchar(16) NOT NULL,
+  `is_subscribe` varchar(1) NOT NULL,
+  `mch_id` varchar(32) NOT NULL,
+  `nonce_str` varchar(32) NOT NULL,
+  `openid` varchar(128) NOT NULL,
+  `out_trade_no` varchar(32) NOT NULL,
+  `result_code` varchar(16) NOT NULL,
+  `return_code` varchar(16) NOT NULL,
+  `sign` varchar(32) NOT NULL,
+  `time_end` varchar(14) NOT NULL,
+  `total_fee` int NOT NULL,
+  `trade_type` varchar(16) NOT NULL,
+  `transaction_id` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

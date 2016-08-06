@@ -24,7 +24,6 @@ import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.RoleType;
 import cn.wisdom.lottery.dao.constant.TicketState;
 import cn.wisdom.lottery.dao.vo.Lottery;
-import cn.wisdom.lottery.dao.vo.LotteryNumber;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
 import cn.wisdom.lottery.service.UserService;
 import cn.wisdom.lottery.service.exception.ServiceException;
@@ -96,53 +95,51 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 
 		return response;
 	}
-
+	
 	private WxMpXmlOutMessage getMyLatestLottery(WxMpXmlMessage wxMessage) {
 		WxMpXmlOutMessage response = null;
-
+		
 		try {
 			Lottery lottery = lotteryServiceFacade.getMyLatestLottery(wxMessage.getFromUserName());
-
+			
 			if (lottery != null) {
 				int period = lottery.getPeriods().get(0);
 				LotteryOpenData openInfo = lotteryServiceFacade.getOpenInfo(
-						LotteryType.SSQ, period);
-
+						lottery.getLotteryType(), period);
+				
 				NewsBuilder builder = WxMpXmlOutMessage.NEWS()
 						.toUser(wxMessage.getFromUserName())
 						.fromUser(wxMessage.getToUserName());
-
-				WxMpXmlOutNewsMessage.Item title = new WxMpXmlOutNewsMessage.Item();
-				title.setTitle("您的最新投注记录");
-				title.setDescription("");
-				title.setPicUrl("");
-				title.setUrl("");
-
-				builder.addArticle(title);
-
-				WxMpXmlOutNewsMessage.Item content = new WxMpXmlOutNewsMessage.Item();
-				content.setDescription("");
-				content.setPicUrl("");
-				String titleStr = "双色球" + period + "期\n";
-				titleStr += "购买日期: "
+				
+				WxMpXmlOutNewsMessage.Item news = new WxMpXmlOutNewsMessage.Item();
+				news.setTitle("您最近投注记录");
+				news.setPicUrl("");
+				
+				String descStr = lottery.getLotteryType().getTypeName() + "-" + period + "期\n";
+				descStr += "购买日期: "
 						+ DateTimeUtils.formatSqlDateTime(lottery
 								.getCreateTime()) + "\n";
-				titleStr += "开奖日期" + openInfo.getOpentime();
-				titleStr += "中奖结果: " + this.getLotteryState(lottery);
-				titleStr += "投注号码: \n";
-				for (LotteryNumber lotteryNumber : lottery.getNumbers()) {
-					titleStr += "    "
-							+ lotteryNumber.getNumber().replaceAll(",", " ")
-									.replaceAll("\\+", " \\+ ") + "\n";
-				}
-
-				content.setTitle(titleStr);
+				descStr += "开奖日期: " + openInfo.getOpentime() + "\n";
+				descStr += "中奖结果: " + this.getLotteryState(lottery) + "\n";
+				descStr += "投注号码:  (×" + lottery.getTimes() + "倍)\n";
 				
-				//TODO
-				String url = "http://cai.southwisdom.cn/....?openid=" + wxMessage.getFromUserName();
-				content.setUrl(url);
-
-				response = builder.addArticle(content).build();
+				int num = lottery.getNumbers().size();
+				for (int i = 0; i < num && i < 5; i++) { // 最多显示5组号码
+					descStr += "    "
+							+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
+							.replaceAll("\\+", " \\+ ") + "\n";
+				}
+				
+				if (num > 5) {
+					descStr += "    ...";
+				}
+				
+				news.setDescription(descStr);
+				
+				String url = "http://cai.southwisdom.cn/lottery.html?openid=" + wxMessage.getFromUserName();
+				news.setUrl(url);
+				
+				response = builder.addArticle(news).build();
 			}
 			else 
 			{
@@ -182,6 +179,8 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		try {
 			LotteryOpenData latestOpenInfo = lotteryServiceFacade
 					.getLatestOpenInfo(LotteryType.SSQ);
+			
+			LotteryOpenData currentPeriod = lotteryServiceFacade.getCurrentPeriod(LotteryType.SSQ);
 
 			WxMpXmlOutNewsMessage.Item article = new WxMpXmlOutNewsMessage.Item();
 			article = new WxMpXmlOutNewsMessage.Item();
@@ -190,7 +189,8 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 			String desc = latestOpenInfo.getOpencode().replaceAll("\\+", " \\+ ")
 					.replaceAll(",", " ");
 			desc += "\n\n";
-			desc += "开奖时间 " + latestOpenInfo.getOpentime();
+			desc += "开   奖   时  间: " + latestOpenInfo.getOpentime() + "\n\n";
+			desc += "下期开奖时间: " + currentPeriod.getOpentime();
 			article.setDescription(desc);
 			article.setPicUrl("");
 			article.setUrl("");

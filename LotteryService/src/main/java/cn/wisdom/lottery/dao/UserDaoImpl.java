@@ -222,6 +222,7 @@ public class UserDaoImpl implements UserDao
         		user.getHeadImgUrl(), 
         		user.getSex(), 
         		user.getSubscribeTime(), 
+        		user.getUnionid(), 
         		user.getId());
 	}
 }
