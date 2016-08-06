@@ -51,6 +51,13 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		.fromUser(wxMessage.getToUserName()).build();
 	}
 	
+	private static WxMpXmlOutMessage buildOutMessage(WxMpXmlMessage wxMessage, String content)
+	{
+		return WxMpXmlOutMessage.TEXT().content(content)
+				.toUser(wxMessage.getFromUserName())
+				.fromUser(wxMessage.getToUserName()).build();
+	}
+	
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
 			Map<String, Object> context, WxMpService wxMpService,
@@ -214,7 +221,7 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		} catch (ServiceException e) {
 			logger.error("failed handle subscribe event.", e);
 		}
-		return buildSuccessOutMessage(wxMessage);
+		return buildOutMessage(wxMessage, "欢迎来到千彩慧友公众平台!");
 	}
 
 }

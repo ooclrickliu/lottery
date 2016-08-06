@@ -189,9 +189,18 @@ public class LotteryServiceImpl implements LotteryService
 
             lotteryDao.updateTicketState(lottery);
 
+            // distribute
             distribute(lottery);
+            
+            // notify customer
+            notifyCustomer(lottery);
 		}
     }
+
+	private void notifyCustomer(Lottery lottery) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	private void distribute(final Lottery lottery) {
 		// distribute to merchant.
