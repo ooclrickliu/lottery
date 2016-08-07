@@ -38,19 +38,17 @@ public class LotteryDaoImpl implements LotteryDao {
 	
 	private static final String GET_LOTTERY_JOIN_PREFIX = "select l.* from lottery l join lottery_period p on l.id = p.lottery_id ";
 	
-	private static final String GET_LOTTERY_ID_PREFIX = "select l.id, l.lottery_type from lottery_period p join lottery l on p.lottery_id = l.id ";
-	
-	private static final String GET_LOTTERY_BY_TICKET_STATE = GET_LOTTERY_ID_PREFIX
-			+ " where period = ? and lottery_type = ? and ticket_state = ?";
+	private static final String GET_LOTTERY_BY_TICKET_STATE = GET_LOTTERY_JOIN_PREFIX
+			+ " where lottery_type = ? and ticket_state in ({0}) and period = ?";
 
 	private static final String GET_LOTTERY_BY_ID = GET_LOTTERY_PREFIX
 			+ " where id in( {0})";
 	
 	private static final String GET_LOTTERY_NUMBER = "select id, lottery_id, number from lottery_number "
-			+ " where lottery_id in(?) order by id";
+			+ " where lottery_id in({0}) order by id";
 	
 	private static final String GET_LOTTERY_PERIOD = "select id, lottery_id, period from lottery_period "
-			+ " where lottery_id in(?) order by id";
+			+ " where lottery_id in({0}) order by id";
 
 	private static final String GET_LOTTERY_BY_MERCHANT = GET_LOTTERY_JOIN_PREFIX
 			+ " where lottery_type = ? and period = ? and merchant = ?";
@@ -63,6 +61,10 @@ public class LotteryDaoImpl implements LotteryDao {
 
 	private static final String UPDATE_LOTTERY_TICKET_STATE = "update lottery set ticket_state = ?, update_time = current_timestamp "
 			+ "where order_no = ?";
+	
+	private static final String UPDATE_SSQ_PRIZED_STATE = "update lottery set ticket_state = 'Prized', "
+			+ "update_time = current_timestamp "
+			+ "where lottery_type = 'SSQ' and period = ? and ";
 	
 	private static final String UPDATE_LOTTERY_PRINT_STATE = "update lottery set ticket_state = 'Printed', "
 			+ "ticket_print_time = current_timestamp, update_time = current_timestamp "
@@ -196,20 +198,18 @@ public class LotteryDaoImpl implements LotteryDao {
 
 	private void getLotteryPeriods(List<Lottery> lotteries) {
 		// lottery numbers
-		List<Long> lotteryIds = new ArrayList<Long>();
 		Map<Long, Lottery> lotteryMap = new HashMap<Long, Lottery>();
 		for (Lottery lottery : lotteries) {
-			lotteryIds.add(lottery.getId());
 			lotteryMap.put(lottery.getId(), lottery);
 		}
-		String lotteryIdCSV = StringUtils.getCSV(lotteryIds);
+		String lotteryIdCSV = StringUtils.getCSV(lotteryMap.keySet());
 
 		if (StringUtils.isNotBlank(lotteryIdCSV)) {
 			String errMsg = MessageFormat.format(
 					"Faild to get lottery periods, [{0}]", lotteryIdCSV);
+			String sql = MessageFormat.format(GET_LOTTERY_PERIOD, lotteryIdCSV);
 			List<LotteryPeriod> periods = daoHelper.queryForList(
-					GET_LOTTERY_PERIOD, lotteryPeriodMapper, errMsg,
-					lotteryIdCSV);
+					sql, lotteryPeriodMapper, errMsg);
 
 			for (LotteryPeriod lotteryPeriod : periods) {
 				lotteryMap.get(lotteryPeriod.getLotteryId()).getPeriods().add(lotteryPeriod.getPeriod());
@@ -219,17 +219,16 @@ public class LotteryDaoImpl implements LotteryDao {
 
 	private void getLotteryNumbers(List<Lottery> lotteries) {
 		// lottery numbers
-		List<Long> lotteryIds = new ArrayList<Long>();
 		Map<Long, Lottery> lotteryMap = new HashMap<Long, Lottery>();
 		for (Lottery lottery : lotteries) {
-			lotteryIds.add(lottery.getId());
 			lotteryMap.put(lottery.getId(), lottery);
 		}
-		String lotteryIdCSV = StringUtils.getCSV(lotteryIds);
+		String lotteryIdCSV = StringUtils.getCSV(lotteryMap.keySet());
 		
 		if (StringUtils.isNotBlank(lotteryIdCSV)) {
 			String errMsg = MessageFormat.format("Faild to get lottery numbers, [{0}]", lotteryIdCSV);
-			List<LotteryNumber> numbers = daoHelper.queryForList(GET_LOTTERY_NUMBER, lotteryNumberMapper, errMsg, lotteryIdCSV);
+			String sql = MessageFormat.format(GET_LOTTERY_NUMBER, lotteryIdCSV);
+			List<LotteryNumber> numbers = daoHelper.queryForList(sql, lotteryNumberMapper, errMsg);
 			
 			for (LotteryNumber lotteryNumber : numbers) {
 				lotteryMap.get(lotteryNumber.getLotteryId()).getNumbers().add(lotteryNumber);
@@ -335,6 +334,25 @@ public class LotteryDaoImpl implements LotteryDao {
 
 		daoHelper.batchUpdate(UPDATE_LOTTERY_PRINT_STATE, batchArgs, errMsg);
 	}
+	
+	@Override
+	public void updatePrizedState(List<Lottery> lotteries) {
+		List<String> orderNos = new ArrayList<String>();
+		List<Object[]> batchArgs = new ArrayList<Object[]>();
+		for (Lottery lottery : lotteries) {
+			Object[] args = new Object[1];
+			args[0] = lottery.getOrderNo();
+			
+			batchArgs.add(args);
+			orderNos.add(lottery.getOrderNo());
+		}
+		
+		String errMsg = MessageFormat
+				.format("Failed to update lottery ticketState to [Printed], orderNos: {0}",
+						orderNos);
+		
+		daoHelper.batchUpdate(UPDATE_LOTTERY_PRINT_STATE, batchArgs, errMsg);
+	}
 
 	@Override
 	public void updateDistributeState(Lottery lottery) {
@@ -352,14 +370,36 @@ public class LotteryDaoImpl implements LotteryDao {
 						lottery.getTicketState(), lottery.getOrderNo());
 		daoHelper.update(UPDATE_LOTTERY_FETCH_STATE, errMsg, lottery.getOrderNo());
 	}
+	
+	@Override
+	public List<Lottery> getPaidLotteries(LotteryType lotteryType, int period) {
+		String errMsg = MessageFormat.format(
+				"Failed to query paid lottery by lotteryType [{0}], peroid [{1}]",
+				lotteryType, period);
+		List<TicketState> states = new ArrayList<TicketState>();
+		states.add(TicketState.Paid);
+		states.add(TicketState.Distributed);
+		states.add(TicketState.Printed);
+		String sql = MessageFormat.format(GET_LOTTERY_BY_TICKET_STATE, StringUtils.getCSV(states, true));
+		List<Lottery> lotteries = daoHelper.queryForList(
+				sql, lotteryMapper, errMsg, lotteryType.toString(), period);
+
+		getLotteryNumbers(lotteries);
+
+		return lotteries;
+	}
 
 	@Override
 	public List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period) {
 		String errMsg = MessageFormat.format(
 				"Failed to query printed lottery by lotteryType [{0}], peroid [{1}]",
 				lotteryType, period);
+		
+		List<TicketState> states = new ArrayList<TicketState>();
+		states.add(TicketState.Printed);
+		String sql = MessageFormat.format(GET_LOTTERY_BY_TICKET_STATE, StringUtils.getCSV(states, true));
 		List<Lottery> lotteries = daoHelper.queryForList(
-				GET_LOTTERY_BY_TICKET_STATE, lotteryMapper, errMsg, period, lotteryType.toString(), TicketState.Printed.toString());
+				sql, lotteryMapper, errMsg, lotteryType.toString(), period);
 
 		getLotteryNumbers(lotteries);
 

@@ -122,7 +122,7 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 				news.setTitle("您最近投注记录");
 				news.setPicUrl("");
 				
-				String descStr = lottery.getLotteryType().getTypeName() + "-" + period + "期\n";
+				String descStr = lottery.getLotteryType().getTypeName() + " - " + period + " 期\n";
 				descStr += "购买日期: "
 						+ DateTimeUtils.formatSqlDateTime(lottery
 								.getCreateTime()) + "\n";

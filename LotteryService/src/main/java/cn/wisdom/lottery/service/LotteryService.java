@@ -71,6 +71,15 @@ public interface LotteryService
 	 * @param orderNo
 	 */
 	void fetchTicket(long lotteryId, long userId) throws ServiceException;
+
+	/**
+	 * Get paid lotteries.
+	 * 
+	 * @param lotteryType
+	 * @param period
+	 * @return
+	 */
+	List<Lottery> getPaidLotteries(LotteryType lotteryType, int period);
 	
 	/**
 	 * Get all printed tickets by type and time.

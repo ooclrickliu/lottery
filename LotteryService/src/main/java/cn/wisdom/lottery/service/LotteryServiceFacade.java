@@ -51,8 +51,11 @@ public interface LotteryServiceFacade
     void savePrizeLottery(PrizeLotterySSQ prizeLotterySSQ,
             LotteryType lotteryType) throws ServiceException;
 
-    List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
+    List<Lottery> getPaidLotteries(LotteryType lotteryType, int period)
             throws ServiceException;
+    
+    List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
+    		throws ServiceException;
 
     Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery,
             PrizeLotterySSQ prizeLotterySSQ) throws ServiceException;

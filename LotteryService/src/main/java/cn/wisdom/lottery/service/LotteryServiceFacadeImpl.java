@@ -126,6 +126,13 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
 
         lotteryPrizeService.savePrizeLottery(prizeLotterySSQ, lotteryType);
     }
+    
+    @Override
+    public List<Lottery> getPaidLotteries(LotteryType lotteryType, int period)
+    		throws ServiceException {
+    	
+    	return lotteryService.getPaidLotteries(lotteryType, period);
+    }
 
     @Override
     public List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)

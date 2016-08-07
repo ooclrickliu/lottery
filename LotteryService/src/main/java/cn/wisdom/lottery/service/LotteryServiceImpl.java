@@ -220,6 +220,12 @@ public class LotteryServiceImpl implements LotteryService
 			}
 		});
 	}
+	
+	@Override
+	public List<Lottery> getPaidLotteries(LotteryType lotteryType, int period) {
+		
+		return lotteryDao.getPaidLotteries(lotteryType, period);
+	}
 
     @Override
     public List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)

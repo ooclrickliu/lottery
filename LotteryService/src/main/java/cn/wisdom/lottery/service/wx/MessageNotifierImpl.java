@@ -57,10 +57,10 @@ public class MessageNotifierImpl implements MessageNotifier {
 		news.setPicUrl("");
 		
 		int period = lottery.getPeriods().get(0);
-		String descStr = lottery.getLotteryType().getTypeName() + "-" + period + "期\n";
+		String descStr = lottery.getLotteryType().getTypeName() + " - " + period + " 期\n";
 		descStr += "倍数: " + lottery.getTimes();
 		if (lottery.getPeriods().size() > 1) {
-			descStr += "        追号: " + lottery.getPeriods() + "期";
+			descStr += "        追号: " + lottery.getPeriods().size() + "期";
 		}
 		descStr += "\n投注号码:\n";
 		
@@ -88,10 +88,10 @@ public class MessageNotifierImpl implements MessageNotifier {
 		news.setPicUrl("");
 		
 		int period = lottery.getPeriods().get(0);
-		String descStr = lottery.getLotteryType().getTypeName() + "-" + period + "期\n";
+		String descStr = lottery.getLotteryType().getTypeName() + " - " + period + "期\n";
 		descStr += "倍数: " + lottery.getTimes();
 		if (lottery.getPeriods().size() > 1) {
-			descStr += "        追号: " + lottery.getPeriods() + "期";
+			descStr += "        追号: " + lottery.getPeriods().size() + "期";
 		}
 		descStr += "\n投注号码:\n";
 		

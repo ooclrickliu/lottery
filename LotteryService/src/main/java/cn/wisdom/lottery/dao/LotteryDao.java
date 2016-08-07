@@ -31,6 +31,8 @@ public interface LotteryDao {
 
 	void updateFetchState(Lottery lottery);
 
+	List<Lottery> getPaidLotteries(LotteryType lotteryType, int period);
+
 	List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period);
 
 	void updatePrizeInfo(List<Lottery> prizeLotteries);

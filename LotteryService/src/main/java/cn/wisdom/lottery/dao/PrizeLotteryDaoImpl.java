@@ -56,7 +56,7 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 			args[0] = ssq.getNumber();
 			args[1] = ssq.getPeriod();
 		}
-		String errMsg = MessageFormat.format("Failed to genearte period for year [{0}]", lottery);
+		String errMsg = MessageFormat.format("Failed to save open numbers of {0} - [{1}]", lotteryType, lottery);
 		daoHelper.update(sql, errMsg, args);
 	}
 

@@ -40,10 +40,13 @@ public class LotteryOpenPrizeTask {
 		try {
 			LOGGER.info("SSQ task start...");
 			
-			// 1. get current period
-			LotteryOpenData currentPeriod = lotteryServiceFacade.getCurrentPeriod(LotteryType.SSQ);
-
-			LOGGER.info("Current period: {}", currentPeriod);
+			// 1. get latestOpenInfo
+			LotteryOpenData latestOpenInfo = lotteryServiceFacade.getLatestOpenInfo(LotteryType.SSQ);
+			if (latestOpenInfo.getOpencode() != null) {
+				return;
+			}
+			
+			LOGGER.info("SSQ period {} open ...", latestOpenInfo.getExpect());
 
 			// 2. get open info from web service
 			LotteryOpenInfo lotteryOpenInfo = lotteryRemoteService
@@ -52,14 +55,14 @@ public class LotteryOpenPrizeTask {
 			if (CollectionUtils.isNotEmpty(data)) {
 				LotteryOpenData lotteryOpenData = data.get(0);
 
-				LOGGER.info("Prize code: {}", lotteryOpenData.getOpencode());
+				LOGGER.info("Prize number: {}", lotteryOpenData.getOpencode());
 				
-				int period = DataConvertUtils.toInt(lotteryOpenData.getExpect());
-				if (currentPeriod.getExpect().equals("" + period)) {
+				if (!latestOpenInfo.getExpect().equals(lotteryOpenData.getExpect())) {
 					return;
 				}
 				
-				PrizeLotterySSQ ssq = new PrizeLotterySSQ(period, lotteryOpenData.getOpencode());
+				int period = DataConvertUtils.toInt(latestOpenInfo.getExpect());
+				PrizeLotterySSQ ssq = new PrizeLotterySSQ(period , lotteryOpenData.getOpencode());
 				
 				lotteryServiceFacade.savePrizeLottery(ssq, LotteryType.SSQ);
 				
@@ -83,17 +86,17 @@ public class LotteryOpenPrizeTask {
 		updatePrizeInfo(ssq);
 	}
 
-	private void updatePrizeInfo(PrizeLotterySSQ ssq) throws ServiceException {
+	private void updatePrizeInfo(PrizeLotterySSQ openInfo) throws ServiceException {
 		LOGGER.info("Start to update lotteries' prize info...");
 		
 		// 1. get all "Printed" tickets of this period
-		List<Lottery> printedLotteries = lotteryServiceFacade.getPrintedLotteries(LotteryType.SSQ, ssq.getPeriod());
+		List<Lottery> paidLotteries = lotteryServiceFacade.getPaidLotteries(LotteryType.SSQ, openInfo.getPeriod());
 		
 		// 2. calculate prize info & bonus.
-		if (CollectionUtils.isNotEmpty(printedLotteries)) {
+		if (CollectionUtils.isNotEmpty(paidLotteries)) {
 			List<Lottery> prizeLotteries = new ArrayList<Lottery>();
-			for (Lottery lottery : printedLotteries) {
-				Map<Long, Map<Integer, Integer>> prizeInfo = lotteryServiceFacade.getPrizeInfo(lottery, ssq);
+			for (Lottery lottery : paidLotteries) {
+				Map<Long, Map<Integer, Integer>> prizeInfo = lotteryServiceFacade.getPrizeInfo(lottery, openInfo);
 				
 				if (CollectionUtils.isNotEmpty(prizeInfo)) {
 					try {
