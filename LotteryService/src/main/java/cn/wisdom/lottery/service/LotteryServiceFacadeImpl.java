@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.wisdom.lottery.dao.constant.LotteryType;
+import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
+import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.context.SessionContext;
@@ -97,20 +99,20 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     }
 
     @Override
-    public void fetchTicket(long lotteryId) throws ServiceException
+    public void fetchTicket(long periodId) throws ServiceException
     {
         long userId = SessionContext.getCurrentUser().getId();
-        lotteryService.fetchTicket(lotteryId, userId);
+        lotteryService.fetchTicket(userId, periodId);
     }
 
     // //////////////////////////////////
 
-    @Override
+ /*   @Override
     public void printTickets(List<Long> lotteryIds, long merchantId)
             throws ServiceException
     {
         lotteryService.printTickets(lotteryIds, merchantId);
-    }
+    }*/
 
     @Override
     public List<Lottery> queryLottery(LotteryType lotteryType, int period,
@@ -134,12 +136,12 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     	return lotteryService.getPaidLotteries(lotteryType, period);
     }
 
-    @Override
-    public List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
-            throws ServiceException
-    {
-        return lotteryService.getPrintedLotteries(lotteryType, period);
-    }
+//    @Override
+//    public List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
+//            throws ServiceException
+//    {
+//        return lotteryService.getPrintedLotteries(lotteryType, period);
+//    }
 
     @Override
     public Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery,
@@ -155,7 +157,13 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     }
 
     @Override
-    public void updatePrizeInfo(List<Lottery> prizeLotteries)
+    public void updatePrizeState(int period, PrizeState prizeState) {
+    	
+    	lotteryService.updatePrizeState(period, prizeState);
+    }
+    
+    @Override
+    public void updatePrizeInfo(List<LotteryPeriod> prizeLotteries)
     {
         lotteryService.updatePrizeInfo(prizeLotteries);
     }

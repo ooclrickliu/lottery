@@ -3,7 +3,9 @@ package cn.wisdom.lottery.dao;
 import java.util.List;
 
 import cn.wisdom.lottery.dao.constant.LotteryType;
+import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
+import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 
 public interface LotteryDao {
 	
@@ -19,23 +21,25 @@ public interface LotteryDao {
 
 	Lottery getLotteryByOrder(String orderNo);
 
+	Lottery getLotteryByPeriod(long periodId);
+
 	Lottery getLatestLottery(long userId);
 
 	List<Lottery> getLotteries(long owner);
 
-	void updateTicketState(Lottery lottery);
+	void updatePayState(Lottery lottery);
 
 	void updatePrintState(List<Lottery> lotteries);
 
 	void updateDistributeState(Lottery lottery);
 
-	void updateFetchState(Lottery lottery);
+	void updateFetchState(LotteryPeriod lotteryPeriod);
 
 	List<Lottery> getPaidLotteries(LotteryType lotteryType, int period);
 
-	List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period);
+	void updatePrizeInfo(List<LotteryPeriod> prizeLotteries);
 
-	void updatePrizeInfo(List<Lottery> prizeLotteries);
+	void updatePrizeState(int period, PrizeState prizeState);
 
 	
 }

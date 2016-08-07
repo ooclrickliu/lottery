@@ -10,7 +10,9 @@ package cn.wisdom.lottery.service;
 import java.util.List;
 
 import cn.wisdom.lottery.dao.constant.LotteryType;
+import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
+import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 import cn.wisdom.lottery.service.exception.ServiceException;
 
 /**
@@ -63,14 +65,14 @@ public interface LotteryService
 	 * @param orderNo
 	 * @throws ServiceException
 	 */
-	void printTickets(List<Long> lotteryIds, long merchantId) throws ServiceException;
+//	void printTickets(List<Long> lotteryIds, long merchantId) throws ServiceException;
 	
 	/**
 	 * Owner get ticket from merchant by self.
 	 * 
 	 * @param orderNo
 	 */
-	void fetchTicket(long lotteryId, long userId) throws ServiceException;
+	void fetchTicket(long userId, long periodId) throws ServiceException;
 
 	/**
 	 * Get paid lotteries.
@@ -89,14 +91,22 @@ public interface LotteryService
 	 * @return
 	 * @throws ServiceException
 	 */
-	List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period) throws ServiceException;
+//	List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period) throws ServiceException;
 
+	/**
+	 * Update prize state.
+	 * 
+	 * @param period
+	 * @param prizeState
+	 */
+	void updatePrizeState(int period, PrizeState prizeState);
+	
 	/**
 	 * Update lottery prize info.
 	 * 
 	 * @param prizeLotteries
 	 */
-	void updatePrizeInfo(List<Lottery> prizeLotteries);
+	void updatePrizeInfo(List<LotteryPeriod> prizeLotteries);
 
 	/**
 	 * Get customer's latest lottery.
@@ -121,5 +131,6 @@ public interface LotteryService
      * @return
      */
     void onPaidSuccess(String orderNo, String openid) throws ServiceException;
+
 	
 }

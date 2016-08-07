@@ -12,7 +12,8 @@ import cn.wisdom.lottery.common.utils.JsonUtils;
 import cn.wisdom.lottery.dao.annotation.Column;
 import cn.wisdom.lottery.dao.constant.BusinessType;
 import cn.wisdom.lottery.dao.constant.LotteryType;
-import cn.wisdom.lottery.dao.constant.TicketState;
+import cn.wisdom.lottery.dao.constant.PayState;
+import cn.wisdom.lottery.dao.constant.PrizeState;
 
 /**
  * Lottery代表一张彩票，一张彩票可包含多组数，每组数可以是单式，也可以是复式. 例如： 02,04,11,16,27,29+14 <单式>
@@ -41,19 +42,17 @@ public class Lottery extends BaseEntity
     private String businessTypeValue;
     private BusinessType businessType;
 
-    private List<Integer> periods = new ArrayList<Integer>();
+    private List<LotteryPeriod> periods = new ArrayList<LotteryPeriod>();
 
     @Column("times")
     private int times;
 
     private List<LotteryNumber> numbers = new ArrayList<LotteryNumber>();
 
-    @Column("ticket_state")
-    private String ticketStateValue;
-    private TicketState ticketState;
-
-    private boolean fetched;
-
+    @Column("pay_state")
+    private String payStateValue;
+    private PayState payState;
+    
     @Column("owner")
     private long owner;
 
@@ -63,18 +62,6 @@ public class Lottery extends BaseEntity
     @Column("distribute_time")
     private Timestamp distributeTime;
 
-    @Column("ticket_print_time")
-    private Timestamp ticketPrintTime;
-
-    @Column("ticket_fetch_time")
-    private Timestamp ticketFetchTime;
-
-    @Column("prize_info")
-    private String prizeInfo;
-
-    @Column("prize_bonus")
-    private int prizeBonus;
-
     public static void main(String[] args)
     {
         Lottery lottery = new Lottery();
@@ -82,23 +69,16 @@ public class Lottery extends BaseEntity
         lottery.setLotteryType(LotteryType.SSQ);
         lottery.setBusinessType(BusinessType.Private);
         lottery.setTimes(5);
-        lottery.setTicketState(TicketState.Paid);
-        lottery.setFetched(false);
         lottery.setOwner(10001);
         lottery.setMerchant(1203);
         lottery.setDistributeTime(DateTimeUtils.getCurrentTimestamp());
-        lottery.setTicketPrintTime(DateTimeUtils.getCurrentTimestamp());
-        lottery.setPrizeBonus(9200);
 
-        List<Integer> periods = new ArrayList<Integer>();
-        periods.add(2016067);
-        lottery.setPeriods(periods);
-
-        List<LotteryNumber> numbers = new ArrayList<LotteryNumber>();
-        numbers.add(new LotteryNumber("08,10,11,20,21,27+11"));
-        numbers.add(new LotteryNumber("06,14,15,19,24,28,32+05,10"));
-        lottery.setNumbers(numbers);
-
+        List<LotteryPeriod> periods = new ArrayList<LotteryPeriod>();
+        LotteryPeriod period = new LotteryPeriod();
+        period.setPrizeState(PrizeState.NotOpen);
+        period.setTicketPrintTime(DateTimeUtils.getCurrentTimestamp());
+        period.setPrizeBonus(9200);
+        period.setFetched(false);
         try
         {
             Map<Long, Map<Integer, Integer>> prizeInfo = new HashMap<Long, Map<Integer, Integer>>();
@@ -106,11 +86,19 @@ public class Lottery extends BaseEntity
             hitInfo.put(3, 5);
             hitInfo.put(4, 16);
             prizeInfo.put(230L, hitInfo);
-            lottery.setPrizeInfo(JsonUtils.toJson(prizeInfo));
+            period.setPrizeInfo(JsonUtils.toJson(prizeInfo));
         }
         catch (OVTException e)
         {
         }
+        
+        periods.add(period);
+        lottery.setPeriods(periods);
+
+        List<LotteryNumber> numbers = new ArrayList<LotteryNumber>();
+        numbers.add(new LotteryNumber("08,10,11,20,21,27+11"));
+        numbers.add(new LotteryNumber("06,14,15,19,24,28,32+05,10"));
+        lottery.setNumbers(numbers);
 
         System.out.println(lottery);
     }
@@ -145,22 +133,6 @@ public class Lottery extends BaseEntity
         this.remark = remark;
     }
 
-    public TicketState getTicketState()
-    {
-        if (ticketState == null)
-        {
-            ticketState = TicketState.valueOf(ticketStateValue);
-        }
-
-        return ticketState;
-    }
-
-    public void setTicketState(TicketState ticketState)
-    {
-        this.ticketState = ticketState;
-        this.ticketStateValue = ticketState.toString();
-    }
-
     public long getOwner()
     {
         return owner;
@@ -169,26 +141,6 @@ public class Lottery extends BaseEntity
     public void setOwner(long owner)
     {
         this.owner = owner;
-    }
-
-    public Timestamp getTicketPrintTime()
-    {
-        return ticketPrintTime;
-    }
-
-    public void setTicketPrintTime(Timestamp ticketPrintTime)
-    {
-        this.ticketPrintTime = ticketPrintTime;
-    }
-
-    public int getPrizeBonus()
-    {
-        return prizeBonus;
-    }
-
-    public void setPrizeBonus(int prizeBonus)
-    {
-        this.prizeBonus = prizeBonus;
     }
 
     public BusinessType getBusinessType()
@@ -216,32 +168,6 @@ public class Lottery extends BaseEntity
         this.distributeTime = distributeTime;
     }
 
-    public Timestamp getTicketFetchTime()
-    {
-        return ticketFetchTime;
-    }
-
-    public void setTicketFetchTime(Timestamp ticketFetchTime)
-    {
-        this.ticketFetchTime = ticketFetchTime;
-        this.fetched = true;
-    }
-
-    public boolean isFetched()
-    {
-        if (!fetched && ticketFetchTime != null)
-        {
-            fetched = true;
-        }
-
-        return fetched;
-    }
-
-    public void setFetched(boolean fetched)
-    {
-        this.fetched = fetched;
-    }
-
     public long getMerchant()
     {
         return merchant;
@@ -250,16 +176,6 @@ public class Lottery extends BaseEntity
     public void setMerchant(long merchant)
     {
         this.merchant = merchant;
-    }
-
-    public String getPrizeInfo()
-    {
-        return prizeInfo;
-    }
-
-    public void setPrizeInfo(String prizeInfo)
-    {
-        this.prizeInfo = prizeInfo;
     }
 
     public List<LotteryNumber> getNumbers()
@@ -282,16 +198,6 @@ public class Lottery extends BaseEntity
         this.times = times;
     }
 
-    public List<Integer> getPeriods()
-    {
-        return periods;
-    }
-
-    public void setPeriods(List<Integer> periods)
-    {
-        this.periods = periods;
-    }
-
     public LotteryType getLotteryType()
     {
         if (lotteryType == null)
@@ -306,4 +212,25 @@ public class Lottery extends BaseEntity
         this.lotteryType = lotteryType;
         this.lotteryTypeValue = lotteryType.toString();
     }
+
+	public List<LotteryPeriod> getPeriods() {
+		return periods;
+	}
+
+	public void setPeriods(List<LotteryPeriod> periods) {
+		this.periods = periods;
+	}
+
+	public PayState getPayState() {
+		if (payState == null)
+        {
+			payState = PayState.valueOf(payStateValue);
+        }
+		return payState;
+	}
+
+	public void setPayState(PayState payState) {
+		this.payState = payState;
+		this.payStateValue = payState.toString();
+	}
 }

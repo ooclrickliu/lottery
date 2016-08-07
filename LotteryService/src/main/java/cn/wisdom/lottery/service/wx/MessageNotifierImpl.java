@@ -11,6 +11,7 @@ import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
 import cn.wisdom.lottery.dao.vo.AppProperty;
 import cn.wisdom.lottery.dao.vo.Lottery;
+import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 import cn.wisdom.lottery.service.UserService;
 
 @Service
@@ -55,9 +56,9 @@ public class MessageNotifierImpl implements MessageNotifier {
 		WxArticle news = new WxArticle();
 		news.setTitle("投注成功");
 		news.setPicUrl("");
-		
-		int period = lottery.getPeriods().get(0);
-		String descStr = lottery.getLotteryType().getTypeName() + " - " + period + " 期\n";
+
+		LotteryPeriod period = lottery.getPeriods().get(0);
+		String descStr = lottery.getLotteryType().getTypeName() + " - " + period.getPeriod() + " 期\n";
 		descStr += "倍数: " + lottery.getTimes();
 		if (lottery.getPeriods().size() > 1) {
 			descStr += "        追号: " + lottery.getPeriods().size() + "期";
@@ -87,8 +88,8 @@ public class MessageNotifierImpl implements MessageNotifier {
 		news.setTitle("新投注通知");
 		news.setPicUrl("");
 		
-		int period = lottery.getPeriods().get(0);
-		String descStr = lottery.getLotteryType().getTypeName() + " - " + period + "期\n";
+		LotteryPeriod period = lottery.getPeriods().get(0);
+		String descStr = lottery.getLotteryType().getTypeName() + " - " + period.getPeriod() + "期\n";
 		descStr += "倍数: " + lottery.getTimes();
 		if (lottery.getPeriods().size() > 1) {
 			descStr += "        追号: " + lottery.getPeriods().size() + "期";

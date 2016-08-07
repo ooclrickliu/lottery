@@ -15,11 +15,13 @@ import cn.wisdom.lottery.common.utils.NumberGeneratorUtil;
 import cn.wisdom.lottery.dao.LotteryDao;
 import cn.wisdom.lottery.dao.constant.BusinessType;
 import cn.wisdom.lottery.dao.constant.LotteryType;
-import cn.wisdom.lottery.dao.constant.TicketState;
+import cn.wisdom.lottery.dao.constant.PayState;
+import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.threadpool.OVTask;
 import cn.wisdom.lottery.dao.threadpool.OVThreadPoolExecutor;
 import cn.wisdom.lottery.dao.vo.AppProperty;
 import cn.wisdom.lottery.dao.vo.Lottery;
+import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.service.exception.ServiceException;
@@ -62,7 +64,7 @@ public class LotteryServiceImpl implements LotteryService
         lottery.setCreateBy(SessionContext.getCurrentUser().getId());
         if (lottery.getBusinessType().equals(BusinessType.Private))
         {
-            lottery.setOwner(SessionContext.getCurrentUser().getId());
+            lottery.setOwner(lottery.getCreateBy());
         }
 
         if (!appProperties.wxPaydebug)
@@ -104,21 +106,20 @@ public class LotteryServiceImpl implements LotteryService
             throws ServiceException
     {
         // change lottery ticket_state to 'Distributed' and set merchant
-        Lottery lotteryProfile = lotteryDao.getLottery(lotteryId);
+        Lottery lottery = lotteryDao.getLottery(lotteryId);
 
-        if (lotteryProfile.getTicketState() != TicketState.Paid)
+        if (lottery.getPayState() != PayState.Paid)
         {
             String errMsg = MessageFormat.format(
                     "Ticket in state [{0}], can't be distributed!",
-                    lotteryProfile.getTicketState());
+                    lottery.getPayState());
             throw new ServiceException(ServiceErrorCode.INVALID_STATE, errMsg);
         }
 
-        lotteryProfile.setTicketState(TicketState.Distributed);
-        lotteryProfile.setMerchant(merchantId);
-        lotteryProfile.setDistributeTime(DateTimeUtils.getCurrentTimestamp());
+        lottery.setMerchant(merchantId);
+        lottery.setDistributeTime(DateTimeUtils.getCurrentTimestamp());
 
-        lotteryDao.updateDistributeState(lotteryProfile);
+        lotteryDao.updateDistributeState(lottery);
     }
 
     @Override
@@ -129,7 +130,7 @@ public class LotteryServiceImpl implements LotteryService
         return lotteryDao.getLottery(lotteryType, period, merchantId);
     }
 
-    @Override
+    /*@Override
     public void printTickets(List<Long> lotteryIds, long merchantId)
             throws ServiceException
     {
@@ -137,11 +138,11 @@ public class LotteryServiceImpl implements LotteryService
         List<Lottery> lotteries = lotteryDao.getLottery(lotteryIds, false, false);
         for (Lottery lottery : lotteries)
         {
-            if (lottery.getTicketState() != TicketState.Distributed)
+            if (lottery.getPayState() != PayState.Distributed)
             {
                 String errMsg = MessageFormat.format(
                         "Ticket in state [{0}], can't be print!",
-                        lottery.getTicketState());
+                        lottery.getPayState());
                 throw new ServiceException(ServiceErrorCode.INVALID_STATE,
                         errMsg);
             }
@@ -151,34 +152,34 @@ public class LotteryServiceImpl implements LotteryService
                         "No print privillidge!");
             }
 
-            lottery.setTicketState(TicketState.Printed);
+            lottery.setPayState(PayState.Printed);
             lottery.setTicketPrintTime(DateTimeUtils.getCurrentTimestamp());
         }
         lotteryDao.updatePrintState(lotteries);
-    }
+    }*/
 
     @Override
-    public void fetchTicket(long lotteryId, long userId)
+    public void fetchTicket(long userId, long periodId)
             throws ServiceException
     {
 
-        Lottery lottery = lotteryDao.getLottery(lotteryId);
-        if (lottery.getTicketState() != TicketState.Printed)
+        Lottery lottery = lotteryDao.getLotteryByPeriod(periodId);
+        if (lottery.getPayState() != PayState.Paid)
         {
-            String errMsg = MessageFormat.format(
-                    "Ticket in state [{0}], can't be fetched!",
-                    lottery.getTicketState());
+            String errMsg = "Lottery is unpaid, can't fetch!";
             throw new ServiceException(ServiceErrorCode.INVALID_STATE, errMsg);
         }
 
         if (lottery.getOwner() != userId)
         {
             throw new ServiceException(ServiceErrorCode.NO_PRIVILEGE,
-                    "No fetch privillidge!");
+                    "Not owner!");
         }
 
-        lottery.setTicketFetchTime(DateTimeUtils.getCurrentTimestamp());
-        lotteryDao.updateFetchState(lottery);
+        List<LotteryPeriod> periods = lottery.getPeriods();
+        LotteryPeriod lotteryPeriod = periods.get(0);
+        lotteryPeriod.setTicketFetchTime(DateTimeUtils.getCurrentTimestamp());
+        lotteryDao.updateFetchState(lotteryPeriod);
     }
 
     @Override
@@ -188,10 +189,10 @@ public class LotteryServiceImpl implements LotteryService
     	logger.info("Receive order paid notification from wx: order[{}]", orderNo);
         final Lottery lottery = lotteryDao.getLotteryByOrder(orderNo);
 
-        if (lottery != null && lottery.getTicketState() == TicketState.UnPaid) {
-            lottery.setTicketState(TicketState.Paid);
+        if (lottery != null && lottery.getPayState() == PayState.UnPaid) {
+            lottery.setPayState(PayState.Paid);
 
-            lotteryDao.updateTicketState(lottery);
+            lotteryDao.updatePayState(lottery);
 
             // distribute
             distribute(lottery);
@@ -228,15 +229,13 @@ public class LotteryServiceImpl implements LotteryService
 	}
 
     @Override
-    public List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
-            throws ServiceException
-    {
-
-        return lotteryDao.getPrintedLotteries(lotteryType, period);
-    }
+    public void updatePrizeState(int period, PrizeState prizeState)
+	{
+    	lotteryDao.updatePrizeState(period, prizeState);
+	}
 
     @Override
-    public void updatePrizeInfo(List<Lottery> prizeLotteries)
+    public void updatePrizeInfo(List<LotteryPeriod> prizeLotteries)
     {
         lotteryDao.updatePrizeInfo(prizeLotteries);
     }

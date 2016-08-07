@@ -14,7 +14,9 @@ import cn.wisdom.lottery.common.utils.CollectionUtils;
 import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.common.utils.JsonUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
+import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
+import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
 import cn.wisdom.lottery.service.exception.ServiceException;
@@ -40,13 +42,13 @@ public class LotteryOpenPrizeTask {
 		try {
 			LOGGER.info("SSQ task start...");
 			
-			// 1. get latestOpenInfo
+			// 1. 根据我们的定义，19点以后的当前时间已经是下一期了，所以要查上一期的开奖信息，如果为空，则需要更新，否则不用更新
 			LotteryOpenData latestOpenInfo = lotteryServiceFacade.getLatestOpenInfo(LotteryType.SSQ);
 			if (latestOpenInfo.getOpencode() != null) {
 				return;
 			}
 			
-			LOGGER.info("SSQ period {} open ...", latestOpenInfo.getExpect());
+			LOGGER.info("SSQ period {} is openning ...", latestOpenInfo.getExpect());
 
 			// 2. get open info from web service
 			LotteryOpenInfo lotteryOpenInfo = lotteryRemoteService
@@ -64,9 +66,10 @@ public class LotteryOpenPrizeTask {
 				int period = DataConvertUtils.toInt(latestOpenInfo.getExpect());
 				PrizeLotterySSQ ssq = new PrizeLotterySSQ(period , lotteryOpenData.getOpencode());
 				
+				// 3. 保存开奖结果
 				lotteryServiceFacade.savePrizeLottery(ssq, LotteryType.SSQ);
 				
-				// 3. update prize info.
+				// 4. 更新所有当期已支付的彩票中奖信息
 				updatePrizeInfo(ssq);
 			}
 
@@ -89,33 +92,44 @@ public class LotteryOpenPrizeTask {
 	private void updatePrizeInfo(PrizeLotterySSQ openInfo) throws ServiceException {
 		LOGGER.info("Start to update lotteries' prize info...");
 		
-		// 1. get all "Printed" tickets of this period
+		// 1. get all "Paid" tickets of this period
 		List<Lottery> paidLotteries = lotteryServiceFacade.getPaidLotteries(LotteryType.SSQ, openInfo.getPeriod());
 		
 		// 2. calculate prize info & bonus.
 		if (CollectionUtils.isNotEmpty(paidLotteries)) {
-			List<Lottery> prizeLotteries = new ArrayList<Lottery>();
+			// 3. update all prize state to "Lose" first.
+			lotteryServiceFacade.updatePrizeState(openInfo.getPeriod(), PrizeState.Lose);
+			
+			// 4. calculate and update prize info.
+			List<LotteryPeriod> prizeLotteries = new ArrayList<LotteryPeriod>();
 			for (Lottery lottery : paidLotteries) {
 				Map<Long, Map<Integer, Integer>> prizeInfo = lotteryServiceFacade.getPrizeInfo(lottery, openInfo);
 				
 				if (CollectionUtils.isNotEmpty(prizeInfo)) {
+					LotteryPeriod period = new LotteryPeriod();
+					period.setLotteryId(lottery.getId());
+					period.setPeriod(openInfo.getPeriod());
+					
 					try {
-						lottery.setPrizeInfo(JsonUtils.toJson(prizeInfo));
+						period.setPrizeInfo(JsonUtils.toJson(prizeInfo));
 					} catch (OVTException e) {
 					}
-					lottery.setPrizeBonus(lotteryServiceFacade.getPrizeBonus(prizeInfo));
+					period.setPrizeBonus(lotteryServiceFacade.getPrizeBonus(prizeInfo));
 					
-					prizeLotteries.add(lottery);
+					prizeLotteries.add(period);
 				}
 			}
-			lotteryServiceFacade.updatePrizeInfo(prizeLotteries);
 			
-			// 3. notify owner
-			notifyOwner(prizeLotteries);
+			if (CollectionUtils.isNotEmpty(prizeLotteries)) {
+				lotteryServiceFacade.updatePrizeInfo(prizeLotteries);
+				
+				// 5. notify owner & merchant
+				notify(prizeLotteries);
+			}
 		}
 	}
 
-	private void notifyOwner(List<Lottery> prizeLotteries) {
+	private void notify(List<LotteryPeriod> prizeLotteries) {
 		if (CollectionUtils.isNotEmpty(prizeLotteries)) {
 			LOGGER.info("Start to notify prize owner...");
 			

@@ -9,7 +9,7 @@ import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.dao.LotteryDao;
-import cn.wisdom.lottery.dao.constant.TicketState;
+import cn.wisdom.lottery.dao.constant.PayState;
 import cn.wisdom.lottery.dao.vo.AppProperty;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.User;
@@ -52,16 +52,15 @@ public class LotteryDistributeServiceImpl implements LotteryDistributeService {
 	
 	private void distribute(Lottery lottery, User merchant) throws ServiceException
 	{
-		if (lottery.getTicketState() != TicketState.Paid)
+		if (lottery.getPayState() != PayState.Paid)
         {
             String errMsg = MessageFormat.format(
                     "Ticket in state [{0}], can't be distributed!",
-                    lottery.getTicketState());
+                    lottery.getPayState());
             throw new ServiceException(ServiceErrorCode.INVALID_STATE, errMsg);
         }
 		logger.info("Distribute lottery[{}] to merchant[{}]", lottery.getId(), merchant.getId());
 		
-		lottery.setTicketState(TicketState.Distributed);
         lottery.setMerchant(merchant.getId());
         lottery.setDistributeTime(DateTimeUtils.getCurrentTimestamp());
 

@@ -22,8 +22,9 @@ import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.RoleType;
-import cn.wisdom.lottery.dao.constant.TicketState;
+import cn.wisdom.lottery.dao.constant.PayState;
 import cn.wisdom.lottery.dao.vo.Lottery;
+import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
 import cn.wisdom.lottery.service.UserService;
 import cn.wisdom.lottery.service.exception.ServiceException;
@@ -110,9 +111,9 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 			Lottery lottery = lotteryServiceFacade.getMyLatestLottery(wxMessage.getFromUserName());
 			
 			if (lottery != null) {
-				int period = lottery.getPeriods().get(0);
+				LotteryPeriod period = lottery.getPeriods().get(0);
 				LotteryOpenData openInfo = lotteryServiceFacade.getOpenInfo(
-						lottery.getLotteryType(), period);
+						lottery.getLotteryType(), period.getPeriod());
 				
 				NewsBuilder builder = WxMpXmlOutMessage.NEWS()
 						.toUser(wxMessage.getFromUserName())
@@ -164,7 +165,7 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		String stateStr = "";
 
 		// 已出奖
-		if (lottery.getTicketState() == TicketState.Prized) {
+		if (lottery.getTicketState() == PayState.Prized) {
 			if (StringUtils.isNotBlank(lottery.getPrizeInfo())
 					&& lottery.getPrizeBonus() > 0) {
 //				 stateStr += "中奖结果: " + getLotteryState(myLottery);s

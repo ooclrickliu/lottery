@@ -26,9 +26,10 @@ import cn.wisdom.lottery.common.utils.JaxbUtil.CollectionWrapper;
 import cn.wisdom.lottery.common.utils.JsonUtils;
 import cn.wisdom.lottery.dao.constant.BusinessType;
 import cn.wisdom.lottery.dao.constant.LotteryType;
-import cn.wisdom.lottery.dao.constant.TicketState;
+import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryNumber;
+import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.dao.vo.WxPayLog;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
@@ -72,8 +73,13 @@ public class LotteryCustomerController
         // 追号
         List<Integer> nextNPeriods = lotteryServiceFacade.getNextNPeriods(
                 LotteryType.SSQ, request.getPeriods());
-        lottery.setPeriods(nextNPeriods);
-        lottery.setTicketState(TicketState.UnPaid);
+        for (Integer period : nextNPeriods) {
+        	LotteryPeriod lotteryPeriod = new LotteryPeriod();
+        	lotteryPeriod.setPeriod(period);
+        	lotteryPeriod.setPrizeState(PrizeState.NotOpen);
+            
+            lottery.getPeriods().add(lotteryPeriod);
+		}
 
         lottery = lotteryServiceFacade.createLottery(LotteryType.SSQ, lottery);
 
@@ -96,10 +102,10 @@ public class LotteryCustomerController
 
     @RequestMapping(method = RequestMethod.POST, value = "/fetch")
     @ResponseBody
-    public JsonDocument fetchTicket(@RequestParam long lotteryId)
+    public JsonDocument fetchTicket(@RequestParam long periodId)
             throws ServiceException
     {
-        lotteryServiceFacade.fetchTicket(lotteryId);
+        lotteryServiceFacade.fetchTicket(periodId);
 
         return LotteryAPIResult.SUCCESS;
     }

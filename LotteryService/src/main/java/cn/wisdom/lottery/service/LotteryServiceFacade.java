@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import cn.wisdom.lottery.dao.constant.LotteryType;
+import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
+import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
@@ -33,7 +35,7 @@ public interface LotteryServiceFacade
 
     Lottery getLottery(long lotteryId) throws ServiceException;
 
-    void fetchTicket(long lotteryId) throws ServiceException;
+    void fetchTicket(long periodId) throws ServiceException;
 
     Lottery getMyLatestLottery(String openid) throws ServiceException;
     
@@ -41,8 +43,8 @@ public interface LotteryServiceFacade
 
     // /////////Merchant///////////
 
-    void printTickets(List<Long> lotteryIds, long merchantId)
-            throws ServiceException;
+//    void printTickets(List<Long> lotteryIds, long merchantId)
+//            throws ServiceException;
 
     List<Lottery> queryLottery(LotteryType lotteryType, int period,
             long merchantId) throws ServiceException;
@@ -54,18 +56,21 @@ public interface LotteryServiceFacade
     List<Lottery> getPaidLotteries(LotteryType lotteryType, int period)
             throws ServiceException;
     
-    List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
-    		throws ServiceException;
+//    List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
+//    		throws ServiceException;
 
     Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery,
             PrizeLotterySSQ prizeLotterySSQ) throws ServiceException;
 
     int getPrizeBonus(Map<Long, Map<Integer, Integer>> prizeInfo);
 
-    void updatePrizeInfo(List<Lottery> prizeLotteries);
+    void updatePrizeInfo(List<LotteryPeriod> prizeLotteries);
 
     // /////////WxPay////////////////
     Map<String, String> unifiedOrder(Lottery lottery, String openId,
             String spbillCreateIp, String tradeType, String body)
             throws ServiceException;
+
+    // /////////Task////////////////
+	void updatePrizeState(int period, PrizeState prizeState);
 }

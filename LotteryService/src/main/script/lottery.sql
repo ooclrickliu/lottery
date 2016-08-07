@@ -70,14 +70,10 @@ CREATE TABLE IF NOT EXISTS `lottery` (
   `lottery_type` varchar(10) NOT NULL,
   `business_type` varchar(10) NOT NULL DEFAULT '',
   `times` int(11) NOT NULL DEFAULT '1',
-  `ticket_state` varchar(20) NOT NULL DEFAULT '',
+  `pay_state` varchar(20) NULL,
   `owner` bigint(20) DEFAULT NULL,
   `merchant` bigint(20) DEFAULT NULL,
   `distribute_time` timestamp NULL DEFAULT NULL,
-  `ticket_print_time` timestamp NULL DEFAULT NULL,
-  `ticket_fetch_time` timestamp NULL DEFAULT NULL,
-  `prize_info` varchar(200) DEFAULT NULL,
-  `prize_bonus` int(11) DEFAULT NULL,
   `remark` varchar(1000) DEFAULT NULL,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NULL,
@@ -87,6 +83,25 @@ CREATE TABLE IF NOT EXISTS `lottery` (
   KEY `idx_l_type` (`lottery_type`),
   KEY `idx_l_merchant` (`merchant`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `lottery_period`
+--
+
+CREATE TABLE IF NOT EXISTS `lottery_period` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `lottery_id` bigint(20) NOT NULL,
+  `period` int(6) NOT NULL,
+  `ticket_print_time` timestamp NULL,  --
+  `ticket_fetch_time` timestamp NULL,  --
+  `prize_state` varchar(20) NULL,  --
+  `prize_info` varchar(200) NULL,   --
+  `prize_bonus` int(11) NULL,   --
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
 
 -- --------------------------------------------------------
 
@@ -101,20 +116,6 @@ CREATE TABLE IF NOT EXISTS `lottery_number` (
   PRIMARY KEY (`id`),
   KEY `lottery_id` (`lottery_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `lottery_period`
---
-
-CREATE TABLE IF NOT EXISTS `lottery_period` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `lottery_id` bigint(20) NOT NULL,
-  `period` int(6) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
 
 -- --------------------------------------------------------
 
