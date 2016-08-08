@@ -68,7 +68,7 @@ public interface LotteryPrizeService {
 	 * 
 	 * @param lottery
 	 * @param ssq
-	 * @return Key: numberId, Value: (key: prizeRange, value: hitNumber)
+	 * @return Key: numberId, Value: (key: prizeRank, value: hitNumber)
 	 */
 	Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery, PrizeLotterySSQ ssq);
 	

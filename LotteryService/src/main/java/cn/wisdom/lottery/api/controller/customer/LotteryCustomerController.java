@@ -23,9 +23,9 @@ import cn.wisdom.lottery.common.exception.OVTException;
 import cn.wisdom.lottery.common.model.JsonDocument;
 import cn.wisdom.lottery.common.utils.JaxbUtil;
 import cn.wisdom.lottery.common.utils.JaxbUtil.CollectionWrapper;
-import cn.wisdom.lottery.common.utils.JsonUtils;
 import cn.wisdom.lottery.dao.constant.BusinessType;
 import cn.wisdom.lottery.dao.constant.LotteryType;
+import cn.wisdom.lottery.dao.constant.PayState;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryNumber;
@@ -63,6 +63,7 @@ public class LotteryCustomerController
         Lottery lottery = new Lottery();
         lottery.setBusinessType(BusinessType.Private);
         lottery.setLotteryType(LotteryType.SSQ);
+        lottery.setPayState(PayState.UnPaid);
         lottery.setTimes(request.getTimes()); // 倍数
 
         for (String number : request.getNumbers())
@@ -117,12 +118,6 @@ public class LotteryCustomerController
     {
         long owner = SessionContext.getCurrentUser().getId();
         List<Lottery> lotteries = lotteryServiceFacade.getLotteries(owner);
-
-        try {
-			System.out.println(JsonUtils.toJson(lotteries));
-		} catch (OVTException e) {
-			e.printStackTrace();
-		}
         
         return new LotteryAPIResult(lotteries);
     }

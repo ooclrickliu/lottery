@@ -62,12 +62,13 @@ public class Lottery extends BaseEntity
     @Column("distribute_time")
     private Timestamp distributeTime;
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws OVTException
     {
         Lottery lottery = new Lottery();
         lottery.setOrderNo("2016062910012001");
         lottery.setLotteryType(LotteryType.SSQ);
         lottery.setBusinessType(BusinessType.Private);
+        lottery.setPayState(PayState.Paid);
         lottery.setTimes(5);
         lottery.setOwner(10001);
         lottery.setMerchant(1203);
@@ -79,18 +80,14 @@ public class Lottery extends BaseEntity
         period.setTicketPrintTime(DateTimeUtils.getCurrentTimestamp());
         period.setPrizeBonus(9200);
         period.setFetched(false);
-        try
-        {
-            Map<Long, Map<Integer, Integer>> prizeInfo = new HashMap<Long, Map<Integer, Integer>>();
-            Map<Integer, Integer> hitInfo = new HashMap<Integer, Integer>();
-            hitInfo.put(3, 5);
-            hitInfo.put(4, 16);
-            prizeInfo.put(230L, hitInfo);
-            period.setPrizeInfo(JsonUtils.toJson(prizeInfo));
-        }
-        catch (OVTException e)
-        {
-        }
+        
+        Map<Long, Map<Integer, Integer>> prizeInfo = new HashMap<Long, Map<Integer, Integer>>();
+        Map<Integer, Integer> hitInfo = new HashMap<Integer, Integer>();
+        hitInfo.put(3, 5);
+        hitInfo.put(4, 16);
+        prizeInfo.put(230L, hitInfo);
+        prizeInfo.put(231L, hitInfo);
+        period.setPrizeInfo(JsonUtils.toJson(prizeInfo));
         
         periods.add(period);
         lottery.setPeriods(periods);
@@ -100,7 +97,14 @@ public class Lottery extends BaseEntity
         numbers.add(new LotteryNumber("06,14,15,19,24,28,32+05,10"));
         lottery.setNumbers(numbers);
 
-        System.out.println(lottery);
+        System.out.println(JsonUtils.toJson(prizeInfo));
+        System.out.println(JsonUtils.toJson(lottery));
+        
+        String prizeInfoString = "{\"231\":{\"3\":5,\"4\":16},\"230\":{\"3\":5,\"4\":16}}";
+        
+        @SuppressWarnings("rawtypes")
+		Map map = JsonUtils.fromJson(prizeInfoString, Map.class);
+        System.out.println(map);
     }
 
     public String getOrderNo()

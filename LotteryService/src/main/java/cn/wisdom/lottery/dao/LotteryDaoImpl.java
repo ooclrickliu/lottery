@@ -129,7 +129,7 @@ public class LotteryDaoImpl implements LotteryDao {
 		// lottery period
 		batchArgs = new ArrayList<Object[]>();
 		for (LotteryPeriod period : lottery.getPeriods()) {
-			args = new Object[2];
+			args = new Object[3];
 			args[0] = lotteryId;
 			args[1] = period.getPeriod();
 			args[2] = period.getPrizeState().toString();
@@ -151,7 +151,7 @@ public class LotteryDaoImpl implements LotteryDao {
 	@Override
 	public Lottery getLottery(long lotteryId, boolean queryNumber, boolean queryPeriod) {
 
-		String sql = MessageFormat.format(GET_LOTTERY_BY_ID, lotteryId);
+		String sql = MessageFormat.format(GET_LOTTERY_BY_ID, "" + lotteryId);
 		
 		String errMsg = MessageFormat.format(
 				"Failed to query lottery by orderNo [{0}]", lotteryId);
@@ -160,12 +160,14 @@ public class LotteryDaoImpl implements LotteryDao {
 		
 		if (lottery != null) {
 			if (queryNumber) {
-				List<LotteryNumber> numbers = daoHelper.queryForList(GET_LOTTERY_NUMBER, lotteryNumberMapper, errMsg, lottery.getId());
+				sql = MessageFormat.format(GET_LOTTERY_NUMBER, "" + lotteryId);
+				List<LotteryNumber> numbers = daoHelper.queryForList(sql, lotteryNumberMapper, errMsg);
 				lottery.setNumbers(numbers);
 			}
 			
 			if (queryPeriod) {
-				List<LotteryPeriod> periods = daoHelper.queryForList(GET_LOTTERY_PERIOD, lotteryPeriodMapper, errMsg, lottery.getId());
+				sql = MessageFormat.format(GET_LOTTERY_PERIOD, "" + lotteryId);
+				List<LotteryPeriod> periods = daoHelper.queryForList(sql, lotteryPeriodMapper, errMsg);
 				lottery.setPeriods(periods);
 			}
 		}

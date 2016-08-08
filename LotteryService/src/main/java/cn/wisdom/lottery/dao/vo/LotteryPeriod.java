@@ -1,7 +1,11 @@
 package cn.wisdom.lottery.dao.vo;
 
 import java.sql.Timestamp;
+import java.util.Map;
 
+import cn.wisdom.lottery.common.exception.OVTException;
+import cn.wisdom.lottery.common.utils.JsonUtils;
+import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.annotation.Column;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 
@@ -25,6 +29,7 @@ public class LotteryPeriod extends BaseEntity {
 
     @Column("prize_info")
     private String prizeInfo;
+    private Map<Long, Map<Integer, Integer>> prizeInfoMap;
 
     @Column("prize_bonus")
     private int prizeBonus;
@@ -49,7 +54,7 @@ public class LotteryPeriod extends BaseEntity {
 
     public PrizeState getPrizeState()
     {
-        if (prizeState == null)
+        if (prizeState == null && StringUtils.isNotBlank(prizeStateValue))
         {
         	prizeState = PrizeState.valueOf(prizeStateValue);
         }
@@ -118,4 +123,26 @@ public class LotteryPeriod extends BaseEntity {
     {
         this.prizeInfo = prizeInfo;
     }
+
+	@SuppressWarnings("unchecked")
+	public Map<Long, Map<Integer, Integer>> getPrizeInfoMap() {
+		if (prizeInfoMap == null && StringUtils.isNotBlank(prizeInfo)) {
+			try {
+				prizeInfoMap = JsonUtils.fromJson(prizeInfo, Map.class);
+			} catch (OVTException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return prizeInfoMap;
+	}
+
+	public void setPrizeInfoMap(Map<Long, Map<Integer, Integer>> prizeInfoMap) {
+		this.prizeInfoMap = prizeInfoMap;
+		try {
+			this.prizeInfo = JsonUtils.toJson(prizeInfoMap);
+		} catch (OVTException e) {
+			e.printStackTrace();
+		}
+	}
 }
