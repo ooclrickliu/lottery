@@ -25,16 +25,16 @@ public class LotteryMerchantController
     @Autowired
     private LotteryServiceFacade lotteryServiceFacade;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/print")
-    @ResponseBody
-    public JsonDocument printTickets(@RequestParam List<Long> lotteryIds)
-            throws ServiceException
-    {
-        long userId = SessionContext.getCurrentUser().getId();
-        lotteryServiceFacade.printTickets(lotteryIds, userId);
-
-        return new LotteryAPIResult();
-    }
+//    @RequestMapping(method = RequestMethod.POST, value = "/print")
+//    @ResponseBody
+//    public JsonDocument printTickets(@RequestParam List<Long> periodIds)
+//            throws ServiceException
+//    {
+//        long userId = SessionContext.getCurrentUser().getId();
+//        lotteryServiceFacade.printTickets(periodIds, userId);
+//
+//        return new LotteryAPIResult();
+//    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/query")
     @ResponseBody

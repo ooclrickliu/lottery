@@ -1,6 +1,10 @@
 package cn.wisdom.lottery.service.wx;
 
+import java.util.List;
+
+import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.vo.Lottery;
+import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 
 public interface MessageNotifier {
 
@@ -8,9 +12,8 @@ public interface MessageNotifier {
 	
 	void notifyMerchantDistributed(Lottery lottery, String openid);
 
-//	void notifyUserApplyApproved(CreditApply apply) throws WxErrorException;
-//
-//	void notifyUserReturnSuccess(CreditApply apply, CreditPayRecord payRecord) throws WxErrorException;
-//
-//	void notifyUserReturnFailed(CreditApply apply, CreditPayRecord payRecord) throws WxErrorException;
+	void notifyMerchantPrizeInfo(LotteryType lotteryType, PrizeLotterySSQ openInfo, List<Lottery> prizeLotteries);
+
+	void notifyCustomerPrizeInfo(List<Lottery> prizeLotteries);
+
 }

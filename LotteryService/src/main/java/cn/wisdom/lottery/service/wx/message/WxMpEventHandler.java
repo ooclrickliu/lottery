@@ -18,11 +18,11 @@ import org.springframework.stereotype.Component;
 
 import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
+import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.RoleType;
-import cn.wisdom.lottery.dao.constant.PayState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
@@ -111,43 +111,12 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 			Lottery lottery = lotteryServiceFacade.getMyLatestLottery(wxMessage.getFromUserName());
 			
 			if (lottery != null) {
-				LotteryPeriod period = lottery.getPeriods().get(0);
-				LotteryOpenData openInfo = lotteryServiceFacade.getOpenInfo(
-						lottery.getLotteryType(), period.getPeriod());
-				
-				NewsBuilder builder = WxMpXmlOutMessage.NEWS()
-						.toUser(wxMessage.getFromUserName())
-						.fromUser(wxMessage.getToUserName());
-				
-				WxMpXmlOutNewsMessage.Item news = new WxMpXmlOutNewsMessage.Item();
-				news.setTitle("您最近投注记录");
-				news.setPicUrl("");
-				
-				String descStr = lottery.getLotteryType().getTypeName() + " - " + period + " 期\n";
-				descStr += "购买日期: "
-						+ DateTimeUtils.formatSqlDateTime(lottery
-								.getCreateTime()) + "\n";
-				descStr += "开奖日期: " + openInfo.getOpentime() + "\n";
-				descStr += "中奖结果: " + this.getLotteryState(lottery) + "\n";
-				descStr += "投注号码:  (×" + lottery.getTimes() + "倍)\n";
-				
-				int num = lottery.getNumbers().size();
-				for (int i = 0; i < num && i < 5; i++) { // 最多显示5组号码
-					descStr += "    "
-							+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
-							.replaceAll("\\+", " \\+ ") + "\n";
+				if (lottery.getPeriods().size() == 1) {
+					response = build1PeriodResponse(wxMessage, lottery);
 				}
-				
-				if (num > 5) {
-					descStr += "    ...";
+				else if (lottery.getPeriods().size() > 1) {
+					response = buildMultiPeriodsResponse(wxMessage, lottery);
 				}
-				
-				news.setDescription(descStr);
-				
-				String url = "http://cai.southwisdom.cn/lottery.html?openid=" + wxMessage.getFromUserName();
-				news.setUrl(url);
-				
-				response = builder.addArticle(news).build();
 			}
 			else 
 			{
@@ -161,25 +130,122 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		return response;
 	}
 
-	private String getLotteryState(Lottery lottery) {
-		String stateStr = "";
+	private WxMpXmlOutMessage buildMultiPeriodsResponse(WxMpXmlMessage wxMessage,
+			Lottery lottery) throws ServiceException {
+		WxMpXmlOutMessage response;
+		
+		LotteryOpenData currentPeriod = lotteryServiceFacade.getCurrentPeriod(lottery.getLotteryType());
+		
+		LotteryPeriod hintPeriod = this.getHintPeriod(lottery, currentPeriod);
+		
+		LotteryOpenData openInfo = lotteryServiceFacade.getOpenInfo(
+				lottery.getLotteryType(), hintPeriod.getPeriod());
+		
+		NewsBuilder builder = WxMpXmlOutMessage.NEWS()
+				.toUser(wxMessage.getFromUserName())
+				.fromUser(wxMessage.getToUserName());
+		
+		WxMpXmlOutNewsMessage.Item news = new WxMpXmlOutNewsMessage.Item();
+		news.setTitle("您最近投注记录");
+		news.setPicUrl("");
+		
+		String descStr = lottery.getLotteryType().getTypeName() + " - " + hintPeriod.getPeriod() + " 期\n";
+		descStr += "购买日期: "
+				+ DateTimeUtils.formatSqlDateTime(lottery
+						.getCreateTime()) + "\n";
+		descStr += "开奖日期: " + openInfo.getOpentime() + "\n";
+		descStr += "中奖结果: " + hintPeriod.getPrizeState().getName() + "\n";
+		descStr += "追号: 第" + (lottery.getPeriods().indexOf(hintPeriod) + 1) + "/" + lottery.getPeriods().size() + " 期\n";
+		descStr += "投注号码:  (×" + lottery.getTimes() + "倍)\n";
+		
+		int num = lottery.getNumbers().size();
+		for (int i = 0; i < num && i < 5; i++) { // 最多显示5组号码
+			descStr += "    "
+					+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
+					.replaceAll("\\+", " \\+ ") + "\n";
+		}
+		
+		if (num > 5) {
+			descStr += "    ...";
+		}
+		
+		news.setDescription(descStr);
+		
+		String url = "http://cai.southwisdom.cn/lottery.html?openid=" + wxMessage.getFromUserName();
+		news.setUrl(url);
+		
+		response = builder.addArticle(news).build();
+		return response;
+	}
+	
+	private LotteryPeriod getHintPeriod(Lottery lottery, LotteryOpenData currentPeriod) {
+		int current = DataConvertUtils.toInt(currentPeriod.getExpect());
+		
+		LotteryPeriod startPeriod = lottery.getPeriods().get(0);
+		LotteryPeriod endPeriod = lottery.getPeriods().get(lottery.getPeriods().size() - 1);
+		int startP = lottery.getPeriods().get(0).getPeriod();
+		int endP = lottery.getPeriods().get(lottery.getPeriods().size() - 1).getPeriod();
+		
+		LotteryPeriod hintPeriod = startPeriod;
+		if (endP <= current) {
+			hintPeriod = endPeriod;
+		}
+		else if (startP < current && endP > current) {
+			for (LotteryPeriod lotteryPeriod : lottery.getPeriods()) {
+				if (lotteryPeriod.getPeriod() == current) {
+					hintPeriod = endPeriod;
+					break;
+				}
+			}
+		}
+		else if (startP >= current) {
+			hintPeriod = startPeriod;
+		}
+		
+		return hintPeriod;
+	}
 
-		// 已出奖
-		if (lottery.getTicketState() == PayState.Prized) {
-			if (StringUtils.isNotBlank(lottery.getPrizeInfo())
-					&& lottery.getPrizeBonus() > 0) {
-//				 stateStr += "中奖结果: " + getLotteryState(myLottery);s
-				stateStr = "中奖";
-			}
-			else {
-				stateStr = "未中奖";
-			}
+	private WxMpXmlOutMessage build1PeriodResponse(WxMpXmlMessage wxMessage,
+			Lottery lottery) throws ServiceException {
+		WxMpXmlOutMessage response;
+		LotteryPeriod period = lottery.getPeriods().get(0);
+		LotteryOpenData openInfo = lotteryServiceFacade.getOpenInfo(
+				lottery.getLotteryType(), period.getPeriod());
+		
+		NewsBuilder builder = WxMpXmlOutMessage.NEWS()
+				.toUser(wxMessage.getFromUserName())
+				.fromUser(wxMessage.getToUserName());
+		
+		WxMpXmlOutNewsMessage.Item news = new WxMpXmlOutNewsMessage.Item();
+		news.setTitle("您最近投注记录");
+		news.setPicUrl("");
+		
+		String descStr = lottery.getLotteryType().getTypeName() + " - " + period + " 期\n";
+		descStr += "购买日期: "
+				+ DateTimeUtils.formatSqlDateTime(lottery
+						.getCreateTime()) + "\n";
+		descStr += "开奖日期: " + openInfo.getOpentime() + "\n";
+		descStr += "中奖结果: " + period.getPrizeState().getName() + "\n";
+		descStr += "投注号码:  (×" + lottery.getTimes() + "倍)\n";
+		
+		int num = lottery.getNumbers().size();
+		for (int i = 0; i < num && i < 5; i++) { // 最多显示5组号码
+			descStr += "    "
+					+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
+					.replaceAll("\\+", " \\+ ") + "\n";
 		}
-		// 未出奖
-		else {
-			stateStr = "未出奖";
+		
+		if (num > 5) {
+			descStr += "    ...";
 		}
-		return stateStr;
+		
+		news.setDescription(descStr);
+		
+		String url = "http://cai.southwisdom.cn/lottery.html?openid=" + wxMessage.getFromUserName();
+		news.setUrl(url);
+		
+		response = builder.addArticle(news).build();
+		return response;
 	}
 
 	private WxMpXmlOutMessage getDrawNotice(WxMpXmlMessage wxMessage) {

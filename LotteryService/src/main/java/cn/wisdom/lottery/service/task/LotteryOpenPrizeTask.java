@@ -23,6 +23,7 @@ import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.remote.LotteryRemoteService;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenInfo;
+import cn.wisdom.lottery.service.wx.MessageNotifier;
 
 public class LotteryOpenPrizeTask {
 
@@ -31,6 +32,9 @@ public class LotteryOpenPrizeTask {
 	
 	@Autowired
 	private LotteryServiceFacade lotteryServiceFacade;
+	
+	@Autowired
+	private MessageNotifier messageNotifier;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(LotteryOpenPrizeTask.class.getName());
 
@@ -101,7 +105,8 @@ public class LotteryOpenPrizeTask {
 			lotteryServiceFacade.updatePrizeState(openInfo.getPeriod(), PrizeState.Lose);
 			
 			// 4. calculate and update prize info.
-			List<LotteryPeriod> prizeLotteries = new ArrayList<LotteryPeriod>();
+			List<Lottery> prizeLotteries = new ArrayList<Lottery>();
+			List<LotteryPeriod> prizeLotteryPeriods = new ArrayList<LotteryPeriod>();
 			for (Lottery lottery : paidLotteries) {
 				Map<Long, Map<Integer, Integer>> prizeInfo = lotteryServiceFacade.getPrizeInfo(lottery, openInfo);
 				
@@ -116,26 +121,28 @@ public class LotteryOpenPrizeTask {
 					}
 					period.setPrizeBonus(lotteryServiceFacade.getPrizeBonus(prizeInfo));
 					
-					prizeLotteries.add(period);
+					lottery.getPeriods().add(period);
+					
+					prizeLotteries.add(lottery);
+					prizeLotteryPeriods.add(period);
 				}
 			}
 			
-			if (CollectionUtils.isNotEmpty(prizeLotteries)) {
-				lotteryServiceFacade.updatePrizeInfo(prizeLotteries);
-				
-				// 5. notify owner & merchant
-				notify(prizeLotteries);
+			if (CollectionUtils.isNotEmpty(prizeLotteryPeriods)) {
+				lotteryServiceFacade.updatePrizeInfo(prizeLotteryPeriods);
 			}
+			
+			// 5. notify owner & merchant
+			notify(LotteryType.SSQ, openInfo, prizeLotteries);
 		}
 	}
 
-	private void notify(List<LotteryPeriod> prizeLotteries) {
-		if (CollectionUtils.isNotEmpty(prizeLotteries)) {
-			LOGGER.info("Start to notify prize owner...");
-			
-			// TODO call WX message api.
-			
-			LOGGER.info("Complete notifying prize owner.");
-		}
+	private void notify(LotteryType lotteryType, PrizeLotterySSQ openInfo, List<Lottery> prizeLotteries) {
+		LOGGER.info("Start to notify prize info ...");
+		
+		messageNotifier.notifyMerchantPrizeInfo(lotteryType, openInfo, prizeLotteries);
+		messageNotifier.notifyCustomerPrizeInfo(prizeLotteries);
+		
+		LOGGER.info("Complete notifying prize info.");
 	}
 }

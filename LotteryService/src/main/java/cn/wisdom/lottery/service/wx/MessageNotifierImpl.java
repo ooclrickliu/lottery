@@ -1,5 +1,7 @@
 package cn.wisdom.lottery.service.wx;
 
+import java.util.List;
+
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.bean.WxMpCustomMessage;
 import me.chanjar.weixin.mp.bean.WxMpCustomMessage.WxArticle;
@@ -9,9 +11,12 @@ import org.springframework.stereotype.Service;
 
 import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
+import cn.wisdom.lottery.common.utils.CollectionUtils;
+import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.vo.AppProperty;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.service.UserService;
 
 @Service
@@ -107,6 +112,43 @@ public class MessageNotifierImpl implements MessageNotifier {
 		news.setUrl("http://cai.southwisdom.cn/lottery_detail.html?openid=" + openid);
 		
 		sendNewsMessage(news, openid);
+	}
+
+	@Override
+	public void notifyMerchantPrizeInfo(LotteryType lotteryType, PrizeLotterySSQ openInfo, List<Lottery> prizeLotteries) {
+		String title = lotteryType.getTypeName() + openInfo.getPeriod() + "期中奖结果";
+		if (CollectionUtils.isEmpty(prizeLotteries)) {
+			WxArticle news = new WxArticle();
+			news.setTitle("");
+			news.setPicUrl("");
+			
+			LotteryPeriod period = lottery.getPeriods().get(0);
+			String descStr = lottery.getLotteryType().getTypeName() + " - " + period.getPeriod() + "期\n";
+			descStr += "倍数: " + lottery.getTimes();
+			if (lottery.getPeriods().size() > 1) {
+				descStr += "        追号: " + lottery.getPeriods().size() + "期";
+			}
+			descStr += "\n投注号码:\n";
+			
+			for (int i = 0; i < lottery.getNumbers().size(); i++) {
+				descStr += "    "
+						+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
+						.replaceAll("\\+", " \\+ ") + "\n";
+			}
+			descStr += "\n金额: " + lottery.getTotalFee() + "元";
+			
+			news.setDescription(descStr);
+			news.setUrl("http://cai.southwisdom.cn/lottery_detail.html?openid=" + openid);
+			
+			sendNewsMessage(news, openid);
+		}
+		
+	}
+
+	@Override
+	public void notifyCustomerPrizeInfo(List<Lottery> prizeLotteries) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
