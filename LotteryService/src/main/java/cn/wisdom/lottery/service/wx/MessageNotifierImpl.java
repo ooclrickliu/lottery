@@ -83,8 +83,9 @@ public class MessageNotifierImpl implements MessageNotifier {
 		if (num > 5) {
 			descStr += "    ...";
 		}
-		news.setUrl("http://cai.southwisdom.cn/lottery_detail.html?openid=" + openid);
+		news.setUrl("http://cai.southwisdom.cn/lottery.html?openid=" + openid + "&lotteryId=" + lottery.getId() + "#/detail");
 		
+//		descStr += news.getUrl();
 		news.setDescription(descStr);
 		
 		sendNewsMessage(news, openid);
@@ -112,8 +113,10 @@ public class MessageNotifierImpl implements MessageNotifier {
 		}
 		descStr += "\n金额: " + lottery.getTotalFee() + "元";
 		
+		news.setUrl("http://cai.southwisdom.cn/lottery.html?openid=" + openid + "&lotteryId=" + lottery.getId() + "#/detail");
+
+//		descStr += news.getUrl();
 		news.setDescription(descStr);
-		news.setUrl("http://cai.southwisdom.cn/lottery_detail.html?openid=" + openid);
 		
 		sendNewsMessage(news, openid);
 	}
