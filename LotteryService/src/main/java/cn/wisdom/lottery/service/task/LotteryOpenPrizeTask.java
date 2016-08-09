@@ -7,12 +7,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import cn.wisdom.lottery.common.exception.OVTException;
 import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
 import cn.wisdom.lottery.common.utils.CollectionUtils;
 import cn.wisdom.lottery.common.utils.DataConvertUtils;
-import cn.wisdom.lottery.common.utils.JsonUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
@@ -108,17 +106,14 @@ public class LotteryOpenPrizeTask {
 			List<Lottery> prizeLotteries = new ArrayList<Lottery>();
 			List<LotteryPeriod> prizeLotteryPeriods = new ArrayList<LotteryPeriod>();
 			for (Lottery lottery : paidLotteries) {
-				Map<Long, Map<Integer, Integer>> prizeInfo = lotteryServiceFacade.getPrizeInfo(lottery, openInfo);
+				Map<String, Map<String, Integer>> prizeInfo = lotteryServiceFacade.getPrizeInfo(lottery, openInfo);
 				
 				if (CollectionUtils.isNotEmpty(prizeInfo)) {
 					LotteryPeriod period = new LotteryPeriod();
 					period.setLotteryId(lottery.getId());
 					period.setPeriod(openInfo.getPeriod());
 					
-					try {
-						period.setPrizeInfo(JsonUtils.toJson(prizeInfo));
-					} catch (OVTException e) {
-					}
+					period.setPrizeInfoMap(prizeInfo);
 					period.setPrizeBonus(lotteryServiceFacade.getPrizeBonus(prizeInfo));
 					
 					lottery.getPeriods().add(period);

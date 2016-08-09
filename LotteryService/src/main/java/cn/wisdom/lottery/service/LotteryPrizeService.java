@@ -70,12 +70,12 @@ public interface LotteryPrizeService {
 	 * @param ssq
 	 * @return Key: numberId, Value: (key: prizeRank, value: hitNumber)
 	 */
-	Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery, PrizeLotterySSQ ssq);
+	Map<String, Map<String, Integer>> getPrizeInfo(Lottery lottery, PrizeLotterySSQ ssq);
 	
 	/**
 	 * Calculate prize bonus according prize info.
 	 * @param prizeInfo
 	 * @return
 	 */
-	int getPrizeBonus(Map<Long, Map<Integer, Integer>> prizeInfo);
+	int getPrizeBonus(Map<String, Map<String, Integer>> prizeInfo);
 }

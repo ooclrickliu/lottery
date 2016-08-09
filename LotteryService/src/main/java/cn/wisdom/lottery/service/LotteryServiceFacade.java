@@ -59,10 +59,10 @@ public interface LotteryServiceFacade
 //    List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
 //    		throws ServiceException;
 
-    Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery,
+    Map<String, Map<String, Integer>> getPrizeInfo(Lottery lottery,
             PrizeLotterySSQ prizeLotterySSQ) throws ServiceException;
 
-    int getPrizeBonus(Map<Long, Map<Integer, Integer>> prizeInfo);
+    int getPrizeBonus(Map<String, Map<String, Integer>> prizeInfo);
 
     void updatePrizeInfo(List<LotteryPeriod> prizeLotteries);
 

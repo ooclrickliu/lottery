@@ -21,10 +21,10 @@ import cn.wisdom.lottery.common.utils.MathUtils;
 public class SSQPrizeCalculator implements LotteryPrizeCalculator {
 
 	@Override
-	public Map<Integer, Integer> getPrizeInfo(int rTotal, int bTotal,
+	public Map<String, Integer> getPrizeInfo(int rTotal, int bTotal,
 			int rHits, int bHits) {
 		
-		Map<Integer, Integer> prizeHitsMap = new HashMap<Integer, Integer>();
+		Map<String, Integer> prizeHitsMap = new HashMap<String, Integer>();
 		
 		if (bHits == 0) {
 			if (rHits == 4) {
@@ -66,11 +66,11 @@ public class SSQPrizeCalculator implements LotteryPrizeCalculator {
 		return prizeHitsMap;
 	}
 
-	private void removeZero(Map<Integer, Integer> prizeHitsMap) {
-		List<Integer> zeroPrizes = new ArrayList<Integer>();
+	private void removeZero(Map<String, Integer> prizeHitsMap) {
+		List<String> zeroPrizes = new ArrayList<String>();
 		
 		int hits;
-		for (int prize : prizeHitsMap.keySet()) {
+		for (String prize : prizeHitsMap.keySet()) {
 			hits = prizeHitsMap.get(prize);
 			
 			if (hits == 0) {
@@ -78,13 +78,13 @@ public class SSQPrizeCalculator implements LotteryPrizeCalculator {
 			}
 		}
 		
-		for (Integer zeroPrize : zeroPrizes) {
+		for (String zeroPrize : zeroPrizes) {
 			prizeHitsMap.remove(zeroPrize);
 		}
 	}
 
-	private Map<Integer, Integer> bhit_0_rhit_4(int rTotal, int bTotal, int rHits, int bHits) {
-		Map<Integer, Integer> prizeHitsMap = new HashMap<Integer, Integer>();
+	private Map<String, Integer> bhit_0_rhit_4(int rTotal, int bTotal, int rHits, int bHits) {
+		Map<String, Integer> prizeHitsMap = new HashMap<String, Integer>();
 		int prize;
 		int hits;
 		//*******************/
@@ -93,13 +93,13 @@ public class SSQPrizeCalculator implements LotteryPrizeCalculator {
 		//Cn-4,2
 //		hits = MathUtils.Cn_m(rTotal - rHits, 2);
 		hits = prize_5(rTotal, bTotal, rHits, bHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		return prizeHitsMap;
 	}
 
-	private Map<Integer, Integer> bhit_0_rhit_5(int rTotal, int bTotal, int rHits, int bHits) {
-		Map<Integer, Integer> prizeHitsMap = new HashMap<Integer, Integer>();
+	private Map<String, Integer> bhit_0_rhit_5(int rTotal, int bTotal, int rHits, int bHits) {
+		Map<String, Integer> prizeHitsMap = new HashMap<String, Integer>();
 		int prize;
 		int hits;
 		//*******************/
@@ -108,7 +108,7 @@ public class SSQPrizeCalculator implements LotteryPrizeCalculator {
 		//Cn-5,1
 //		hits = rTotal - 5;
 		hits = prize_4(rTotal, bTotal, rHits, bHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 
 		//*******************/
 		prize = 5;
@@ -116,13 +116,13 @@ public class SSQPrizeCalculator implements LotteryPrizeCalculator {
 		//C5,4*Cn-5,2
 //		hits = 5 * MathUtils.Cn_m(rTotal - rHits, 2);
 		hits = prize_5(rTotal, bTotal, rHits, bHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		return prizeHitsMap;
 	}
 
-	private Map<Integer, Integer> bhit_0_rhit_6(int rTotal, int bTotal, int rHits, int bHits) {
-		Map<Integer, Integer> prizeHitsMap = new HashMap<Integer, Integer>();
+	private Map<String, Integer> bhit_0_rhit_6(int rTotal, int bTotal, int rHits, int bHits) {
+		Map<String, Integer> prizeHitsMap = new HashMap<String, Integer>();
 		int prize;
 		int hits;
 		//*******************/
@@ -130,112 +130,112 @@ public class SSQPrizeCalculator implements LotteryPrizeCalculator {
 		
 		//bTotal
 		hits = bTotal;
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 
 		//*******************/
 		prize = 4;
 		
 		//Crh,5*Cn-rh,1
 		hits = prize_4(rTotal, bTotal, rHits, bHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 
 		//*******************/
 		prize = 5;
 		
 		//Crh,4*Cn-rh,2
 		hits = prize_5(rTotal, bTotal, rHits, bHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		return prizeHitsMap;
 	}
 
-	private Map<Integer, Integer> bhit_1_rhit_less_3(int rTotal) {
-		Map<Integer, Integer> prizeHitsMap = new HashMap<Integer, Integer>();
+	private Map<String, Integer> bhit_1_rhit_less_3(int rTotal) {
+		Map<String, Integer> prizeHitsMap = new HashMap<String, Integer>();
 		int prize;
 		int hits;
 		//*******************/
 		prize = 6;
 		
 		hits = MathUtils.Cn_m(rTotal, 6);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		return prizeHitsMap;
 	}
 
-	private Map<Integer, Integer> bhit_1_rhit_6(int rTotal, int bTotal, int rHits, int bHits) {
-		Map<Integer, Integer> prizeHitsMap = new HashMap<Integer, Integer>();
+	private Map<String, Integer> bhit_1_rhit_6(int rTotal, int bTotal, int rHits, int bHits) {
+		Map<String, Integer> prizeHitsMap = new HashMap<String, Integer>();
 		int prize;
 		int hits;
 		//*******************/
 		prize = 1;
 		hits = 1;
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		//*******************/
 		prize = 2;
 		
 		//bTotal-1
 		hits = bTotal-1;
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		//*******************/
 		//Crh,5*Cn-rh,1
 		prize = 3;
 		hits = MathUtils.Cn_m(rHits, 5) * MathUtils.Cn_m(rTotal - rHits, 1);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		//*******************/
 		prize = 4;
 		
 		//Crh,4*Cn-rh,2
 		hits = prize_4(rTotal, bTotal, rHits, bHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 
 		//*******************/
 		prize = 5;
 		hits = prize_5(rTotal, bTotal, rHits, bHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		//*******************/
 		prize = 6;
 		
 		hits = prize_6(rTotal, rHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		return prizeHitsMap;
 	}
 
-	private Map<Integer, Integer> bhit_1_rhit_5(int rTotal, int bTotal, int rHits, int bHits) {
-		Map<Integer, Integer> prizeHitsMap = new HashMap<Integer, Integer>();
+	private Map<String, Integer> bhit_1_rhit_5(int rTotal, int bTotal, int rHits, int bHits) {
+		Map<String, Integer> prizeHitsMap = new HashMap<String, Integer>();
 		int prize;
 		int hits;
 		//*******************/
 		prize = 3;
 		hits = MathUtils.Cn_m(rTotal - rHits, 1);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		//*******************/
 		prize = 4;
 		
 		hits = prize_4(rTotal, bTotal, rHits, bHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 
 		//*******************/
 		prize = 5;
 		hits = prize_5(rTotal, bTotal, rHits, bHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		//*******************/
 		prize = 6;
 		
 		hits = prize_6(rTotal, rHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		return prizeHitsMap;
 	}
 
-	private Map<Integer, Integer> bhit_1_rhit_4(int rTotal, int bTotal, int rHits, int bHits) {
-		Map<Integer, Integer> prizeHitsMap = new HashMap<Integer, Integer>();
+	private Map<String, Integer> bhit_1_rhit_4(int rTotal, int bTotal, int rHits, int bHits) {
+		Map<String, Integer> prizeHitsMap = new HashMap<String, Integer>();
 		int prize;
 		int hits;
 		//*******************/
@@ -243,24 +243,24 @@ public class SSQPrizeCalculator implements LotteryPrizeCalculator {
 		
 		//Cn-4,2
 		hits = MathUtils.Cn_m(rTotal - rHits, 2);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 
 		//*******************/
 		prize = 5;
 		hits = prize_5(rTotal, bTotal, rHits, bHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		//*******************/
 		prize = 6;
 		
 		hits = prize_6(rTotal, rHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		return prizeHitsMap;
 	}
 
-	private Map<Integer, Integer> bhit_3_rhit_3(int rTotal, int rHits) {
-		Map<Integer, Integer> prizeHitsMap = new HashMap<Integer, Integer>();
+	private Map<String, Integer> bhit_3_rhit_3(int rTotal, int rHits) {
+		Map<String, Integer> prizeHitsMap = new HashMap<String, Integer>();
 		int prize;
 		int hits;
 		//*******************/
@@ -268,13 +268,13 @@ public class SSQPrizeCalculator implements LotteryPrizeCalculator {
 		
 		//Cn-3,3
 		hits = MathUtils.Cn_m(rTotal - rHits, 3);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		//*******************/
 		prize = 6;
 		
 		hits = prize_6(rTotal, rHits);
-		prizeHitsMap.put(prize, hits);
+		prizeHitsMap.put("" + prize, hits);
 		
 		return prizeHitsMap;
 	}

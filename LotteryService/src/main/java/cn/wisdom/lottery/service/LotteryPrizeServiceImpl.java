@@ -86,13 +86,13 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 	}
 
 	@Override
-	public Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery, PrizeLotterySSQ openLottery) {
-		Map<Long, Map<Integer, Integer>> prizeInfo = new HashMap<Long, Map<Integer,Integer>>();
+	public Map<String, Map<String, Integer>> getPrizeInfo(Lottery lottery, PrizeLotterySSQ openLottery) {
+		Map<String, Map<String, Integer>> prizeInfo = new HashMap<String, Map<String,Integer>>();
 
 		if (lottery.getLotteryType() == LotteryType.SSQ) {
-			Map<Integer, Integer> singlePrizeInfo;
+			Map<String, Integer> singlePrizeInfo;
 			for (LotteryNumber number : lottery.getNumbers()) {
-				singlePrizeInfo = new HashMap<Integer, Integer>();
+				singlePrizeInfo = new HashMap<String, Integer>();
 				
 				int rHits = 0;
 				int bHits = 0;
@@ -115,7 +115,7 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 						rawLottery.getBlue().size(), rHits, bHits);
 				
 				if (CollectionUtils.isNotEmpty(singlePrizeInfo)) {
-					prizeInfo.put(number.getId(), singlePrizeInfo);
+					prizeInfo.put("" + number.getId(), singlePrizeInfo);
 				}
 			}
 		}
@@ -124,8 +124,8 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 	}
 
 	@Override
-	public int getPrizeBonus(Map<Long, Map<Integer, Integer>> prizeInfo) {
-		for (Map<Integer, Integer> singlePrizeInfo : prizeInfo.values()) {
+	public int getPrizeBonus(Map<String, Map<String, Integer>> prizeInfo) {
+		for (Map<String, Integer> singlePrizeInfo : prizeInfo.values()) {
 			if (singlePrizeInfo.keySet().contains(1) ||
 					singlePrizeInfo.keySet().contains(2)) {
 				return BONUS_NOT_SURE;
@@ -134,8 +134,8 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 		
 		int bonus = 0;
 		int pirzeBonus, prizeAmount;
-		for (Map<Integer, Integer> singlePrizeInfo : prizeInfo.values()) {
-			for (int prize : singlePrizeInfo.keySet()) {
+		for (Map<String, Integer> singlePrizeInfo : prizeInfo.values()) {
+			for (String prize : singlePrizeInfo.keySet()) {
 				pirzeBonus = prizeBonusMap.get(prize);
 				prizeAmount = singlePrizeInfo.get(prize);
 				bonus += prizeAmount * pirzeBonus;
@@ -145,12 +145,12 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 		return bonus;
 	}
 	
-	private static final Map<Integer, Integer> prizeBonusMap = new HashMap<Integer, Integer>();
+	private static final Map<String, Integer> prizeBonusMap = new HashMap<String, Integer>();
 	static 
 	{
-		prizeBonusMap.put(3, 3000);
-		prizeBonusMap.put(4, 200);
-		prizeBonusMap.put(5, 10);
-		prizeBonusMap.put(6, 5);
+		prizeBonusMap.put("3", 3000);
+		prizeBonusMap.put("4", 200);
+		prizeBonusMap.put("5", 10);
+		prizeBonusMap.put("6", 5);
 	}
 }

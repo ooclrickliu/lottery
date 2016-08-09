@@ -144,14 +144,14 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
 //    }
 
     @Override
-    public Map<Long, Map<Integer, Integer>> getPrizeInfo(Lottery lottery,
+    public Map<String, Map<String, Integer>> getPrizeInfo(Lottery lottery,
             PrizeLotterySSQ prizeLotterySSQ) throws ServiceException
     {
         return lotteryPrizeService.getPrizeInfo(lottery, prizeLotterySSQ);
     }
 
     @Override
-    public int getPrizeBonus(Map<Long, Map<Integer, Integer>> prizeInfo)
+    public int getPrizeBonus(Map<String, Map<String, Integer>> prizeInfo)
     {
         return lotteryPrizeService.getPrizeBonus(prizeInfo);
     }

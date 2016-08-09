@@ -24,5 +24,5 @@ public interface LotteryPrizeCalculator {
 	 * @param bHits
 	 * @return
 	 */
-	Map<Integer, Integer> getPrizeInfo(int rTotal, int bTotal, int rHits, int bHits);
+	Map<String, Integer> getPrizeInfo(int rTotal, int bTotal, int rHits, int bHits);
 }

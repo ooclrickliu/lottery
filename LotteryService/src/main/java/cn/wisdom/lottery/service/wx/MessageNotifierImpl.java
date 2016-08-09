@@ -124,7 +124,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 		Map<Long, List<Lottery>> prizeLotteryMap = this.groupByMerchant(prizeLotteries);
 		for (long merchantId : prizeLotteryMap.keySet()) {
 			
-			Map<Integer, Integer> prizeInfoSummary = this.sumPrizeInfo(prizeLotteryMap.get(merchantId));
+			Map<String, Integer> prizeInfoSummary = this.sumPrizeInfo(prizeLotteryMap.get(merchantId));
 			
 			WxArticle news = this.buildMerchantPrizeNotifyMessage(lotteryType, openInfo, prizeInfoSummary);
 			
@@ -135,7 +135,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 	}
 
 	private WxArticle buildMerchantPrizeNotifyMessage(LotteryType lotteryType, PrizeLotterySSQ openInfo, 
-			Map<Integer, Integer> prizeInfoSummary) {
+			Map<String, Integer> prizeInfoSummary) {
 		WxArticle news = new WxArticle();
 		String title = lotteryType.getTypeName() + openInfo.getPeriod() + "期中奖结果";
 		news.setTitle(title);
@@ -147,7 +147,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 		}
 		else {
 			descStr += "中奖结果: ";
-			for (int rank : prizeInfoSummary.keySet()) {
+			for (String rank : prizeInfoSummary.keySet()) {
 				descStr += "\n      " + rank + "等奖: " + prizeInfoSummary.get(rank) + " 注";
 			}
 		}
@@ -158,13 +158,13 @@ public class MessageNotifierImpl implements MessageNotifier {
 		return news;
 	}
 
-	private Map<Integer, Integer> sumPrizeInfo(List<Lottery> prizeLotteries) {
-		Map<Integer, Integer> sumPrizeInfoMap = new HashMap<Integer, Integer>();
+	private Map<String, Integer> sumPrizeInfo(List<Lottery> prizeLotteries) {
+		Map<String, Integer> sumPrizeInfoMap = new HashMap<String, Integer>();
 		for (Lottery lottery : prizeLotteries) {
 			LotteryPeriod lotteryPeriod = lottery.getPeriods().get(0);
-			for (Long numberId : lotteryPeriod.getPrizeInfoMap().keySet()) {
-				Map<Integer, Integer> numberPrizeInfoMap = lotteryPeriod.getPrizeInfoMap().get(numberId);
-				for (Integer rank : numberPrizeInfoMap.keySet()) {
+			for (String numberId : lotteryPeriod.getPrizeInfoMap().keySet()) {
+				Map<String, Integer> numberPrizeInfoMap = lotteryPeriod.getPrizeInfoMap().get(numberId);
+				for (String rank : numberPrizeInfoMap.keySet()) {
 					Integer sum = sumPrizeInfoMap.get(rank);
 					if (sum == null) {
 						sum = 0;

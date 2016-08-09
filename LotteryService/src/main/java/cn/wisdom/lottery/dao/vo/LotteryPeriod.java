@@ -1,9 +1,11 @@
 package cn.wisdom.lottery.dao.vo;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Map;
 
 import cn.wisdom.lottery.common.exception.OVTException;
+import cn.wisdom.lottery.common.utils.CollectionUtils;
 import cn.wisdom.lottery.common.utils.JsonUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.annotation.Column;
@@ -29,7 +31,7 @@ public class LotteryPeriod extends BaseEntity {
 
     @Column("prize_info")
     private String prizeInfo;
-    private Map<Long, Map<Integer, Integer>> prizeInfoMap;
+    private Map<String, Map<String, Integer>> prizeInfoMap; 
 
     @Column("prize_bonus")
     private int prizeBonus;
@@ -125,7 +127,7 @@ public class LotteryPeriod extends BaseEntity {
     }
 
 	@SuppressWarnings("unchecked")
-	public Map<Long, Map<Integer, Integer>> getPrizeInfoMap() {
+	public Map<String, Map<String, Integer>> getPrizeInfoMap() {
 		if (prizeInfoMap == null && StringUtils.isNotBlank(prizeInfo)) {
 			try {
 				prizeInfoMap = JsonUtils.fromJson(prizeInfo, Map.class);
@@ -137,7 +139,7 @@ public class LotteryPeriod extends BaseEntity {
 		return prizeInfoMap;
 	}
 
-	public void setPrizeInfoMap(Map<Long, Map<Integer, Integer>> prizeInfoMap) {
+	public void setPrizeInfoMap(Map<String, Map<String, Integer>> prizeInfoMap) {
 		this.prizeInfoMap = prizeInfoMap;
 		try {
 			this.prizeInfo = JsonUtils.toJson(prizeInfoMap);
@@ -145,4 +147,29 @@ public class LotteryPeriod extends BaseEntity {
 			e.printStackTrace();
 		}
 	}
+
+	public Map<String, Integer> getPrizeMap() {
+		Map<String, Integer> prizeMap = new HashMap<String, Integer>();
+		
+		Map<String, Map<String, Integer>> prizeInfoMap = this.getPrizeInfoMap();
+		if (CollectionUtils.isNotEmpty(prizeInfoMap)) {
+			for (String numberId : prizeInfoMap.keySet()) {
+				Map<String, Integer> map = prizeInfoMap.get(numberId);
+				for (String rank : map.keySet()) {
+					Integer count = prizeMap.get(rank);
+					if (count == null) {
+						count = 0;
+					}
+					count += map.get(rank);
+					
+					prizeMap.put(rank, count);
+				}
+			}
+		}
+		return prizeMap;
+	}
+
+//	public void setPrizeMap(Map<Long, Map<Integer, Integer>> prizeMap) {
+//		this.prizeMap = prizeMap;
+//	}
 }
