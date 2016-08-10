@@ -132,7 +132,10 @@ public class MessageNotifierImpl implements MessageNotifier {
 			WxArticle news = this.buildMerchantPrizeNotifyMessage(lotteryType, openInfo, prizeInfoSummary);
 			
 			User merchant = userService.getUserById(merchantId);
-			sendNewsMessage(news, merchant.getOpenid());
+			
+			if (merchant != null) {
+				sendNewsMessage(news, merchant.getOpenid());
+			}
 		}
 
 	}
