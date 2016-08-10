@@ -39,7 +39,7 @@ public class LotteryDaoImpl implements LotteryDao {
 	private static final String GET_LOTTERY_JOIN_PREFIX = "select l.* from lottery l join lottery_period p on l.id = p.lottery_id ";
 	
 	private static final String GET_PAID_LOTTERY_OF_PERIOD = GET_LOTTERY_JOIN_PREFIX
-			+ " where lottery_type = ? and ticket_state = 'Paid' and period = ?";
+			+ " where lottery_type = ? and pay_state = 'Paid' and period = ?";
 
 	private static final String GET_LOTTERY_BY_ID = GET_LOTTERY_PREFIX
 			+ " where id in( {0})";
@@ -65,7 +65,7 @@ public class LotteryDaoImpl implements LotteryDao {
 	private static final String UPDATE_LOTTERY_PAY_STATE = "update lottery set pay_state = ?, update_time = current_timestamp "
 			+ "where id = ?";
 	
-	private static final String UPDATE_LOTTERY_PRINT_STATE = "update lottery set ticket_state = 'Printed', "
+	private static final String UPDATE_LOTTERY_PRINT_STATE = "update lottery set pay_state = 'Printed', "
 			+ "ticket_print_time = current_timestamp, update_time = current_timestamp "
 			+ "where order_no = ?";
 	
@@ -81,7 +81,7 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ "where period = ?";
 	
 	private static final String UPDATE_LOTTERY_PRIZE_INFO = "update lottery_period set prize_info = ?, "
-			+ "prize_bonus = ?, prize_state = 'Win', update_time = current_timestamp "
+			+ "prize_bonus = ?, prize_state = 'Win' "
 			+ "where lottery_id = ? and period= ?";
 
     private static final DaoRowMapper<Lottery> lotteryMapper = new DaoRowMapper<Lottery>(Lottery.class);

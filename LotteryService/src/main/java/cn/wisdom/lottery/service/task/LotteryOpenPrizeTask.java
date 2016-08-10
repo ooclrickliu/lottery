@@ -11,6 +11,7 @@ import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
 import cn.wisdom.lottery.common.utils.CollectionUtils;
 import cn.wisdom.lottery.common.utils.DataConvertUtils;
+import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
@@ -46,7 +47,10 @@ public class LotteryOpenPrizeTask {
 			
 			// 1. 根据我们的定义，19点以后的当前时间已经是下一期了，所以要查上一期的开奖信息，如果为空，则需要更新，否则不用更新
 			LotteryOpenData latestOpenInfo = lotteryServiceFacade.getLatestOpenInfo(LotteryType.SSQ);
-			if (latestOpenInfo.getOpencode() != null) {
+			if (StringUtils.isNotBlank(latestOpenInfo.getOpencode())) {
+				
+				LOGGER.info(latestOpenInfo.getExpect() + " period has already opened: " + latestOpenInfo.getOpencode());
+				LOGGER.info("SSQ task over.");
 				return;
 			}
 			
