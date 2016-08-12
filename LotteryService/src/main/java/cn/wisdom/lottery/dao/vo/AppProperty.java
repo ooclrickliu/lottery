@@ -21,8 +21,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppProperty
 {
-	@Value("${cookie.access_token.age}")
-	public int cookieAccessTokenAge;
+	@Value("${cookie.access_token.hour.age}")
+	public int cookieAccessTokenHourAge;
 	
 	@Value("${wxPay.debug}")
 	public boolean wxPaydebug;

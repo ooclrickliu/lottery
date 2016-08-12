@@ -317,6 +317,9 @@ CREATE TABLE IF NOT EXISTS `wx_pay_log` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 
+alter table `user` add password varchar(50) DEFAULT '' after openid;
+create unique index idx_user_phone on user(phone);
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

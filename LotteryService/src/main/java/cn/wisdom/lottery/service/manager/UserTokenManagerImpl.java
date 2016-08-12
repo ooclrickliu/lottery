@@ -52,7 +52,7 @@ public class UserTokenManagerImpl implements UserTokenManager
         long userId = 0;
         
         Timestamp expireTime = new Timestamp(DateTimeUtils.addSeconds(
-                new java.util.Date(), appProperties.cookieAccessTokenAge)
+                new java.util.Date(), appProperties.cookieAccessTokenHourAge)
                 .getTime());
         try
         {
@@ -85,7 +85,7 @@ public class UserTokenManagerImpl implements UserTokenManager
         accessToken.setToken(token);
         accessToken.setUserId(userId);
         accessToken.setExpireTime(new Timestamp(DateTimeUtils.addSeconds(
-                new java.util.Date(), appProperties.cookieAccessTokenAge)
+                new java.util.Date(), appProperties.cookieAccessTokenHourAge)
                 .getTime()));
         
         try
