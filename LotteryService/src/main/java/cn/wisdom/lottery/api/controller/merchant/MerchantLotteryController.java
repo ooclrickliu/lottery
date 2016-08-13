@@ -15,6 +15,7 @@ import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.api.response.QueryLotteryResponse;
 import cn.wisdom.lottery.common.model.JsonDocument;
 import cn.wisdom.lottery.common.utils.CollectionUtils;
+import cn.wisdom.lottery.common.utils.NumberUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
@@ -78,8 +79,8 @@ public class MerchantLotteryController
 			summarizeMap(prizeMap, period.getPrizeMap());
 		}
 		
-		response.setTotalFee(totalFee);
-		response.setTotalPrize(totalPrize);
+		response.setTotalFee(NumberUtils.formatFloat(totalFee));
+		response.setTotalPrize(NumberUtils.formatFloat(totalPrize));
 		
 		response.setPrizeInfo(prizeMap);
 	}
