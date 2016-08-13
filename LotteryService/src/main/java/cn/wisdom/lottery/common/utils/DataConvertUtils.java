@@ -92,6 +92,24 @@ public class DataConvertUtils
     {
         return (int) toLong(value);
     }
+    
+    public static float toFloat(String value)
+    {
+        float f = 0;
+        if (value != null && value.toString().length() != 0)
+        {
+            try
+            {
+                f = Float.parseFloat(value);
+            }
+            catch (NumberFormatException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        
+        return f;
+    }
 
     /**
      * Convert object to long.

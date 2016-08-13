@@ -5,7 +5,7 @@
  * 
  * May 5, 2015
  */
-package cn.wisdom.lottery.service.manager;
+package cn.wisdom.lottery.service;
 
 import cn.wisdom.lottery.service.exception.ServiceException;
 
@@ -18,7 +18,7 @@ import cn.wisdom.lottery.service.exception.ServiceException;
  * @See 
  * @Since [OVT Cloud Platform]/[Service] 1.0
  */
-public interface UserTokenManager
+public interface AccessTokenService
 {
     
     /**
@@ -50,6 +50,4 @@ public interface UserTokenManager
      * @param userId
      */
     void invalidTokensByUser(long userId) throws ServiceException;
-    
-    void cleanExpiredUserToken() throws ServiceException;
 }

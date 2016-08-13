@@ -8,7 +8,6 @@
 package cn.wisdom.lottery.service;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
@@ -20,15 +19,15 @@ import org.springframework.stereotype.Service;
 import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
 import cn.wisdom.lottery.common.utils.DataFormatValidator;
+import cn.wisdom.lottery.common.utils.EncryptionUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.UserDao;
 import cn.wisdom.lottery.dao.constant.RoleType;
 import cn.wisdom.lottery.dao.vo.User;
+import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.InvalidDataInputException;
 import cn.wisdom.lottery.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.service.exception.ServiceException;
-import cn.wisdom.lottery.service.manager.UserManager;
-import cn.wisdom.lottery.service.manager.UserTokenManager;
 import cn.wisdom.lottery.service.wx.WXService;
 
 /**
@@ -42,11 +41,8 @@ import cn.wisdom.lottery.service.wx.WXService;
 @Service
 public class UserServiceImpl implements UserService
 {
-    @Autowired
-    private UserTokenManager userAccessTokenManager;
-    
-    @Autowired
-    private UserManager userManager;
+	@Autowired
+	private AccessTokenService accessTokenService;
     
     @Autowired
     private UserDao userDao;
@@ -63,67 +59,14 @@ public class UserServiceImpl implements UserService
      */
     public User getUserByAccessToken(String accessToken) throws ServiceException
     {
-        long userId = userAccessTokenManager.getUserByAccessToken(accessToken);
+    	User user = null;
+        long userId = accessTokenService.getUserByAccessToken(accessToken);
         logger.debug("Got userId {} by accessToken {}", userId, accessToken);
 
-        User user = userManager.getUserById(userId);
-        if (user == null)
-        {
-            throw new ServiceException(ServiceErrorCode.INVALID_ACCESS,
-                    "Failed to find user by userId!");
-        }
-
+		if (userId > 0) {
+			user = userDao.getUserById(userId);
+		}
         return user;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ovt.service.UserService#checkEmail(java.lang.String)
-     */
-    public boolean checkName(String name) throws ServiceException
-    {
-        return checkNameUnique(name);
-    }
-
-    /**
-     * validate email and password format.
-     * 
-     * @throws InvalidDataInputException
-     */
-    // private void checkFormat(String email, String password)
-    // throws ServiceException
-    // {
-    // checkNameFormat(email);
-    //
-    // checkPasswordFormat(password);
-    // }
-
-    /**
-     * check password format.
-     * 
-     * @param password
-     * @throws InvalidDataInputException
-     */
-    private void checkPasswordFormat(String password) throws InvalidDataInputException
-    {
-        if (!DataFormatValidator.isValidPassword(password))
-        {
-            throw new InvalidDataInputException(ServiceErrorCode.INVALID_PASSWORD,
-                    "Password format is invalid!");
-        }
-    }
-
-    /**
-     * check if email is unique.
-     * 
-     * @param email
-     * @return
-     * @throws ServiceException
-     */
-    private boolean checkNameUnique(String name) throws ServiceException
-    {
-        return userManager.checkName(name);
     }
 
     /*
@@ -132,32 +75,31 @@ public class UserServiceImpl implements UserService
      * @see com.ovt.service.UserService#login(java.lang.String,
      * java.lang.String)
      */
-    public String login(String name, String password) throws ServiceException
+    public String login(String phone, String password) throws ServiceException
     {
-        // check args' format
-        // checkFormat(name, password);
-//        User user = userManager.getUserByName(name);
-//        if (user == null)
-//        {
-//            throw new ServiceException(ServiceErrorCode.USER_NOT_EXIST, "User is not exist!");
-//        }
-//
-//        // check password
-//        if (!StringUtils.equals(user.getPassword(), EncryptionUtils.encrypt(password)))
-//        {
-//            throw new ServiceException(ServiceErrorCode.WRONG_PASSWORD, "Password is wrong!");
-//        }
-//
-//        List<Permission> permission = permissionManager.getPermissionByUserId((int) user.getId());
-//        user.setPermission(permission);
-//        // generate access token
-//        String accessToken = userAccessTokenManager.generateAccessToken(user.getId());
-//        // put user into session context
-//        SessionContext.setCurrentUser(user);
-//
-//        return accessToken;
-    	return "";
-    }
+		
+		User user = userDao.getUserByPhone(phone);
+		if (user == null)
+        {
+            throw new ServiceException(ServiceErrorCode.USER_NOT_EXIST,
+                    "User is not exist!");
+        }
+		
+		SessionContext.setCurrentUser(user);
+
+        // check password
+        if (!StringUtils.equals(user.getPassword(),
+                EncryptionUtils.encrypt(password)))
+        {
+            throw new ServiceException(ServiceErrorCode.WRONG_PASSWORD,
+                    "Password is wrong!");
+        }
+        
+        // generate access token
+        String accessToken =
+                accessTokenService.generateAccessToken(user.getId());
+		
+		return accessToken;}
 
     /*
      * (non-Javadoc)
@@ -168,121 +110,59 @@ public class UserServiceImpl implements UserService
     {
         if (StringUtils.isNotBlank(accessToken))
         {
-            userAccessTokenManager.invalidToken(accessToken);
+            accessTokenService.invalidToken(accessToken);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ovt.service.UserService#changePassword(java.lang.String,
-     * java.lang.String)
-     */
-    public String changePassword(String oldPassword, String newPassword) throws ServiceException
+    public String changePassword(String oldPassword, String newPassword)
+            throws ServiceException
     {
-//        // check format
-//        if (!DataFormatValidator.isValidPassword(oldPassword)
-//                || !DataFormatValidator.isValidPassword(newPassword))
-//        {
-//            throw new InvalidDataInputException(ServiceErrorCode.INVALID_PASSWORD,
-//                    "Password format is invalid!");
-//        }
-//
-//        // new password can't be same as old one
-//        if (StringUtils.equals(oldPassword, newPassword))
-//        {
-//            throw new InvalidDataInputException(ServiceErrorCode.SAME_NEW_OLD_PASSWORD,
-//                    "New password can't be same as old one!");
-//        }
-//
-//        User currentUser = SessionContext.getCurrentUser();
-//
-//        // check old password
-//        if (!StringUtils.equals(currentUser.getPassword(), EncryptionUtils.encrypt(oldPassword)))
-//        {
-//            throw new InvalidDataInputException(ServiceErrorCode.WRONG_PASSWORD,
-//                    "Old password is wrong!");
-//        }
-//
-//        // change password flow
-//        String accessToken = changePassword(newPassword, currentUser.getId());
-//
-//        return accessToken;
-    	return "";
-    }
+        // check format
+        if (!DataFormatValidator.isValidPassword(oldPassword)
+                || !DataFormatValidator.isValidPassword(newPassword))
+        {
+            throw new InvalidDataInputException(
+                    ServiceErrorCode.INVALID_PASSWORD_FORMAT,
+                    "Password format is invalid!");
+        }
 
-    /**
-     * change password flow.
-     * 
-     * @param newPassword
-     * @param currentUser
-     * @return
-     * @throws ServiceException
-     */
-    private String changePassword(String newPassword, long currentUserId) throws ServiceException
-    {
-        // update
-        userManager.changePassword(currentUserId, newPassword);
+        // new password can't be same as old one
+        if (StringUtils.equals(oldPassword, newPassword))
+        {
+            throw new InvalidDataInputException(
+                    ServiceErrorCode.SAME_PASSWORD,
+                    "New password can't be same as old one!");
+        }
 
-        // invalid all old access tokens of user
-        userAccessTokenManager.invalidTokensByUser(currentUserId);
+        User currentUser = SessionContext.getCurrentUser();
 
-        // generate new access token
-        String accessToken = userAccessTokenManager.generateAccessToken(currentUserId);
+        // check old password
+        if (!StringUtils.equals(currentUser.getPassword(),
+                EncryptionUtils.encrypt(oldPassword)))
+        {
+            throw new InvalidDataInputException(
+                    ServiceErrorCode.WRONG_PASSWORD, "Old password is wrong!");
+        }
+
+        // change password flow
+        String accessToken = changePassword(newPassword, currentUser.getId());
+
         return accessToken;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ovt.service.UserService#getUserList(com.ovt.dao.vo.PageInfo)
-     */
-    public List<User> getUserList() throws ServiceException
+    private String changePassword(String newPassword, long userId)
+            throws ServiceException
     {
-        return userManager.getUserList();
-    }
+        // update
+    	userDao.updatePassword(userId, EncryptionUtils.encrypt(newPassword));
 
-    /**
-     * create a new user.
-     * 
-     * @param email
-     * @param password
-     * @return
-     * @throws ServiceException
-     * @throws InvalidDataInputException
-     */
-    public User createUser(String name, String password) throws ServiceException
-    {
-        // do check
-        checkName(name);
-        checkPasswordFormat(password);
+        // invalid all old access tokens of user
+        accessTokenService.invalidTokensByUser(userId);
 
-        // create new user
-        return userManager.createUser(name, password);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ovt.service.UserService#deleteUser(java.lang.String)
-     */
-    @Override
-    public void deleteUser(int id) throws ServiceException
-    {
-        userManager.deleteUser(id);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see cn.wisdom.lottery.service.UserService#cleanExpiredUserToken()
-     */
-    @Override
-    public void cleanExpiredUserToken() throws ServiceException
-    {
-        logger.info("<Manual trigger> Check expire user token task start!");
-        userAccessTokenManager.cleanExpiredUserToken();
-        logger.info("<Manual trigger> Check expire user token task complete!");
+        // generate new access token
+        String accessToken =
+                accessTokenService.generateAccessToken(userId);
+        return accessToken;
     }
 
 	@Override
@@ -343,7 +223,7 @@ public class UserServiceImpl implements UserService
 
 	@Override
 	public User getUserById(long userId) {
-		return userDao.getUser(userId);
+		return userDao.getUserById(userId);
 	}
 
 }

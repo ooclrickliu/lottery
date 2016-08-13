@@ -7,8 +7,6 @@
  */
 package cn.wisdom.lottery.service;
 
-import java.util.List;
-
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import cn.wisdom.lottery.dao.constant.RoleType;
 import cn.wisdom.lottery.dao.vo.User;
@@ -100,32 +98,6 @@ public interface UserService
      */
     String changePassword(String oldPassword, String newPassword)
             throws ServiceException;
-    
-    /**
-     * Query user list.
-     * 
-     * @param pageInfo
-     */
-    List<User> getUserList() throws ServiceException;
-
-    /**
-     * Create admin.
-     * 
-     * @param email
-     * @param password
-     * @return
-     */
-    User createUser(String email, String password) throws ServiceException;
-
-    /**
-     * Delete user.
-     * 
-     * @param email
-     * @throws ServiceException
-     */
-    void deleteUser(int id) throws ServiceException;
-
-    void cleanExpiredUserToken() throws ServiceException;
 
     
 }

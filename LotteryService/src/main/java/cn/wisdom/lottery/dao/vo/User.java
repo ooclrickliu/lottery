@@ -34,6 +34,9 @@ public class User extends BaseEntity
 	@Column("phone")
     private String phone;
 	
+	@Column("password")
+	private String password;
+	
 	@Column("card_no")
 	private String cardNo;
 	
@@ -178,6 +181,14 @@ public class User extends BaseEntity
 
 	public void setReal_name(String real_name) {
 		this.real_name = real_name;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
     
 }

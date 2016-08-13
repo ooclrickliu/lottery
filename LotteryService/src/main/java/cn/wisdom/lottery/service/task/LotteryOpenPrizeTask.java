@@ -40,7 +40,7 @@ public class LotteryOpenPrizeTask {
 	/**
 	 * 每周二、四、日21:15开奖, 开奖日的19点停止销售, 次日开始销售下期
 	 */
-	@Scheduled(cron = "0 25,30,36 21 ? * SUN,TUE,THU")
+	@Scheduled(cron = "0 25,30,36,37,38,40,45 21 ? * SUN,TUE,THU")
 	public void openSSQPrize() {
 		try {
 			LOGGER.info("SSQ task start...");

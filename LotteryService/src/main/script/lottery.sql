@@ -320,6 +320,19 @@ CREATE TABLE IF NOT EXISTS `wx_pay_log` (
 alter table `user` add password varchar(50) DEFAULT '' after openid;
 create unique index idx_user_phone on user(phone);
 
+-- Table user_access_token
+CREATE TABLE IF NOT EXISTS access_token (
+    id bigint    NOT NULL  AUTO_INCREMENT,
+    user_id bigint    NOT NULL DEFAULT 0 ,
+    access_token varchar(50)    NOT NULL DEFAULT '' ,
+    client_type SMALLINT    NOT NULL DEFAULT 0 ,
+    expire_time timestamp    NULL ,
+    create_time timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+    update_time timestamp    NOT NULL ,
+    is_delete SMALLINT    NOT NULL DEFAULT 0 ,
+    CONSTRAINT user_access_token_pk PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -5,9 +5,9 @@
  * 
  * May 5, 2015
  */
-package cn.wisdom.lottery.service.manager;
+package cn.wisdom.lottery.service;
 
-import java.sql.Timestamp;
+import java.sql.Date;
 import java.text.MessageFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +16,9 @@ import org.springframework.stereotype.Service;
 import cn.wisdom.lottery.common.exception.OVTRuntimeException;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.common.utils.EncryptionUtils;
-import cn.wisdom.lottery.dao.UserTokenDao;
+import cn.wisdom.lottery.dao.AccessTokenDao;
+import cn.wisdom.lottery.dao.vo.AccessToken;
 import cn.wisdom.lottery.dao.vo.AppProperty;
-import cn.wisdom.lottery.dao.vo.UserToken;
 import cn.wisdom.lottery.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.service.exception.ServiceException;
 
@@ -31,10 +31,10 @@ import cn.wisdom.lottery.service.exception.ServiceException;
  * @Since [OVT Cloud Platform]/[API] 1.0
  */
 @Service
-public class UserTokenManagerImpl implements UserTokenManager
+public class AccessTokenServiceImpl implements AccessTokenService
 {
     @Autowired
-    private UserTokenDao userAccessTokenDao;
+    private AccessTokenDao userAccessTokenDao;
 
     @Autowired
     private AppProperty appProperties;
@@ -50,18 +50,13 @@ public class UserTokenManagerImpl implements UserTokenManager
             throws ServiceException
     {
         long userId = 0;
-        
-        Timestamp expireTime = new Timestamp(DateTimeUtils.addSeconds(
-                new java.util.Date(), appProperties.cookieAccessTokenHourAge)
-                .getTime());
         try
         {
-            userAccessTokenDao.updateTokenExpireTime(accessToken, expireTime);
             userId = userAccessTokenDao.getUserByToken(accessToken);
         }
         catch (OVTRuntimeException e)
         {
-            throw new ServiceException(ServiceErrorCode.GET_USER_BY_TOKEN_FAILED,
+            throw new ServiceException(ServiceErrorCode.INVALID_ACCESS_TOKEN,
                     MessageFormat.format(
                             "Failed to get user by access token - [{0}]!",
                             accessToken), e);
@@ -81,20 +76,21 @@ public class UserTokenManagerImpl implements UserTokenManager
     {
         String token = EncryptionUtils.generateUUID();
 
-        UserToken accessToken = new UserToken();
-        accessToken.setToken(token);
+        AccessToken accessToken = new AccessToken();
+        accessToken.setAccessToken(token);
         accessToken.setUserId(userId);
-        accessToken.setExpireTime(new Timestamp(DateTimeUtils.addSeconds(
+        accessToken.setClientType("Web");
+        accessToken.setExpireTime(new Date(DateTimeUtils.addHours(
                 new java.util.Date(), appProperties.cookieAccessTokenHourAge)
                 .getTime()));
-        
+
         try
         {
             userAccessTokenDao.save(accessToken);
         }
         catch (OVTRuntimeException e)
         {
-            throw new ServiceException(ServiceErrorCode.GENERATE_USER_TOKEN_FAILED,
+            throw new ServiceException(ServiceErrorCode.SYSTEM_UNEXPECTED,
                     MessageFormat.format("Failed save access token - [{0}]!",
                             accessToken), e);
         }
@@ -117,7 +113,7 @@ public class UserTokenManagerImpl implements UserTokenManager
         }
         catch (OVTRuntimeException e)
         {
-            throw new ServiceException(ServiceErrorCode.INVALIDE_USER_TOKEN_FAILED,
+            throw new ServiceException(ServiceErrorCode.SYSTEM_UNEXPECTED,
                     MessageFormat.format("Failed delete access token - [{0}]!",
                             accessToken), e);
         }
@@ -138,23 +134,10 @@ public class UserTokenManagerImpl implements UserTokenManager
         }
         catch (OVTRuntimeException e)
         {
-            throw new ServiceException(ServiceErrorCode.INVALIDE_USER_TOKEN_FAILED,
+            throw new ServiceException(ServiceErrorCode.SYSTEM_UNEXPECTED,
                     MessageFormat.format(
                             "Failed delete access tokens of user - [{0}]!",
                             userId), e);
-        }
-    }
-    
-    public void cleanExpiredUserToken() throws ServiceException
-    {
-        try
-        {
-            userAccessTokenDao.deleteExpiredUserToken();
-        }
-        catch (OVTRuntimeException e)
-        {
-            throw new ServiceException(ServiceErrorCode.CLEAN_EXPIRED_TOKEN_FAILED,
-                            "Failed delete expired user tokens!");
         }
     }
 

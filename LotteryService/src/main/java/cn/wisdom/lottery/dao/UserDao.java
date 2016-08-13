@@ -7,8 +7,6 @@
  */
 package cn.wisdom.lottery.dao;
 
-import java.util.List;
-
 import cn.wisdom.lottery.dao.vo.User;
 
 /**
@@ -29,61 +27,13 @@ public interface UserDao
      */
     long save(User user);
 
-//    long deleteUser(User user);
-
     /**
      * Get user by id.
      * 
      * @param userId
      * @return
      */
-    User getUser(long userId);
-    
-    /**
-     * Get user by email.
-     * 
-     * @param email
-     * @return
-     */
-    User getUserByName(String name);
-    
-    /**
-     * Find if the email already exist.
-     * 
-     * @param email
-     * @return
-     */
-    boolean isNameExist(String name);
-    
-    /**
-     * Update user password.
-     * 
-     * @param id
-     * @param newPassword
-     */
-    void update(long userId, String newPassword);
-    
-    /**
-     * Delete user by email.
-     * 
-     * @param email
-     */
-    void delete(int id);
-
-    /**
-     * Get users list.
-     * 
-     * @param pageInfo
-     */
-    List<User> getUserList();
-
-    /**
-     * Get user permission by id.
-     * 
-     * @param userId
-     */
-    
-    List<User> getUserByPermission(int permId);
+	User getUserById(long userId);
 
     /**
      * Get user by openid.
@@ -99,5 +49,9 @@ public interface UserDao
 	 * @param user
 	 */
 	void updateUserWxInfo(User user);
+
+	User getUserByPhone(String phone);
+
+	void updatePassword(long userId, String encrypt);
      
 }

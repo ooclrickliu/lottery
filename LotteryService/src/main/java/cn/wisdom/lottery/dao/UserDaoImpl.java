@@ -8,7 +8,6 @@
 package cn.wisdom.lottery.dao;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -36,30 +35,25 @@ public class UserDaoImpl implements UserDao
             + "create_time, update_time) "
             + "VALUES(?, ?, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
 
-    private static final String SQL_GET_PREFIX = "SELECT id, openid, role, real_name, phone, card_no, "
-            + " create_time, update_time FROM user ";
+	private static final String SQL_GET_USER_PREFIX = "select * from user ";
 
-    private static final String SQL_GET_USER_BY_OPENID = SQL_GET_PREFIX
+    private static final String SQL_GET_USER_BY_OPENID = SQL_GET_USER_PREFIX
             + "WHERE openid = ? LIMIT 1";
     
-    private static final String SQL_GET_USER = SQL_GET_PREFIX
+    private static final String SQL_GET_USER = SQL_GET_USER_PREFIX
     		+ "WHERE id = ? LIMIT 1";
-
-    private static final String SQL_GET_USER_BY_NAME = SQL_GET_PREFIX
-            + "WHERE admin_name = ? LIMIT 1";
 
     private static final String SQL_UPDATE_WX_INFO = "UPDATE user SET country = ?, province = ?, city = ?, nick_name = ?, head_img_url = ?, sex = ?, subscribe_time = ?, unionid = ?, update_time = CURRENT_TIMESTAMP "
             + "WHERE id = ?";
-
-    private static final String SQL_DELETE = "DELETE FROM admin WHERE id = ?";
-
-    private static final String SQL_GET_USER_BY_PERMISSION = "SELECT id,admin_name,admin_pwd,create_time, update_by "
-            + "FROM admin " + "WHERE id "
-            + "IN (SELECT ap_admin_id FROM admin_permission WHERE ap_perm_id = ?)";
+    
+    private static final String SQL_GET_USER_BY_PHONE = SQL_GET_USER_PREFIX
+    		+ "where phone = ?";
+    
+	private static final String SQL_UPDATE_USER_PASSWORD = "update user set password = ?, update_time = current_timestamp where id = ?";
     
     private static final DaoRowMapper<User> userMapper = new DaoRowMapper<User>(User.class);
 
-    public User getUser(final long id)
+    public User getUserById(final long id)
     {
         if (id <= 0)
         {
@@ -71,21 +65,6 @@ public class UserDaoImpl implements UserDao
                 id);
         User user = daoHelper.queryForObject(SQL_GET_USER, userMapper, errMsg,
                 id);
-
-        return user;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ovt.dao.UserDao#getUserByEmail(java.lang.String)
-     */
-    public User getUserByName(final String name)
-    {
-        String errMsg = MessageFormat.format("Failed query user by name {0}!",
-                name);
-        User user = daoHelper.queryForObject(SQL_GET_USER_BY_NAME, userMapper,
-                errMsg, name);
 
         return user;
     }
@@ -107,91 +86,6 @@ public class UserDaoImpl implements UserDao
         long id = daoHelper.save(SQL_INSERT_USER, errMsg, true, params);
 
         return id;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ovt.dao.UserDao#isEmailExist(java.lang.String)
-     */
-    public boolean isNameExist(final String email)
-    {
-        User user = this.getUserByName(email);
-        if(user != null && user.getId() != 0)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ovt.dao.UserDao#update(long, java.lang.String)
-     */
-    public void update(final long userId, final String newPassword)
-    {
-        String errMsg = MessageFormat
-                .format("Failed to update user [{0}] password !", userId);
-
-//        daoHelper.update(SQL_UPDATE_PASSWORD, errMsg, newPassword, userId);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ovt.dao.UserDao#delete(java.lang.String)
-     */
-    public void delete(final int id)
-    {
-        // query
-        final User user = getUser(id);
-        if (user == null)
-        {
-            return;
-        }
-
-        String errMsg = MessageFormat.format("Failed to delete user [{0}]!",
-                id);
-
-        daoHelper.update(SQL_DELETE, errMsg, user.getId());
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.ovt.dao.UserDao#getUserList(com.ovt.dao.vo.PageInfo)SQL_GET_USER_LIST
-     */
-    public List<User> getUserList()
-    {
-        // String sql =
-        // MessageFormat.format(
-        // SQL_GET_USER_LIST,
-        // pageInfo.getSortBy(),
-        // pageInfo.getOrder().toString(),
-        // DataConvertUtils.toString(pageInfo.getPageNo()
-        // * pageInfo.getPageSize()),
-        // DataConvertUtils.toString(pageInfo.getPageSize()));
-
-        String errMsg = MessageFormat.format("Failed to query users list!",
-                (Object[]) null);
-
-        List<User> users = daoHelper.queryForList(SQL_GET_PREFIX, userMapper,
-                errMsg);
-
-        return users;
-    }
-
-    @Override
-    public List<User> getUserByPermission(int permId)
-    {
-        String errMsg = MessageFormat.format(
-                "Failed to query users with permission Id : {0}!", permId);
-        List<User> users = daoHelper.queryForList(SQL_GET_USER_BY_PERMISSION,
-                userMapper, errMsg, permId);
-
-        return users;
     }
 
 	@Override
@@ -224,5 +118,24 @@ public class UserDaoImpl implements UserDao
         		user.getSubscribeTime(), 
         		user.getUnionid(), 
         		user.getId());
+	}
+	
+	@Override
+	public User getUserByPhone(String phone) {
+
+		String errMsg = "Failed to get user by phone: " + phone;
+		User user = daoHelper.queryForObject(SQL_GET_USER_BY_PHONE, userMapper,
+				errMsg, phone);
+
+		return user;
+	}
+
+	@Override
+	public void updatePassword(long userId, String newPassword) {
+
+		String errMsg = "Failed to update user stuff info step1, openid: "
+				+ userId;
+		daoHelper.update(SQL_UPDATE_USER_PASSWORD, errMsg,
+				newPassword, userId);
 	}
 }
