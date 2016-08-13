@@ -48,6 +48,8 @@ public class Lottery extends BaseEntity
     private int times;
 
     private List<LotteryNumber> numbers = new ArrayList<LotteryNumber>();
+    
+    private List<LotteryRedpack> redpacks = new ArrayList<LotteryRedpack>();
 
     @Column("pay_state")
     private String payStateValue;
@@ -236,5 +238,13 @@ public class Lottery extends BaseEntity
 	public void setPayState(PayState payState) {
 		this.payState = payState;
 		this.payStateValue = payState.toString();
+	}
+
+	public List<LotteryRedpack> getRedpacks() {
+		return redpacks;
+	}
+
+	public void setRedpacks(List<LotteryRedpack> redpacks) {
+		this.redpacks = redpacks;
 	}
 }

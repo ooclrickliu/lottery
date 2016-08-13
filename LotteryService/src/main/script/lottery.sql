@@ -332,6 +332,21 @@ CREATE TABLE IF NOT EXISTS access_token (
     is_delete SMALLINT    NOT NULL DEFAULT 0 ,
     CONSTRAINT user_access_token_pk PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `lottery_redpack`
+--
+
+CREATE TABLE IF NOT EXISTS `lottery_redpack` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `lottery_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `rate` int NULL,
+  `acquire_time` timestamp NULL,
+  `prize_bonus` int(11) NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -6,5 +6,5 @@ public enum BusinessType {
 	Private, 
 	
 	// by for sharing to others
-	RedBag
+	RedPack
 }

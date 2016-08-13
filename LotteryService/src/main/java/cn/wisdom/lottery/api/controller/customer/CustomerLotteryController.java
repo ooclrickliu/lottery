@@ -36,6 +36,7 @@ import cn.wisdom.lottery.service.LotteryServiceFacade;
 import cn.wisdom.lottery.service.WxPayLogService;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceException;
+import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 
 @RequestMapping("/lottery/customer")
 @Controller
@@ -90,6 +91,44 @@ public class CustomerLotteryController
 
         return new LotteryAPIResult(wxPayInfoMap);
     }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/ssq/create/redpack")
+    @ResponseBody
+    public JsonDocument createSSQRedpackLottery(HttpServletRequest httpRequest,
+    		@RequestBody LotteryOrderRequest request,
+    		@RequestParam String tradeType, @RequestParam String body)
+    				throws ServiceException
+    				{
+    	User user = SessionContext.getCurrentUser();
+    	
+    	Lottery lottery = new Lottery();
+    	lottery.setBusinessType(BusinessType.RedPack);
+    	lottery.setLotteryType(LotteryType.SSQ);
+    	lottery.setPayState(PayState.UnPaid);
+    	lottery.setTimes(request.getTimes()); // 倍数
+    	
+    	for (String number : request.getNumbers())
+    	{
+    		lottery.getNumbers().add(new LotteryNumber(number));
+    	}
+    	
+    	// 追号
+    	List<Integer> period = lotteryServiceFacade.getNextNPeriods(
+    			LotteryType.SSQ, 1);
+    	LotteryPeriod lotteryPeriod = new LotteryPeriod();
+		lotteryPeriod.setPeriod(period.get(0));
+		lotteryPeriod.setPrizeState(PrizeState.NotOpen);
+		
+		lottery.getPeriods().add(lotteryPeriod);
+    	
+    	lottery = lotteryServiceFacade.createLottery(LotteryType.SSQ, lottery);
+    	
+    	Map<String, String> wxPayInfoMap = lotteryServiceFacade.unifiedOrder(
+    			lottery, user.getOpenid(), httpRequest.getHeader("X-Real-IP"),
+    			tradeType, body);
+    	
+    	return new LotteryAPIResult(wxPayInfoMap);
+    				}
 
     @RequestMapping(method = RequestMethod.GET, value = "/detail")
     @ResponseBody
