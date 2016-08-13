@@ -19,7 +19,7 @@ import cn.wisdom.lottery.service.exception.ServiceException;
 
 @RequestMapping("/lottery/merchant")
 @Controller
-public class LotteryMerchantController
+public class MerchantLotteryController
 {
 
     @Autowired

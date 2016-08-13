@@ -29,9 +29,14 @@
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/lottery/customer/**" />
-			<mvc:mapping path="/user/**" />
+			<mvc:mapping path="/customer/**" />
 			<mvc:exclude-mapping path="/lottery/customer/wxnotify" />
 			<bean class="cn.wisdom.lottery.api.interceptor.CustomerAccessInterceptor" />
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/lottery/merchant/**" />
+			<mvc:mapping path="/merchant/**" />
+			<bean class="cn.wisdom.lottery.api.interceptor.MerchantAccessInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
 </beans>

@@ -22,19 +22,35 @@ import cn.wisdom.lottery.service.UserService;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.service.exception.ServiceException;
+import cn.wisdom.lottery.service.wx.WXService;
 
 @Controller
 @RequestMapping("/merchant")
 public class MerchantControllers {
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
-	private AppProperty appProperty;
+	private WXService wxService;
+
+	@Autowired
+	private AppProperty appProperties;
 
 	private static final JsonDocument SUCCESS = LotteryAPIResult.SUCCESS;
 
+	/**
+	 * Get current User.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
+	@RequestMapping(method = RequestMethod.GET, value = "/current")
+	@ResponseBody
+	public JsonDocument getCurrentUser() throws ServiceException {
+		User currentUser = SessionContext.getCurrentUser();
+		return new LotteryAPIResult(currentUser);
+	}
 
 	/**
 	 * login.
@@ -47,63 +63,64 @@ public class MerchantControllers {
 	public JsonDocument login(HttpServletResponse response,
 			@RequestParam String phone, @RequestParam String password)
 			throws ServiceException {
-		
+
 		String accessToken = userService.login(phone, password);
-		
+
 		User user = SessionContext.getCurrentUser();
-		if (user.getRole() != RoleType.ADMIN) {
-			String errMsg = MessageFormat.format("Admin [{0}] not exists.", phone);
+		if (user.getRole() == RoleType.CUSTOMER) {
+			String errMsg = MessageFormat.format("User [{0}] not exists.",
+					phone);
 			throw new ServiceException(ServiceErrorCode.USER_NOT_EXIST, errMsg);
 		}
 
 		CookieUtil.addCookie(response, CookieUtil.KEY_ACCESS_TOKEN,
-				accessToken, appProperty.cookieAccessTokenHourAge * CookieUtil.ONE_HOUR);
+				accessToken, appProperties.cookieAccessTokenHourAge
+						* CookieUtil.ONE_HOUR);
 
 		return SUCCESS;
 	}
-	
-    /**
-     * logout.
-     * 
-     * @param response
-     * @return
-     * @throws ServiceException
-     */
-    @RequestMapping(method = RequestMethod.POST, value = "/logout")
-    @ResponseBody
-    public JsonDocument logout(HttpServletRequest request,
-            HttpServletResponse response) throws ServiceException
-    {
-        String accessToken =
-                CookieUtil.getCookie(request, CookieUtil.KEY_ACCESS_TOKEN);
-        userService.logout(accessToken);
 
-        CookieUtil.addCookie(response, CookieUtil.KEY_ACCESS_TOKEN,
-                accessToken, 0);
+	/**
+	 * logout.
+	 * 
+	 * @param response
+	 * @return
+	 * @throws ServiceException
+	 */
+	@RequestMapping(method = RequestMethod.POST, value = "/logout")
+	@ResponseBody
+	public JsonDocument logout(HttpServletRequest request,
+			HttpServletResponse response) throws ServiceException {
+		String accessToken = CookieUtil.getCookie(request,
+				CookieUtil.KEY_ACCESS_TOKEN);
+		userService.logout(accessToken);
 
-        return SUCCESS;
-    }
+		CookieUtil.addCookie(response, CookieUtil.KEY_ACCESS_TOKEN,
+				accessToken, 0);
 
-    /**
-     * Change user password.
-     * 
-     * @param oldPassword
-     * @param newPassword
-     * @return
-     * @throws ServiceException
-     */
-    @RequestMapping(method = RequestMethod.POST, value = "/changePassword")
-    @ResponseBody
-    public JsonDocument changePassword(HttpServletResponse response,
-            @RequestParam String oldPassword, @RequestParam String newPassword)
-            throws ServiceException
-    {
-        String newAccessToken =
-                userService.changePassword(oldPassword, newPassword);
+		return SUCCESS;
+	}
 
-        CookieUtil.addCookie(response, CookieUtil.KEY_ACCESS_TOKEN,
-                newAccessToken, appProperty.cookieAccessTokenHourAge);
+	/**
+	 * Change user password.
+	 * 
+	 * @param oldPassword
+	 * @param newPassword
+	 * @return
+	 * @throws ServiceException
+	 */
+	@RequestMapping(method = RequestMethod.POST, value = "/changePassword")
+	@ResponseBody
+	public JsonDocument changePassword(HttpServletResponse response,
+			@RequestParam String oldPassword, @RequestParam String newPassword)
+			throws ServiceException {
+		String newAccessToken = userService.changePassword(oldPassword,
+				newPassword);
 
-        return SUCCESS;
-    }
+		CookieUtil.addCookie(response, CookieUtil.KEY_ACCESS_TOKEN,
+				newAccessToken, appProperties.cookieAccessTokenHourAge);
+
+		return SUCCESS;
+	}
+
 }
