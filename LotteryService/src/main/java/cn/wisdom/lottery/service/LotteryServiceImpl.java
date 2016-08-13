@@ -130,33 +130,13 @@ public class LotteryServiceImpl implements LotteryService
         return lotteryDao.getLottery(lotteryType, period, merchantId);
     }
 
-    /*@Override
-    public void printTickets(List<Long> lotteryIds, long merchantId)
+    @Override
+    public void printTicket(long periodId)
             throws ServiceException
     {
-        // change lottery ticket_state to 'print' and set print time
-        List<Lottery> lotteries = lotteryDao.getLottery(lotteryIds, false, false);
-        for (Lottery lottery : lotteries)
-        {
-            if (lottery.getPayState() != PayState.Distributed)
-            {
-                String errMsg = MessageFormat.format(
-                        "Ticket in state [{0}], can't be print!",
-                        lottery.getPayState());
-                throw new ServiceException(ServiceErrorCode.INVALID_STATE,
-                        errMsg);
-            }
-            if (lottery.getMerchant() != merchantId)
-            {
-                throw new ServiceException(ServiceErrorCode.NO_PRIVILEGE,
-                        "No print privillidge!");
-            }
-
-            lottery.setPayState(PayState.Printed);
-            lottery.setTicketPrintTime(DateTimeUtils.getCurrentTimestamp());
-        }
-        lotteryDao.updatePrintState(lotteries);
-    }*/
+        // set lottery print time
+        lotteryDao.updatePrintState(periodId);
+    }
 
     @Override
     public void fetchTicket(long userId, long periodId)

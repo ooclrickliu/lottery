@@ -65,7 +65,7 @@ public interface LotteryService
 	 * @param orderNo
 	 * @throws ServiceException
 	 */
-//	void printTickets(List<Long> lotteryIds, long merchantId) throws ServiceException;
+	void printTicket(long periodId) throws ServiceException;
 	
 	/**
 	 * Owner get ticket from merchant by self.

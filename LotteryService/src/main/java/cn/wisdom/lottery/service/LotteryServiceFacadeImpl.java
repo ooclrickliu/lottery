@@ -106,13 +106,11 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     }
 
     // //////////////////////////////////
-
- /*   @Override
-    public void printTickets(List<Long> lotteryIds, long merchantId)
-            throws ServiceException
-    {
-        lotteryService.printTickets(lotteryIds, merchantId);
-    }*/
+    @Override
+    public void printTicket(long periodId)
+    		throws ServiceException {
+    	lotteryService.printTicket(periodId);
+    }
 
     @Override
     public List<Lottery> queryLottery(LotteryType lotteryType, int period,

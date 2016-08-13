@@ -36,6 +36,8 @@ public class LotteryPeriod extends BaseEntity {
     @Column("prize_bonus")
     private int prizeBonus;
 
+    private boolean printed;
+    
     private boolean fetched;
 
 	public long getLotteryId() {
@@ -169,7 +171,17 @@ public class LotteryPeriod extends BaseEntity {
 		return prizeMap;
 	}
 
-//	public void setPrizeMap(Map<Long, Map<Integer, Integer>> prizeMap) {
-//		this.prizeMap = prizeMap;
-//	}
+	public boolean isPrinted() {
+
+        if (!printed && ticketPrintTime != null)
+        {
+        	printed = true;
+        }
+        
+		return printed;
+	}
+
+	public void setPrinted(boolean printed) {
+		this.printed = printed;
+	}
 }

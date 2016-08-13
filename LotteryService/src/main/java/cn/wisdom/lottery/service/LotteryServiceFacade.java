@@ -43,8 +43,8 @@ public interface LotteryServiceFacade
 
     // /////////Merchant///////////
 
-//    void printTickets(List<Long> lotteryIds, long merchantId)
-//            throws ServiceException;
+    void printTicket(long periodId)
+            throws ServiceException;
 
     List<Lottery> queryLottery(LotteryType lotteryType, int period,
             long merchantId) throws ServiceException;

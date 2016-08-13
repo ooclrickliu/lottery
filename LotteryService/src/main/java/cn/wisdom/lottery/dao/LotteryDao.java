@@ -29,7 +29,7 @@ public interface LotteryDao {
 
 	void updatePayState(Lottery lottery);
 
-	void updatePrintState(List<Lottery> lotteries);
+	void updatePrintState(long periodId);
 
 	void updateDistributeState(Lottery lottery);
 
