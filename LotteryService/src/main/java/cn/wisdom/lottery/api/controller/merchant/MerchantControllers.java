@@ -24,8 +24,8 @@ import cn.wisdom.lottery.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.service.exception.ServiceException;
 
 @Controller
-@RequestMapping("/merchant/users")
-public class UserMerchantControllers {
+@RequestMapping("/merchant")
+public class MerchantControllers {
 	
 	@Autowired
 	private UserService userService;
