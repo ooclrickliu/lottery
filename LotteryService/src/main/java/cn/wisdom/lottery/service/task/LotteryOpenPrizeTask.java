@@ -124,6 +124,9 @@ public class LotteryOpenPrizeTask {
 					
 					prizeLotteries.add(lottery);
 					prizeLotteryPeriods.add(period);
+					
+					// redpack
+					lotteryServiceFacade.calculateRedpacksPrize(lottery);
 				}
 			}
 			

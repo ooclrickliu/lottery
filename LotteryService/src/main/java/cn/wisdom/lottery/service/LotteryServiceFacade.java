@@ -72,4 +72,6 @@ public interface LotteryServiceFacade
 
     // /////////Task////////////////
 	void updatePrizeState(int period, PrizeState prizeState);
+	
+	void calculateRedpacksPrize(Lottery lottery);
 }

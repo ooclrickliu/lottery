@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
+import cn.wisdom.lottery.dao.constant.BusinessType;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.mapper.DaoRowMapper;
@@ -49,6 +50,9 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ " where id in( {0})";
 	
 	private static final String GET_LOTTERY_NUMBER = "select * from lottery_number "
+			+ " where lottery_id in({0}) order by id";
+	
+	private static final String GET_LOTTERY_REDPACK = "select * from lottery_redpack "
 			+ " where lottery_id in({0}) order by id";
 	
 	private static final String GET_LOTTERY_PERIOD = "select * from lottery_period "
@@ -96,6 +100,8 @@ public class LotteryDaoImpl implements LotteryDao {
     private static final DaoRowMapper<LotteryNumber> lotteryNumberMapper = new DaoRowMapper<LotteryNumber>(LotteryNumber.class);
 	
     private static final DaoRowMapper<LotteryPeriod> lotteryPeriodMapper = new DaoRowMapper<LotteryPeriod>(LotteryPeriod.class);
+    
+    private static final DaoRowMapper<LotteryRedpack> lotteryRedpackMapper = new DaoRowMapper<LotteryRedpack>(LotteryRedpack.class);
 
 	@Override
 	public void saveLottery(Lottery lottery) {
@@ -276,6 +282,27 @@ public class LotteryDaoImpl implements LotteryDao {
 			}
 		}
 	}
+	
+	private void getLotteryRedpacks(List<Lottery> lotteries) {
+		// lottery redpacks
+		Map<Long, Lottery> lotteryMap = new HashMap<Long, Lottery>();
+		for (Lottery lottery : lotteries) {
+			if (lottery.getBusinessType() == BusinessType.RedPack) {
+				lotteryMap.put(lottery.getId(), lottery);
+			}
+		}
+		String lotteryIdCSV = StringUtils.getCSV(lotteryMap.keySet());
+		
+		if (StringUtils.isNotBlank(lotteryIdCSV)) {
+			String errMsg = MessageFormat.format("Faild to get lottery numbers, [{0}]", lotteryIdCSV);
+			String sql = MessageFormat.format(GET_LOTTERY_REDPACK, lotteryIdCSV);
+			List<LotteryRedpack> redpacks = daoHelper.queryForList(sql, lotteryRedpackMapper, errMsg);
+			
+			for (LotteryRedpack lotteryRedpack : redpacks) {
+				lotteryMap.get(lotteryRedpack.getLotteryId()).getRedpacks().add(lotteryRedpack);
+			}
+		}
+	}
 
 	@Override
 	public List<Lottery> getLottery(LotteryType lotteryType, int period, long merchantId) {
@@ -412,10 +439,12 @@ public class LotteryDaoImpl implements LotteryDao {
 				GET_PAID_LOTTERY_OF_PERIOD, lotteryMapper, errMsg, lotteryType.toString(), period);
 
 		getLotteryNumbers(lotteries);
+		
+		getLotteryRedpacks(lotteries);
 
 		return lotteries;
 	}
-	
+
 	@Override
 	public void updatePrizeState(int period, PrizeState prizeState) {
 		String errMsg = MessageFormat

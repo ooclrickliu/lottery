@@ -180,4 +180,8 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
 		return lotteryService.snatchRedpack(lotteryId);
 	}
 
+	@Override
+	public void calculateRedpacksPrize(Lottery lottery) {
+		lotteryPrizeService.calculateRedpacksPrize(lottery);
+	}
 }

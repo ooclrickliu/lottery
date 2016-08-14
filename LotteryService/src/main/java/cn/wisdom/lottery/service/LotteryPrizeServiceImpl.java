@@ -14,6 +14,7 @@ import cn.wisdom.lottery.dao.PrizeLotteryDao;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryNumber;
+import cn.wisdom.lottery.dao.vo.LotteryRedpack;
 import cn.wisdom.lottery.dao.vo.PrizeLottery;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.service.exception.ServiceException;
@@ -143,6 +144,18 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 		}
 		
 		return bonus;
+	}
+	
+	@Override
+	public void calculateRedpacksPrize(Lottery lottery) {
+		if (CollectionUtils.isNotEmpty(lottery.getRedpacks())) {
+			int totalBonus = lottery.getPeriods().get(0).getPrizeBonus();
+			int bonus = 0;
+			for (LotteryRedpack lotteryRedpack : lottery.getRedpacks()) {
+				bonus = totalBonus * lotteryRedpack.getRate() / 100;
+				lotteryRedpack.setPrizeBonus(bonus);
+			}
+		}
 	}
 	
 	private static final Map<String, Integer> prizeBonusMap = new HashMap<String, Integer>();

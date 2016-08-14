@@ -78,4 +78,11 @@ public interface LotteryPrizeService {
 	 * @return
 	 */
 	int getPrizeBonus(Map<String, Map<String, Integer>> prizeInfo);
+	
+	/**
+	 * Calculate redpack prize bonus.
+	 * 
+	 * @param lottery
+	 */
+	void calculateRedpacksPrize(Lottery lottery);
 }
