@@ -40,7 +40,7 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     }
 
     @Override
-    public List<Integer> getNextNPeriods(LotteryType lotteryType, int n)
+    public List<PrizeLotterySSQ> getNextNPeriods(LotteryType lotteryType, int n)
             throws ServiceException
     {
         return lotteryPrizeService.getNextNPeriods(lotteryType, n);

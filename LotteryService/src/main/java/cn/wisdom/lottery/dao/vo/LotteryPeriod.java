@@ -206,4 +206,12 @@ public class LotteryPeriod extends BaseEntity {
 	public void setCanFetch(boolean canFetch) {
 		this.canFetch = canFetch;
 	}
+
+	public Timestamp getPrizeOpenTime() {
+		return prizeOpenTime;
+	}
+
+	public void setPrizeOpenTime(Timestamp prizeOpenTime) {
+		this.prizeOpenTime = prizeOpenTime;
+	}
 }

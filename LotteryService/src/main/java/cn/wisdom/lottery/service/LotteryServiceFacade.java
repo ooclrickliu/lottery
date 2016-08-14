@@ -19,7 +19,7 @@ public interface LotteryServiceFacade
     LotteryOpenData getCurrentPeriod(LotteryType lotteryType)
             throws ServiceException;
 
-    List<Integer> getNextNPeriods(LotteryType lotteryType, int n)
+    List<PrizeLotterySSQ> getNextNPeriods(LotteryType lotteryType, int n)
             throws ServiceException;
 
     Lottery createLottery(LotteryType ssq, Lottery lottery)

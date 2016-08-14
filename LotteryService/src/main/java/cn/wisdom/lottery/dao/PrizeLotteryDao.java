@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.vo.PrizeLottery;
+import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 
 public interface PrizeLotteryDao {
@@ -18,5 +19,5 @@ public interface PrizeLotteryDao {
 
 	LotteryOpenData getOpenInfo(LotteryType lotteryType, int period);
 
-	List<Integer> getNextNPeriods(LotteryType lotteryType, int n);
+	List<PrizeLotterySSQ> getNextNPeriods(LotteryType lotteryType, int n);
 }

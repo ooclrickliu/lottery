@@ -30,6 +30,7 @@ import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryNumber;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.dao.vo.WxPayLog;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
@@ -69,54 +70,16 @@ public class CustomerLotteryController {
 		}
 
 		// 追号
-		List<Integer> nextNPeriods = lotteryServiceFacade.getNextNPeriods(
+		List<PrizeLotterySSQ> nextNPeriods = lotteryServiceFacade.getNextNPeriods(
 				LotteryType.SSQ, request.getPeriods());
-		for (Integer period : nextNPeriods) {
+		for (PrizeLotterySSQ period : nextNPeriods) {
 			LotteryPeriod lotteryPeriod = new LotteryPeriod();
-			lotteryPeriod.setPeriod(period);
+			lotteryPeriod.setPeriod(period.getPeriod());
 			lotteryPeriod.setPrizeState(PrizeState.NotOpen);
+			lotteryPeriod.setPrizeOpenTime(period.getOpenTime());
 
 			lottery.getPeriods().add(lotteryPeriod);
 		}
-
-		lottery = lotteryServiceFacade.createLottery(LotteryType.SSQ, lottery);
-
-		Map<String, String> wxPayInfoMap = lotteryServiceFacade.unifiedOrder(
-				lottery, user.getOpenid(), httpRequest.getHeader("X-Real-IP"),
-				tradeType, body);
-
-		return new LotteryAPIResult(wxPayInfoMap);
-	}
-
-	@RequestMapping(method = RequestMethod.POST, value = "/ssq/create/redpack")
-	@ResponseBody
-	public JsonDocument createSSQRedpackLottery(HttpServletRequest httpRequest,
-			@RequestBody LotteryOrderRequest request,
-			@RequestParam String tradeType, @RequestParam String body)
-			throws ServiceException {
-		User user = SessionContext.getCurrentUser();
-
-		Lottery lottery = new Lottery();
-		lottery.setCreateBy(SessionContext.getCurrentUser().getId());
-		lottery.setOwner(lottery.getCreateBy());
-		lottery.setBusinessType(BusinessType.RedPack);
-		lottery.setLotteryType(LotteryType.SSQ);
-		lottery.setPayState(PayState.UnPaid);
-		lottery.setTimes(request.getTimes()); // 倍数
-		lottery.setRedpackCount(request.getRedpackCount());
-
-		for (String number : request.getNumbers()) {
-			lottery.getNumbers().add(new LotteryNumber(number));
-		}
-
-		//
-		List<Integer> period = lotteryServiceFacade.getNextNPeriods(
-				LotteryType.SSQ, 1);
-		LotteryPeriod lotteryPeriod = new LotteryPeriod();
-		lotteryPeriod.setPeriod(period.get(0));
-		lotteryPeriod.setPrizeState(PrizeState.NotOpen);
-
-		lottery.getPeriods().add(lotteryPeriod);
 
 		lottery = lotteryServiceFacade.createLottery(LotteryType.SSQ, lottery);
 
@@ -176,14 +139,5 @@ public class CustomerLotteryController {
 		} else {
 			return "fail";
 		}
-	}
-	
-	@RequestMapping(method = RequestMethod.POST, value = "/redpack/q")
-	@ResponseBody
-	public JsonDocument snatchRedpack(@RequestParam long lotteryId)
-					throws ServiceException {
-		Lottery lottery = lotteryServiceFacade.snatchRedpack(lotteryId);
-		
-		return new LotteryAPIResult(lottery);
 	}
 }

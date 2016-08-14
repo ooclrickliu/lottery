@@ -20,7 +20,7 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 	
 	private static final String GET_SSQ_CURRENT_PERIOD = "select period, open_time from prize_no_ssq where open_time > current_timestamp limit 1";
 	
-	private static final String GET_SSQ_NEXT_N_PERIOD = "select period from prize_no_ssq where open_time > current_timestamp limit ?";
+	private static final String GET_SSQ_NEXT_N_PERIOD = "select period, open_time from prize_no_ssq where open_time > current_timestamp limit ?";
 	
 	private static final String GET_SSQ_LAST_PERIOD = "select id, period, open_time, number from prize_no_ssq where open_time < current_timestamp order by id desc limit 1";
 	
@@ -74,9 +74,9 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 	}
 
 	@Override
-	public List<Integer> getNextNPeriods(LotteryType lotteryType, int n) {
+	public List<PrizeLotterySSQ> getNextNPeriods(LotteryType lotteryType, int n) {
 		String errMsg = MessageFormat.format("Failed to query {0} next {1} period.", lotteryType, n);
-		List<Integer> periods = daoHelper.queryForList(GET_SSQ_NEXT_N_PERIOD, Integer.class, errMsg, n);
+		List<PrizeLotterySSQ> periods = daoHelper.queryForList(GET_SSQ_NEXT_N_PERIOD, ssqPrizeInfoMapper, errMsg, n);
 		
 		return periods;
 	}

@@ -23,6 +23,7 @@ import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryNumber;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
 import cn.wisdom.lottery.service.context.SessionContext;
@@ -57,11 +58,12 @@ public class CustomerRedpackController {
 		}
 
 		//
-		List<Integer> period = lotteryServiceFacade.getNextNPeriods(
+		List<PrizeLotterySSQ> period = lotteryServiceFacade.getNextNPeriods(
 				LotteryType.SSQ, 1);
 		LotteryPeriod lotteryPeriod = new LotteryPeriod();
-		lotteryPeriod.setPeriod(period.get(0));
+		lotteryPeriod.setPeriod(period.get(0).getPeriod());
 		lotteryPeriod.setPrizeState(PrizeState.NotOpen);
+		lotteryPeriod.setPrizeOpenTime(period.get(0).getOpenTime());
 
 		lottery.getPeriods().add(lotteryPeriod);
 

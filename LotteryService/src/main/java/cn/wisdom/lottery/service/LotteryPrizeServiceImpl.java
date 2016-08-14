@@ -56,7 +56,7 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 	}
 	
 	@Override
-	public List<Integer> getNextNPeriods(LotteryType lotteryType, int n) {
+	public List<PrizeLotterySSQ> getNextNPeriods(LotteryType lotteryType, int n) {
 		
 		return prizeLotteryDao.getNextNPeriods(lotteryType, n);
 	}

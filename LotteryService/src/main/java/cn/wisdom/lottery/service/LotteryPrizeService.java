@@ -27,7 +27,7 @@ public interface LotteryPrizeService {
 	 * @param n
 	 * @return
 	 */
-	List<Integer> getNextNPeriods(LotteryType lotteryType, int n);
+	List<PrizeLotterySSQ> getNextNPeriods(LotteryType lotteryType, int n);
 
 	/**
 	 * Get the latest open info.
