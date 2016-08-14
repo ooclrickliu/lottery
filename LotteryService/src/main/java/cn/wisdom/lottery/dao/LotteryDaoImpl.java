@@ -80,7 +80,7 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ "ticket_fetch_time = current_timestamp, update_time = current_timestamp "
 			+ "where id = ?";
 	
-	private static final String UPDATE_LOTTERY_PRIZE_STATE = "update lottery_period set prize_state = ? "
+	private static final String UPDATE_LOTTERY_PRIZE_STATE = "update lottery_period set prize_state = ?, prize_open_time = current_timestamp "
 			+ "where period = ?";
 	
 	private static final String UPDATE_LOTTERY_PRIZE_INFO = "update lottery_period set prize_info = ?, "

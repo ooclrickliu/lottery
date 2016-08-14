@@ -67,8 +67,7 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 		
 		if (prizeLottery != null && prizeLottery.getOpenTime() != null) {
 			Timestamp openTime = prizeLottery.getOpenTime();
-			openTime.setHours(21);
-			openTime.setMinutes(15);
+			unifyOpenTime(openTime);
 			prizeLottery.setOpenTime(openTime);
 		}
 		return new LotteryOpenData(prizeLottery);
@@ -89,11 +88,16 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 
 		if (prizeLottery != null && prizeLottery.getOpenTime() != null) {
 			Timestamp openTime = prizeLottery.getOpenTime();
-			openTime.setHours(21);
-			openTime.setMinutes(15);
+			unifyOpenTime(openTime);
 			prizeLottery.setOpenTime(openTime);
 		}
 		return new LotteryOpenData(prizeLottery);
+	}
+
+	@SuppressWarnings("deprecation")
+	private void unifyOpenTime(Timestamp openTime) {
+		openTime.setHours(21);
+		openTime.setMinutes(15);
 	}
 
 	@Override
@@ -103,8 +107,7 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 		
 		if (prizeLottery != null && prizeLottery.getOpenTime() != null) {
 			Timestamp openTime = prizeLottery.getOpenTime();
-			openTime.setHours(21);
-			openTime.setMinutes(15);
+			unifyOpenTime(openTime);
 			prizeLottery.setOpenTime(openTime);
 		}
 		

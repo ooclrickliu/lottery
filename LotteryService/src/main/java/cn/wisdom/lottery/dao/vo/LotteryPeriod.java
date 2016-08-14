@@ -1,11 +1,13 @@
 package cn.wisdom.lottery.dao.vo;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import cn.wisdom.lottery.common.exception.OVTException;
 import cn.wisdom.lottery.common.utils.CollectionUtils;
+import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.common.utils.JsonUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.annotation.Column;
@@ -13,6 +15,8 @@ import cn.wisdom.lottery.dao.constant.PrizeState;
 
 public class LotteryPeriod extends BaseEntity {
 	
+	private static final int FETCH_VALID_DAYS = 10;
+
 	@Column("lottery_id")
 	private long lotteryId;
 
@@ -25,6 +29,9 @@ public class LotteryPeriod extends BaseEntity {
 
     @Column("ticket_print_time")
     private Timestamp ticketPrintTime;
+    
+    @Column("prize_open_time")
+    private Timestamp prizeOpenTime;
 
     @Column("ticket_fetch_time")
     private Timestamp ticketFetchTime;
@@ -39,6 +46,8 @@ public class LotteryPeriod extends BaseEntity {
     private boolean printed;
     
     private boolean fetched;
+    
+    private boolean canFetch;
 
 	public long getLotteryId() {
 		return lotteryId;
@@ -183,5 +192,18 @@ public class LotteryPeriod extends BaseEntity {
 
 	public void setPrinted(boolean printed) {
 		this.printed = printed;
+	}
+
+	public boolean isCanFetch() {
+		if (!canFetch && getPrizeState() != PrizeState.NotOpen && prizeOpenTime != null) {
+			Date now = DateTimeUtils.getCurrentTimestamp();
+			canFetch = now.before(DateTimeUtils.addDays(prizeOpenTime, FETCH_VALID_DAYS));
+		}
+		
+		return canFetch;
+	}
+
+	public void setCanFetch(boolean canFetch) {
+		this.canFetch = canFetch;
 	}
 }
