@@ -348,8 +348,9 @@ CREATE TABLE IF NOT EXISTS `lottery_redpack` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-
 alter table `lottery_period` add prize_open_time timestamp NULL after ticket_print_time;
+
+alter table `lottery` add redpack_count int NULL after owner;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

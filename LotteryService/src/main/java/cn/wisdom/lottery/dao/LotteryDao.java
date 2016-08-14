@@ -6,6 +6,7 @@ import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.LotteryRedpack;
 
 public interface LotteryDao {
 	
@@ -40,6 +41,8 @@ public interface LotteryDao {
 	void updatePrizeInfo(List<LotteryPeriod> prizeLotteries);
 
 	void updatePrizeState(int period, PrizeState prizeState);
+
+	void saveRedpack(LotteryRedpack redpack);
 
 	
 }

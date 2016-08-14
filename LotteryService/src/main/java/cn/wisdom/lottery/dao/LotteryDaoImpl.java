@@ -18,6 +18,7 @@ import cn.wisdom.lottery.dao.mapper.DaoRowMapper;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryNumber;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.LotteryRedpack;
 
 @Repository
 public class LotteryDaoImpl implements LotteryDao {
@@ -25,14 +26,17 @@ public class LotteryDaoImpl implements LotteryDao {
 	@Autowired
 	private DaoHelper daoHelper;
 
-	private static final String SAVE_LOTTERY = "insert into lottery(order_no, total_fee, lottery_type, business_type, times, pay_state, owner, remark, create_by, update_time) "
-			+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp)";
+	private static final String SAVE_LOTTERY = "insert into lottery(order_no, total_fee, lottery_type, business_type, times, pay_state, owner, remark, create_by, redpack_count, update_time) "
+			+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp)";
 
 	private static final String SAVE_LOTTERY_NUMBER = "insert into lottery_number(lottery_id, number) "
 			+ "values (?, ?)";
 	
 	private static final String SAVE_LOTTERY_PERIOD = "insert into lottery_period(lottery_id, period, prize_state) "
 			+ "values (?, ?, ?)";
+	
+	private static final String SAVE_LOTTERY_REDPACK = "insert into lottery_redpack(lottery_id, user_id, rate, acquire_time) "
+			+ "values (?, ?, ?, ?)";
 
 	private static final String GET_LOTTERY_PREFIX = "select * from lottery";
 	
@@ -95,7 +99,7 @@ public class LotteryDaoImpl implements LotteryDao {
 
 	@Override
 	public void saveLottery(Lottery lottery) {
-		Object[] args = new Object[9];
+		Object[] args = new Object[10];
 		args[0] = lottery.getOrderNo();
 		args[1] = lottery.getTotalFee();
 		args[2] = lottery.getLotteryType().toString();
@@ -105,6 +109,7 @@ public class LotteryDaoImpl implements LotteryDao {
 		args[6] = lottery.getOwner();
 		args[7] = lottery.getRemark();
 		args[8] = lottery.getCreateBy();
+		args[9] = lottery.getRedpackCount();
 
 		String errMsg = MessageFormat
 				.format("Failed to save lottery!", lottery);
@@ -143,6 +148,18 @@ public class LotteryDaoImpl implements LotteryDao {
 		errMsg = MessageFormat.format("Failed to save lottery period!", lottery);
 		daoHelper.batchUpdate(SAVE_LOTTERY_PERIOD, batchArgs, errMsg);
 
+	}
+
+	public void saveRedpack(LotteryRedpack redpack) {
+		Object[] args = new Object[4];
+		args[0] = redpack.getLotteryId();
+		args[1] = redpack.getUser();
+		args[2] = redpack.getRate();
+		args[3] = redpack.getAcquireTime();
+
+		String errMsg = MessageFormat
+				.format("Failed to save lottery!", redpack);
+		daoHelper.save(SAVE_LOTTERY_REDPACK, errMsg, false, args);
 	}
 
 	@Override
@@ -424,5 +441,4 @@ public class LotteryDaoImpl implements LotteryDao {
 
 		daoHelper.batchUpdate(UPDATE_LOTTERY_PRIZE_INFO, batchArgs, errMsg);
 	}
-
 }

@@ -186,12 +186,12 @@ public class UserServiceImpl implements UserService
 	}
 
 	@Override
-	public User getUserByOauthCode(String oauthCode) {
+	public User getSubscribedUserByOauthCode(String oauthCode) {
 		User user = null;
 		try {
 			WxMpOAuth2AccessToken oauth2getAccessToken = wxService.getWxMpService().oauth2getAccessToken(oauthCode);
 			
-//			WxMpUser wxMpUser = wxService.getWxMpService().oauth2getUserInfo(oauth2getAccessToken, null);
+			//  调用这步主要为了更新用户微信信息
 			WxMpUser wxMpUser = wxService.getWxMpService().userInfo(oauth2getAccessToken.getOpenId(), null);
 			
 			user = userDao.getUserByOpenid(wxMpUser.getOpenId());
@@ -207,6 +207,47 @@ public class UserServiceImpl implements UserService
 				user.setUnionid(wxMpUser.getUnionId());
 				
 				userDao.updateUserWxInfo(user);
+			}
+			else if (user == null) {
+				// 非关注用户，通过抢红包页面过来的
+				user = new User(wxMpUser);
+				
+				userDao.saveWithWxInfo(user);
+			}
+		} catch (WxErrorException e) {
+			String errMsg = MessageFormat.format("failed pass wx oauth and get user info, code: [{0}]", oauthCode);
+			logger.error(errMsg, e);
+		}
+		return user;
+	}
+	
+	@Override
+	public User getOuterUserByOauthCode(String oauthCode) {
+		User user = null;
+		try {
+			WxMpOAuth2AccessToken oauth2getAccessToken = wxService.getWxMpService().oauth2getAccessToken(oauthCode);
+			
+			WxMpUser wxMpUser = wxService.getWxMpService().oauth2getUserInfo(oauth2getAccessToken, null);
+			
+			user = userDao.getUserByOpenid(wxMpUser.getOpenId());
+			if (user != null && !(StringUtils.equals(user.getNickName(), wxMpUser.getNickname()) &&
+					StringUtils.equals(user.getHeadImgUrl(), wxMpUser.getHeadImgUrl()))) {
+				user.setNickName(wxMpUser.getNickname());
+				user.setHeadImgUrl(wxMpUser.getHeadImgUrl());
+				user.setCountry(wxMpUser.getCountry());
+				user.setProvince(wxMpUser.getProvince());
+				user.setCity(wxMpUser.getCity());
+				user.setSex(wxMpUser.getSex());
+				user.setSubscribeTime(wxMpUser.getSubscribeTime());
+				user.setUnionid(wxMpUser.getUnionId());
+				
+				userDao.updateUserWxInfo(user);
+			}
+			else if (user == null) {
+				// 非关注用户，通过抢红包页面过来的
+				user = new User(wxMpUser);
+				
+				userDao.saveWithWxInfo(user);
 			}
 		} catch (WxErrorException e) {
 			String errMsg = MessageFormat.format("failed pass wx oauth and get user info, code: [{0}]", oauthCode);

@@ -27,6 +27,8 @@ public interface UserDao
      */
     long save(User user);
 
+    long saveWithWxInfo(User user);
+
     /**
      * Get user by id.
      * 

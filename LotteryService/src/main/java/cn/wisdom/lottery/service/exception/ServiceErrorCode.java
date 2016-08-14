@@ -22,9 +22,7 @@ public class ServiceErrorCode {
 	public static final String SYSTEM_UNEXPECTED = "SystemUnexpected";
 
 	// user
-	public static final String NOT_SUBSCRIB = "NotSubscribe";
 	public static final String NOT_LOGIN = "NotLogin";
-	public static final String NO_AVAILABLE_CREDIT_LINE = "NoAvailableCreditLine";
 
 	// ================Console===================//
 	public static final String INVALID_ACCESS_TOKEN = "InvalidAccessToken";
@@ -37,6 +35,8 @@ public class ServiceErrorCode {
 	public static final String MISSING_BALL = "MissingBall";
 	public static final String INVALID_STATE = "InvalidState";
 	public static final String NO_PRIVILEGE = "NoPrivilege";
+	public static final String ERROR_BUSINESS_TYPE = "ErrorBusinessType";
+	public static final String REDPACK_EMPTY = "RedpackEmpty";
 
 	// WX
 	public static final String OAUTH_FAIL = "OAuthFail";

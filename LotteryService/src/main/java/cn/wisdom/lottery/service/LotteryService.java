@@ -132,5 +132,14 @@ public interface LotteryService
      */
     void onPaidSuccess(String orderNo, String openid) throws ServiceException;
 
+    /**
+     * Redpack.
+     * 
+     * @param lotteryId
+     * @return 
+     * @throws ServiceException 
+     */
+	Lottery snatchRedpack(long lotteryId) throws ServiceException;
+
 	
 }

@@ -48,12 +48,20 @@ public interface UserService
 	User getUserByOpenId(String openId);
 	
 	/**
-	 * 通过OAuth获取用户信息
+	 * 通过OAuth获取已关注公众号用户信息
 	 * 
 	 * @param oauthCode
 	 * @return
 	 */
-	User getUserByOauthCode(String oauthCode);
+	User getSubscribedUserByOauthCode(String oauthCode);
+	
+	/**
+	 * 通过OAuth获取未关注公众号用户信息
+	 * 
+	 * @param oauthCode
+	 * @return
+	 */
+	User getOuterUserByOauthCode(String oauthCode);
 
 	/**
 	 * 通过ID获取用户信息

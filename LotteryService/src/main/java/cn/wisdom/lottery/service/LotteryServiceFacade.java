@@ -41,6 +41,8 @@ public interface LotteryServiceFacade
     
     List<Lottery> getLotteries(long owner) throws ServiceException;
 
+	Lottery snatchRedpack(long lotteryId) throws ServiceException;
+
     // /////////Merchant///////////
 
     void printTicket(long periodId)
@@ -55,9 +57,6 @@ public interface LotteryServiceFacade
 
     List<Lottery> getPaidLotteries(LotteryType lotteryType, int period)
             throws ServiceException;
-    
-//    List<Lottery> getPrintedLotteries(LotteryType lotteryType, int period)
-//    		throws ServiceException;
 
     Map<String, Map<String, Integer>> getPrizeInfo(Lottery lottery,
             PrizeLotterySSQ prizeLotterySSQ) throws ServiceException;

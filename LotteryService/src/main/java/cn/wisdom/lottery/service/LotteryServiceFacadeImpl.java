@@ -175,4 +175,9 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
                 spbillCreateIp, tradeType, body);
     }
 
+	@Override
+	public Lottery snatchRedpack(long lotteryId) throws ServiceException {
+		return lotteryService.snatchRedpack(lotteryId);
+	}
+
 }

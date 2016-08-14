@@ -10,16 +10,18 @@ public class LotteryRedpack extends BaseEntity {
 	private long lotteryId;
 
 	@Column("user_id")
-	private long user_id;
+	private long userId;
 
     @Column("rate")
     private int rate;
 
     @Column("acquire_time")
-    private Timestamp acquire_time;
+    private Timestamp acquireTime;
 
     @Column("prize_bonus")
-    private int prize_bonus;
+    private int prizeBonus;
+    
+    private User user;
 
 	public long getLotteryId() {
 		return lotteryId;
@@ -29,12 +31,12 @@ public class LotteryRedpack extends BaseEntity {
 		this.lotteryId = lotteryId;
 	}
 
-	public long getUser_id() {
-		return user_id;
+	public long getUserId() {
+		return userId;
 	}
 
-	public void setUser_id(long user_id) {
-		this.user_id = user_id;
+	public void setUserId(long userId) {
+		this.userId = userId;
 	}
 
 	public int getRate() {
@@ -45,20 +47,28 @@ public class LotteryRedpack extends BaseEntity {
 		this.rate = rate;
 	}
 
-	public Timestamp getAcquire_time() {
-		return acquire_time;
+	public Timestamp getAcquireTime() {
+		return acquireTime;
 	}
 
-	public void setAcquire_time(Timestamp acquire_time) {
-		this.acquire_time = acquire_time;
+	public void setAcquireTime(Timestamp acquireTime) {
+		this.acquireTime = acquireTime;
 	}
 
-	public int getPrize_bonus() {
-		return prize_bonus;
+	public int getPrizeBonus() {
+		return prizeBonus;
 	}
 
-	public void setPrize_bonus(int prize_bonus) {
-		this.prize_bonus = prize_bonus;
+	public void setPrizeBonus(int prizeBonus) {
+		this.prizeBonus = prizeBonus;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }

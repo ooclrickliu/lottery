@@ -11,6 +11,7 @@ import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
 import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
+import cn.wisdom.lottery.common.utils.MathUtils;
 import cn.wisdom.lottery.common.utils.NumberGeneratorUtil;
 import cn.wisdom.lottery.dao.LotteryDao;
 import cn.wisdom.lottery.dao.constant.BusinessType;
@@ -22,6 +23,8 @@ import cn.wisdom.lottery.dao.threadpool.OVThreadPoolExecutor;
 import cn.wisdom.lottery.dao.vo.AppProperty;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.LotteryRedpack;
+import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.service.exception.ServiceException;
@@ -59,13 +62,6 @@ public class LotteryServiceImpl implements LotteryService
     public Lottery createLottery(Lottery lottery) throws ServiceException
     {
         logger.debug("Receive lottery order: {}!", lottery);
-
-        // 1. set owner for private lottery
-        lottery.setCreateBy(SessionContext.getCurrentUser().getId());
-        if (lottery.getBusinessType().equals(BusinessType.Private))
-        {
-            lottery.setOwner(lottery.getCreateBy());
-        }
 
         if (!appProperties.wxPaydebug)
         {
@@ -231,4 +227,62 @@ public class LotteryServiceImpl implements LotteryService
     	
     	return lotteryDao.getLotteries(owner);
     }
+
+	@Override
+	public Lottery snatchRedpack(long lotteryId) throws ServiceException {
+		User user = SessionContext.getCurrentUser();
+		
+		// 1. how to get outer user info
+		// A: customerOAuthAccessInterceptor
+		
+		// 2. assert lottery is redpack type
+		Lottery lottery = this.getLottery(lotteryId);
+		if (lottery.getBusinessType() != BusinessType.RedPack) {
+			throw new ServiceException(ServiceErrorCode.ERROR_BUSINESS_TYPE, "Error lottery business type.");
+		}
+		
+		// 3. check redpack remain count
+		if (lottery.getRedpacks().size() >= lottery.getRedpackCount())
+		{
+			throw new ServiceException(ServiceErrorCode.REDPACK_EMPTY, "Redpack is empty.");
+		}
+		
+		// 4. get all redpack user info
+		
+		// 5. record snatched redpack info: rate, user
+		// TODO use reids and calculate it safely and quickly
+		int rate = generateRedpackRate(lottery.getRedpackCount(), lottery.getRedpacks());
+		LotteryRedpack redpack = new LotteryRedpack();
+		redpack.setLotteryId(lotteryId);
+		redpack.setUserId(user.getId());
+		redpack.setRate(rate);
+		redpack.setAcquireTime(DateTimeUtils.getCurrentTimestamp());
+		redpack.setUser(user);
+		lottery.getRedpacks().add(redpack);
+		
+		lotteryDao.saveRedpack(redpack);
+		
+		return lottery;
+	}
+
+	private int generateRedpackRate(int redpackCount,
+			List<LotteryRedpack> redpacks) {
+		int rate = 0;
+		
+		int remainCount = redpackCount - redpacks.size();
+		int remainRate = 100;
+		
+		for (LotteryRedpack lotteryRedpack : redpacks) {
+			remainRate -= lotteryRedpack.getRate();
+		}
+		
+		if (remainCount > 1) {
+			rate = MathUtils.rand(remainRate);
+		}
+		else if (remainCount == 1) {
+			rate = remainRate;
+		}
+		
+		return rate;
+	}
 }

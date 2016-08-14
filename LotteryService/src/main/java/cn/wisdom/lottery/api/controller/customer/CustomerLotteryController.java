@@ -36,156 +36,154 @@ import cn.wisdom.lottery.service.LotteryServiceFacade;
 import cn.wisdom.lottery.service.WxPayLogService;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceException;
-import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 
 @RequestMapping("/lottery/customer")
 @Controller
-public class CustomerLotteryController
-{
+public class CustomerLotteryController {
 
-    @Autowired
-    private LotteryServiceFacade lotteryServiceFacade;
-    
-    @Autowired
-    private WxPayLogService wxPayLogService;
-    
-    private static JaxbUtil xml2WxPayLog = new JaxbUtil(WxPayLog.class,
-            CollectionWrapper.class);
+	@Autowired
+	private LotteryServiceFacade lotteryServiceFacade;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/ssq/create")
-    @ResponseBody
-    public JsonDocument createSSQLottery(HttpServletRequest httpRequest,
-            @RequestBody LotteryOrderRequest request,
-            @RequestParam String tradeType, @RequestParam String body)
-            throws ServiceException
-    {
-        User user = SessionContext.getCurrentUser();
+	@Autowired
+	private WxPayLogService wxPayLogService;
 
-        Lottery lottery = new Lottery();
-        lottery.setBusinessType(BusinessType.Private);
-        lottery.setLotteryType(LotteryType.SSQ);
-        lottery.setPayState(PayState.UnPaid);
-        lottery.setTimes(request.getTimes()); // 倍数
+	private static JaxbUtil xml2WxPayLog = new JaxbUtil(WxPayLog.class,
+			CollectionWrapper.class);
 
-        for (String number : request.getNumbers())
-        {
-            lottery.getNumbers().add(new LotteryNumber(number));
-        }
+	@RequestMapping(method = RequestMethod.POST, value = "/ssq/create")
+	@ResponseBody
+	public JsonDocument createSSQLottery(HttpServletRequest httpRequest,
+			@RequestBody LotteryOrderRequest request,
+			@RequestParam String tradeType, @RequestParam String body)
+			throws ServiceException {
+		User user = SessionContext.getCurrentUser();
 
-        // 追号
-        List<Integer> nextNPeriods = lotteryServiceFacade.getNextNPeriods(
-                LotteryType.SSQ, request.getPeriods());
-        for (Integer period : nextNPeriods) {
-        	LotteryPeriod lotteryPeriod = new LotteryPeriod();
-        	lotteryPeriod.setPeriod(period);
-        	lotteryPeriod.setPrizeState(PrizeState.NotOpen);
-            
-            lottery.getPeriods().add(lotteryPeriod);
+		Lottery lottery = new Lottery();
+		lottery.setBusinessType(BusinessType.Private);
+		lottery.setLotteryType(LotteryType.SSQ);
+		lottery.setPayState(PayState.UnPaid);
+		lottery.setTimes(request.getTimes()); // 倍数
+
+		for (String number : request.getNumbers()) {
+			lottery.getNumbers().add(new LotteryNumber(number));
 		}
 
-        lottery = lotteryServiceFacade.createLottery(LotteryType.SSQ, lottery);
+		// 追号
+		List<Integer> nextNPeriods = lotteryServiceFacade.getNextNPeriods(
+				LotteryType.SSQ, request.getPeriods());
+		for (Integer period : nextNPeriods) {
+			LotteryPeriod lotteryPeriod = new LotteryPeriod();
+			lotteryPeriod.setPeriod(period);
+			lotteryPeriod.setPrizeState(PrizeState.NotOpen);
 
-        Map<String, String> wxPayInfoMap = lotteryServiceFacade.unifiedOrder(
-                lottery, user.getOpenid(), httpRequest.getHeader("X-Real-IP"),
-                tradeType, body);
+			lottery.getPeriods().add(lotteryPeriod);
+		}
 
-        return new LotteryAPIResult(wxPayInfoMap);
-    }
-    
-    @RequestMapping(method = RequestMethod.POST, value = "/ssq/create/redpack")
-    @ResponseBody
-    public JsonDocument createSSQRedpackLottery(HttpServletRequest httpRequest,
-    		@RequestBody LotteryOrderRequest request,
-    		@RequestParam String tradeType, @RequestParam String body)
-    				throws ServiceException
-    				{
-    	User user = SessionContext.getCurrentUser();
-    	
-    	Lottery lottery = new Lottery();
-    	lottery.setBusinessType(BusinessType.RedPack);
-    	lottery.setLotteryType(LotteryType.SSQ);
-    	lottery.setPayState(PayState.UnPaid);
-    	lottery.setTimes(request.getTimes()); // 倍数
-    	
-    	for (String number : request.getNumbers())
-    	{
-    		lottery.getNumbers().add(new LotteryNumber(number));
-    	}
-    	
-    	// 追号
-    	List<Integer> period = lotteryServiceFacade.getNextNPeriods(
-    			LotteryType.SSQ, 1);
-    	LotteryPeriod lotteryPeriod = new LotteryPeriod();
+		lottery = lotteryServiceFacade.createLottery(LotteryType.SSQ, lottery);
+
+		Map<String, String> wxPayInfoMap = lotteryServiceFacade.unifiedOrder(
+				lottery, user.getOpenid(), httpRequest.getHeader("X-Real-IP"),
+				tradeType, body);
+
+		return new LotteryAPIResult(wxPayInfoMap);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/ssq/create/redpack")
+	@ResponseBody
+	public JsonDocument createSSQRedpackLottery(HttpServletRequest httpRequest,
+			@RequestBody LotteryOrderRequest request,
+			@RequestParam String tradeType, @RequestParam String body)
+			throws ServiceException {
+		User user = SessionContext.getCurrentUser();
+
+		Lottery lottery = new Lottery();
+		lottery.setCreateBy(SessionContext.getCurrentUser().getId());
+		lottery.setOwner(lottery.getCreateBy());
+		lottery.setBusinessType(BusinessType.RedPack);
+		lottery.setLotteryType(LotteryType.SSQ);
+		lottery.setPayState(PayState.UnPaid);
+		lottery.setTimes(request.getTimes()); // 倍数
+		lottery.setRedpackCount(request.getRedpackCount());
+
+		for (String number : request.getNumbers()) {
+			lottery.getNumbers().add(new LotteryNumber(number));
+		}
+
+		//
+		List<Integer> period = lotteryServiceFacade.getNextNPeriods(
+				LotteryType.SSQ, 1);
+		LotteryPeriod lotteryPeriod = new LotteryPeriod();
 		lotteryPeriod.setPeriod(period.get(0));
 		lotteryPeriod.setPrizeState(PrizeState.NotOpen);
-		
+
 		lottery.getPeriods().add(lotteryPeriod);
-    	
-    	lottery = lotteryServiceFacade.createLottery(LotteryType.SSQ, lottery);
-    	
-    	Map<String, String> wxPayInfoMap = lotteryServiceFacade.unifiedOrder(
-    			lottery, user.getOpenid(), httpRequest.getHeader("X-Real-IP"),
-    			tradeType, body);
-    	
-    	return new LotteryAPIResult(wxPayInfoMap);
-    				}
 
-    @RequestMapping(method = RequestMethod.GET, value = "/detail")
-    @ResponseBody
-    public JsonDocument viewLottery(@RequestParam long lotteryId)
-            throws ServiceException
-    {
-        Lottery lottery = lotteryServiceFacade.getLottery(lotteryId);
+		lottery = lotteryServiceFacade.createLottery(LotteryType.SSQ, lottery);
 
-        return new LotteryAPIResult(lottery);
-    }
+		Map<String, String> wxPayInfoMap = lotteryServiceFacade.unifiedOrder(
+				lottery, user.getOpenid(), httpRequest.getHeader("X-Real-IP"),
+				tradeType, body);
 
-    @RequestMapping(method = RequestMethod.POST, value = "/fetch")
-    @ResponseBody
-    public JsonDocument fetchTicket(@RequestParam long periodId)
-            throws ServiceException
-    {
-        lotteryServiceFacade.fetchTicket(periodId);
+		return new LotteryAPIResult(wxPayInfoMap);
+	}
 
-        return LotteryAPIResult.SUCCESS;
-    }
+	@RequestMapping(method = RequestMethod.GET, value = "/detail")
+	@ResponseBody
+	public JsonDocument viewLottery(@RequestParam long lotteryId)
+			throws ServiceException {
+		Lottery lottery = lotteryServiceFacade.getLottery(lotteryId);
 
-    @RequestMapping(method = RequestMethod.GET, value = "/list")
-    @ResponseBody
-    public JsonDocument getMyLotteries() 
-    		throws ServiceException
-    {
-        long owner = SessionContext.getCurrentUser().getId();
-        List<Lottery> lotteries = lotteryServiceFacade.getLotteries(owner);
-        
-        return new LotteryAPIResult(lotteries);
-    }
+		return new LotteryAPIResult(lottery);
+	}
 
-    @RequestMapping(method = RequestMethod.POST, value = "/wxnotify")
-    @ResponseBody
-    public String wxPayNotify(HttpServletRequest request,
-            HttpServletResponse response) throws OVTException, IOException
-    {
+	@RequestMapping(method = RequestMethod.POST, value = "/fetch")
+	@ResponseBody
+	public JsonDocument fetchTicket(@RequestParam long periodId)
+			throws ServiceException {
+		lotteryServiceFacade.fetchTicket(periodId);
 
-        String xml = StreamUtils.copyToString(request.getInputStream(),
-                Charset.defaultCharset());
-        WxPayLog wxPayLog = xml2WxPayLog.fromXml(xml);
+		return LotteryAPIResult.SUCCESS;
+	}
 
-        if (wxPayLog.getResultCode().equalsIgnoreCase("SUCCESS"))
-        {
-        	if(wxPayLogService.getWxPayLogByTradeNo(wxPayLog.getOutTradeNo()) == null)
-        	{
-        		wxPayLogService.saveWxPayLog(wxPayLog);
-        		
-        		// update lottery state
-        		lotteryServiceFacade.onPaidSuccess(wxPayLog.getOutTradeNo(), wxPayLog.getOpenId());
-        	}
-        	
-            return "success";
-        }
-        else
-        {
-            return "fail";
-        }
-    }
+	@RequestMapping(method = RequestMethod.GET, value = "/list")
+	@ResponseBody
+	public JsonDocument getMyLotteries() throws ServiceException {
+		long owner = SessionContext.getCurrentUser().getId();
+		List<Lottery> lotteries = lotteryServiceFacade.getLotteries(owner);
+
+		return new LotteryAPIResult(lotteries);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/wxnotify")
+	@ResponseBody
+	public String wxPayNotify(HttpServletRequest request,
+			HttpServletResponse response) throws OVTException, IOException {
+
+		String xml = StreamUtils.copyToString(request.getInputStream(),
+				Charset.defaultCharset());
+		WxPayLog wxPayLog = xml2WxPayLog.fromXml(xml);
+
+		if (wxPayLog.getResultCode().equalsIgnoreCase("SUCCESS")) {
+			if (wxPayLogService.getWxPayLogByTradeNo(wxPayLog.getOutTradeNo()) == null) {
+				wxPayLogService.saveWxPayLog(wxPayLog);
+
+				// update lottery state
+				lotteryServiceFacade.onPaidSuccess(wxPayLog.getOutTradeNo(),
+						wxPayLog.getOpenId());
+			}
+
+			return "success";
+		} else {
+			return "fail";
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/redpack/q")
+	@ResponseBody
+	public JsonDocument snatchRedpack(@RequestParam long lotteryId)
+					throws ServiceException {
+		Lottery lottery = lotteryServiceFacade.snatchRedpack(lotteryId);
+		
+		return new LotteryAPIResult(lottery);
+	}
 }

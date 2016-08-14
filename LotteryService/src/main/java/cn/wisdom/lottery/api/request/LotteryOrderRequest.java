@@ -9,6 +9,8 @@ public class LotteryOrderRequest {
 	private int periods;
 	
 	private int times;
+	
+	private int redpackCount;
 
 	public List<String> getNumbers() {
 		return numbers;
@@ -32,5 +34,13 @@ public class LotteryOrderRequest {
 
 	public void setTimes(int times) {
 		this.times = times;
+	}
+
+	public int getRedpackCount() {
+		return redpackCount;
+	}
+
+	public void setRedpackCount(int redpackCount) {
+		this.redpackCount = redpackCount;
 	}
 }

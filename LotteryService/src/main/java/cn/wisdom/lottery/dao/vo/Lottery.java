@@ -57,6 +57,9 @@ public class Lottery extends BaseEntity
     
     @Column("owner")
     private long owner;
+    
+    @Column("redpack_count")
+    private int redpackCount;
 
     @Column("merchant")
     private long merchant;
@@ -246,5 +249,13 @@ public class Lottery extends BaseEntity
 
 	public void setRedpacks(List<LotteryRedpack> redpacks) {
 		this.redpacks = redpacks;
+	}
+
+	public int getRedpackCount() {
+		return redpackCount;
+	}
+
+	public void setRedpackCount(int redpackCount) {
+		this.redpackCount = redpackCount;
 	}
 }

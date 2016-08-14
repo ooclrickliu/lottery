@@ -34,6 +34,10 @@ public class UserDaoImpl implements UserDao
     private static final String SQL_INSERT_USER = "INSERT IGNORE INTO user(openid, role, "
             + "create_time, update_time) "
             + "VALUES(?, ?, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+    
+    private static final String SQL_INSERT_USER2 = "INSERT IGNORE INTO user(openid, role, nick_name, head_img_url, country, province, city, sex, subscribe_time, union_id, "
+    		+ "create_time, update_time) "
+    		+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
 
 	private static final String SQL_GET_USER_PREFIX = "select * from user ";
 
@@ -84,6 +88,28 @@ public class UserDaoImpl implements UserDao
                 user.getOpenid());
 
         long id = daoHelper.save(SQL_INSERT_USER, errMsg, true, params);
+
+        return id;
+    }
+    
+    @Override
+    public long saveWithWxInfo(User user) {
+    	Object[] params = new Object[10];
+        params[0] = user.getOpenid();
+        params[1] = user.getRole().toString();
+        params[2] = user.getNickName();
+        params[3] = user.getHeadImgUrl();
+        params[4] = user.getCountry();
+        params[5] = user.getProvince();
+        params[6] = user.getCity();
+        params[7] = user.getSex();
+        params[8] = user.getSubscribeTime();
+        params[9] = user.getUnionid();
+        
+        String errMsg = MessageFormat.format("Failed insert user with wx info, openid={0}!",
+                user.getOpenid());
+
+        long id = daoHelper.save(SQL_INSERT_USER2, errMsg, true, params);
 
         return id;
     }
