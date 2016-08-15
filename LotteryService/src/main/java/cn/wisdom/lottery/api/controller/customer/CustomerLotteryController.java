@@ -64,6 +64,8 @@ public class CustomerLotteryController {
 		lottery.setLotteryType(LotteryType.SSQ);
 		lottery.setPayState(PayState.UnPaid);
 		lottery.setTimes(request.getTimes()); // 倍数
+        lottery.setCreateBy(user.getId());
+        lottery.setOwner(user.getId());
 
 		for (String number : request.getNumbers()) {
 			lottery.getNumbers().add(new LotteryNumber(number));
