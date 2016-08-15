@@ -2,6 +2,7 @@ package cn.wisdom.lottery.api.controller.customer;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -79,6 +80,7 @@ public class CustomerLotteryController {
 			lotteryPeriod.setPeriod(period.getPeriod());
 			lotteryPeriod.setPrizeState(PrizeState.NotOpen);
 			lotteryPeriod.setPrizeOpenTime(period.getOpenTime());
+			unifyOpenTime(lotteryPeriod.getPrizeOpenTime());
 
 			lottery.getPeriods().add(lotteryPeriod);
 		}
@@ -90,6 +92,12 @@ public class CustomerLotteryController {
 				tradeType, body);
 
 		return new LotteryAPIResult(wxPayInfoMap);
+	}
+
+	@SuppressWarnings("deprecation")
+	private void unifyOpenTime(Timestamp openTime) {
+		openTime.setHours(21);
+		openTime.setMinutes(15);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/detail")
