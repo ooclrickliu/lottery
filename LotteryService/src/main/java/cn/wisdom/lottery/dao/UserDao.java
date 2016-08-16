@@ -7,6 +7,8 @@
  */
 package cn.wisdom.lottery.dao;
 
+import java.util.List;
+
 import cn.wisdom.lottery.dao.vo.User;
 
 /**
@@ -55,5 +57,7 @@ public interface UserDao
 	User getUserByPhone(String phone);
 
 	void updatePassword(long userId, String encrypt);
+
+	List<User> getUserByIdList(List<Long> userIds);
      
 }

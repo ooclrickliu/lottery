@@ -33,8 +33,8 @@ public class LotteryDaoImpl implements LotteryDao {
 	private static final String SAVE_LOTTERY_NUMBER = "insert into lottery_number(lottery_id, number) "
 			+ "values (?, ?)";
 	
-	private static final String SAVE_LOTTERY_PERIOD = "insert into lottery_period(lottery_id, period, prize_state) "
-			+ "values (?, ?, ?)";
+	private static final String SAVE_LOTTERY_PERIOD = "insert into lottery_period(lottery_id, period, prize_state, prize_open_time) "
+			+ "values (?, ?, ?, ?)";
 	
 	private static final String SAVE_LOTTERY_REDPACK = "insert into lottery_redpack(lottery_id, user_id, rate, acquire_time) "
 			+ "values (?, ?, ?, ?)";
@@ -143,10 +143,11 @@ public class LotteryDaoImpl implements LotteryDao {
 		// lottery period
 		batchArgs = new ArrayList<Object[]>();
 		for (LotteryPeriod period : lottery.getPeriods()) {
-			args = new Object[3];
+			args = new Object[4];
 			args[0] = lotteryId;
 			args[1] = period.getPeriod();
 			args[2] = period.getPrizeState().toString();
+			args[3] = period.getPrizeOpenTime();
 			
 			batchArgs.add(args);
 		}

@@ -195,7 +195,7 @@ public class LotteryPeriod extends BaseEntity {
 	}
 
 	public boolean isCanFetch() {
-		if (!canFetch && getPrizeState() != PrizeState.NotOpen && prizeOpenTime != null) {
+		if (!canFetch && prizeOpenTime != null) {
 			Date now = DateTimeUtils.getCurrentTimestamp();
 			canFetch = now.before(DateTimeUtils.addDays(prizeOpenTime, FETCH_VALID_DAYS));
 		}

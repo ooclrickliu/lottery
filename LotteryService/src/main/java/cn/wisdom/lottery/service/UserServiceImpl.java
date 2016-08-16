@@ -8,6 +8,7 @@
 package cn.wisdom.lottery.service;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
@@ -265,6 +266,11 @@ public class UserServiceImpl implements UserService
 	@Override
 	public User getUserById(long userId) {
 		return userDao.getUserById(userId);
+	}
+
+	@Override
+	public List<User> getUserByIdList(List<Long> userIds) {
+		return userDao.getUserByIdList(userIds);
 	}
 
 }

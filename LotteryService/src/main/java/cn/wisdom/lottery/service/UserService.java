@@ -7,6 +7,8 @@
  */
 package cn.wisdom.lottery.service;
 
+import java.util.List;
+
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import cn.wisdom.lottery.dao.constant.RoleType;
 import cn.wisdom.lottery.dao.vo.User;
@@ -70,6 +72,8 @@ public interface UserService
 	 * @return
 	 */
 	User getUserById(long userId);
+
+	List<User> getUserByIdList(List<Long> userIds);
 	
 	/**
 	 * 通过AccessToken获取用户信息

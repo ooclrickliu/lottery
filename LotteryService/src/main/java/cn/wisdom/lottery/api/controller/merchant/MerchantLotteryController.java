@@ -1,5 +1,6 @@
 package cn.wisdom.lottery.api.controller.merchant;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,9 @@ import cn.wisdom.lottery.common.utils.NumberUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
+import cn.wisdom.lottery.service.UserService;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
@@ -28,9 +31,11 @@ import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 @Controller
 public class MerchantLotteryController
 {
-
     @Autowired
     private LotteryServiceFacade lotteryServiceFacade;
+    
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(method = RequestMethod.GET, value = "/query")
     @ResponseBody
@@ -51,11 +56,33 @@ public class MerchantLotteryController
         
         // prize info
         this.summarize(lotteries, response);
+        
+        // owner user info
+        this.addUserInfo(lotteries);
 
         return new LotteryAPIResult(response);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/print")
+    private void addUserInfo(List<Lottery> lotteries) {
+		List<Long> userIds = new ArrayList<Long>();
+		if (CollectionUtils.isNotEmpty(lotteries)) {
+			for (Lottery lottery : lotteries) {
+				userIds.add(lottery.getOwner());
+			}
+			
+			List<User> users = userService.getUserByIdList(userIds);
+			Map<Long, User> userMap = new HashMap<Long, User>();
+			for (User user : users) {
+				userMap.put(user.getId(), user);
+			}
+			
+			for (Lottery lottery : lotteries) {
+				lottery.setOwnerObj(userMap.get(lottery.getOwner()));
+			}
+		}
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/print")
     @ResponseBody
     public JsonDocument printTickets(@RequestParam long periodId)
             throws ServiceException

@@ -8,6 +8,7 @@
 package cn.wisdom.lottery.dao;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -46,6 +47,9 @@ public class UserDaoImpl implements UserDao
     
     private static final String SQL_GET_USER = SQL_GET_USER_PREFIX
     		+ "WHERE id = ? LIMIT 1";
+    
+    private static final String SQL_GET_USER_BY_IDS = SQL_GET_USER_PREFIX
+    		+ "WHERE id in ({0})";
 
     private static final String SQL_UPDATE_WX_INFO = "UPDATE user SET country = ?, province = ?, city = ?, nick_name = ?, head_img_url = ?, sex = ?, subscribe_time = ?, unionid = ?, update_time = CURRENT_TIMESTAMP "
             + "WHERE id = ?";
@@ -163,5 +167,15 @@ public class UserDaoImpl implements UserDao
 				+ userId;
 		daoHelper.update(SQL_UPDATE_USER_PASSWORD, errMsg,
 				newPassword, userId);
+	}
+
+	@Override
+	public List<User> getUserByIdList(List<Long> userIds) {
+		String errMsg = "Failed to get user by ids: " + userIds;
+		String sql = MessageFormat.format(SQL_GET_USER_BY_IDS, StringUtils.getCSV(userIds));
+		List<User> users = daoHelper.queryForList(sql, userMapper,
+				errMsg);
+
+		return users;
 	}
 }

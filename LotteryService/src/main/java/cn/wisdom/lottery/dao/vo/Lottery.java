@@ -58,6 +58,8 @@ public class Lottery extends BaseEntity
     @Column("owner")
     private long owner;
     
+    private User ownerObj;
+    
     @Column("redpack_count")
     private int redpackCount;
 
@@ -257,5 +259,13 @@ public class Lottery extends BaseEntity
 
 	public void setRedpackCount(int redpackCount) {
 		this.redpackCount = redpackCount;
+	}
+
+	public User getOwnerObj() {
+		return ownerObj;
+	}
+
+	public void setOwnerObj(User ownerObj) {
+		this.ownerObj = ownerObj;
 	}
 }
