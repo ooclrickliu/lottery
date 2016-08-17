@@ -66,9 +66,7 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_CURRENT_PERIOD, ssqPrizeInfoMapper, errMsg);
 		
 		if (prizeLottery != null && prizeLottery.getOpenTime() != null) {
-			Timestamp openTime = prizeLottery.getOpenTime();
-			unifyOpenTime(openTime);
-			prizeLottery.setOpenTime(openTime);
+			unifyOpenTime(prizeLottery.getOpenTime());
 		}
 		return new LotteryOpenData(prizeLottery);
 	}
@@ -87,9 +85,7 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_LAST_PERIOD, ssqPrizeInfoMapper, errMsg);
 
 		if (prizeLottery != null && prizeLottery.getOpenTime() != null) {
-			Timestamp openTime = prizeLottery.getOpenTime();
-			unifyOpenTime(openTime);
-			prizeLottery.setOpenTime(openTime);
+			unifyOpenTime(prizeLottery.getOpenTime());
 		}
 		return new LotteryOpenData(prizeLottery);
 	}
@@ -105,12 +101,13 @@ public class PrizeLotteryDaoImpl implements PrizeLotteryDao {
 		String errMsg = MessageFormat.format("Failed to query {0} open info of period {1}.", lotteryType, period);
 		PrizeLottery prizeLottery = daoHelper.queryForObject(GET_SSQ_PERIOD, ssqPrizeInfoMapper, errMsg, period);
 		
+		LotteryOpenData result = null;
 		if (prizeLottery != null && prizeLottery.getOpenTime() != null) {
-			Timestamp openTime = prizeLottery.getOpenTime();
-			unifyOpenTime(openTime);
-			prizeLottery.setOpenTime(openTime);
+			unifyOpenTime(prizeLottery.getOpenTime());
+			
+			result = new LotteryOpenData(prizeLottery);
 		}
 		
-		return new LotteryOpenData(prizeLottery);
+		return result;
 	}
 }
