@@ -53,7 +53,7 @@ public class WxMpTextHandler extends AbstractWxMpHandler {
 			String desc = openInfo.getOpencode().replaceAll("\\+", " \\+ ")
 					.replaceAll(",", " ");
 			desc += "\n\n";
-			desc += "开   奖   时  间: " + openInfo.getOpentime() + "\n\n";
+			desc += "开   奖   时  间: " + openInfo.getOpentime();
 			article.setDescription(desc);
 			article.setPicUrl("");
 			article.setUrl("");
