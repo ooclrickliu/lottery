@@ -39,7 +39,9 @@ public class LotteryPriceServiceImpl implements LotteryPriceService {
 				
 				price += MathUtils.Cn_m(r, 6) * b;
 			}
-			return price * 2;
+			
+			price = price * 2 * lottery.getTimes() * lottery.getPeriods().size();
+			return price;
 		}
 	}
 
