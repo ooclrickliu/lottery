@@ -8,12 +8,16 @@ import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 
 public interface MessageNotifier {
 
-	void notifyCustomerPaidSuccess(Lottery lottery, String openid);
+	void notifyCustomerPaidSuccess(Lottery lottery);
+
+	void notifyCustomerPaidFail(Lottery lottery);
 	
 	void notifyMerchantDistributed(Lottery lottery, String openid);
 
 	void notifyMerchantPrizeInfo(LotteryType lotteryType, PrizeLotterySSQ openInfo, List<Lottery> prizeLotteries);
 
 	void notifyCustomerPrizeInfo(List<Lottery> prizeLotteries);
+
+	void notifyMerchantNewPayRequest(Lottery lottery);
 
 }

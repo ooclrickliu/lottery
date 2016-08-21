@@ -1,7 +1,10 @@
 package cn.wisdom.lottery.service;
 
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.List;
+
+import me.chanjar.weixin.common.exception.WxErrorException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,7 @@ import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.wx.MessageNotifier;
+import cn.wisdom.lottery.service.wx.WXService;
 
 @Service
 public class LotteryServiceImpl implements LotteryService
@@ -51,6 +55,9 @@ public class LotteryServiceImpl implements LotteryService
 
     @Autowired
     private LotteryDao lotteryDao;
+
+	@Autowired
+	private WXService wxService;
     
     @Autowired
     private OVThreadPoolExecutor executor;
@@ -157,6 +164,60 @@ public class LotteryServiceImpl implements LotteryService
         lotteryPeriod.setTicketFetchTime(DateTimeUtils.getCurrentTimestamp());
         lotteryDao.updateFetchState(lotteryPeriod);
     }
+    
+    @Override
+    public void submitPayRequest(long lotteryId, String payImgUrl) {
+
+    	logger.info("Receive order pay request: lottery[{}]", lotteryId);
+    	
+        final Lottery lottery = lotteryDao.getLottery(lotteryId);
+    	if (lottery != null && lottery.getPayState() == PayState.UnPaid) {
+    		try {
+    			File payImg = wxService.getWxMpService().mediaDownload(
+    					payImgUrl);
+    			lottery.setPayImgUrl(payImg.getName());
+    			lottery.setPayState(PayState.PaidApproving);
+
+    			lotteryDao.updatePayImg(lottery);
+
+    			messageNotifier.notifyMerchantNewPayRequest(lottery);
+    		} catch (WxErrorException e) {
+    			logger.error("failed to upload payImg", e);
+    			lottery.setPayImgUrl(payImgUrl);
+    		}
+    	}
+    }
+    
+    @Override
+    public void confirmPay(long lotteryId) {
+    	final Lottery lottery = lotteryDao.getLottery(lotteryId);
+
+        if (lottery != null && lottery.getPayState() == PayState.PaidApproving) {
+            lottery.setPayState(PayState.Paid);
+
+            lotteryDao.updatePayState(lottery);
+
+            // distribute
+            distribute(lottery);
+            
+            // notify customer
+            messageNotifier.notifyCustomerPaidSuccess(lottery);
+		}
+    }
+    
+    @Override
+    public void confirmPayFail(long lotteryId) {
+    	final Lottery lottery = lotteryDao.getLottery(lotteryId);
+    	
+    	if (lottery != null && lottery.getPayState() == PayState.PaidApproving) {
+    		lottery.setPayState(PayState.PaidFail);
+    		
+    		lotteryDao.updatePayState(lottery);
+    		
+    		// notify customer
+    		messageNotifier.notifyCustomerPaidFail(lottery);
+    	}
+    }
 
     @Override
     public void onPaidSuccess(String orderNo, String openid)
@@ -174,7 +235,7 @@ public class LotteryServiceImpl implements LotteryService
             distribute(lottery);
             
             // notify customer
-            messageNotifier.notifyCustomerPaidSuccess(lottery, openid);
+            messageNotifier.notifyCustomerPaidSuccess(lottery);
 		}
     }
 

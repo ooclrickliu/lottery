@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -87,11 +86,28 @@ public class CustomerLotteryController {
 
 		lottery = lotteryServiceFacade.createLottery(LotteryType.SSQ, lottery);
 
-		Map<String, String> wxPayInfoMap = lotteryServiceFacade.unifiedOrder(
-				lottery, user.getOpenid(), httpRequest.getHeader("X-Real-IP"),
-				tradeType, body);
+//		Map<String, String> wxPayInfoMap = lotteryServiceFacade.unifiedOrder(
+//				lottery, user.getOpenid(), httpRequest.getHeader("X-Real-IP"),
+//				tradeType, body);
 
-		return new LotteryAPIResult(wxPayInfoMap);
+		return new LotteryAPIResult(lottery);
+	}
+
+	/**
+	 * 上传支付凭证
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
+	@RequestMapping(method = RequestMethod.POST, value = "/pay/submit")
+	@ResponseBody
+	public JsonDocument submitPayScreenshot(@RequestParam long lotteryId,
+			@RequestParam String payImgUrl)
+			throws ServiceException {
+
+		lotteryServiceFacade.submitPayRequest(lotteryId, payImgUrl);
+
+		return LotteryAPIResult.SUCCESS;
 	}
 
 	@SuppressWarnings("deprecation")

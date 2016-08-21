@@ -352,6 +352,8 @@ alter table `lottery_period` add prize_open_time timestamp NULL after ticket_pri
 
 alter table `lottery` add redpack_count int NULL after owner;
 
+alter table `lottery` add `pay_img_url` varchar(500) NULL;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

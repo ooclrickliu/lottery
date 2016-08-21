@@ -44,5 +44,7 @@ public interface LotteryDao {
 
 	void saveRedpack(LotteryRedpack redpack);
 
+	void updatePayImg(Lottery lottery);
+
 	
 }

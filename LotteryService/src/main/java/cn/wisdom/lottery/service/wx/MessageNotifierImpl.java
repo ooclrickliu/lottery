@@ -60,7 +60,24 @@ public class MessageNotifierImpl implements MessageNotifier {
 	}
 	
 	@Override
-	public void notifyCustomerPaidSuccess(Lottery lottery, String openid)
+	public void notifyMerchantNewPayRequest(Lottery lottery) {
+		WxArticle news = new WxArticle();
+		news.setTitle("新支付确认");
+		news.setPicUrl(appProperty.imgServerUrl + lottery.getPayImgUrl());
+		
+		String descStr = "应付金额: " + lottery.getTotalFee() + "元";
+
+		User user = userService.getUserById(appProperty.defaultOperator);
+		news.setUrl("http://cai.southwisdom.cn/lottery.html?openid=" + user.getOpenid() + "&lotteryId=" + lottery.getId() + "#/detail");
+
+		news.setDescription(descStr);
+		
+		sendNewsMessage(news, user.getOpenid());
+		
+	}
+	
+	@Override
+	public void notifyCustomerPaidSuccess(Lottery lottery)
 	{
 		WxArticle news = new WxArticle();
 		news.setTitle("投注成功");
@@ -83,12 +100,32 @@ public class MessageNotifierImpl implements MessageNotifier {
 		if (num > 5) {
 			descStr += "    ...";
 		}
-		news.setUrl("http://cai.southwisdom.cn/lottery.html?openid=" + openid + "&lotteryId=" + lottery.getId() + "#/detail");
+		User user = userService.getUserById(lottery.getOwner());
+		news.setUrl("http://cai.southwisdom.cn/lottery.html?openid=" + user.getOpenid()  + "&lotteryId=" + lottery.getId() + "#/detail");
 		
 //		descStr += news.getUrl();
 		news.setDescription(descStr);
 		
-		sendNewsMessage(news, openid);
+		sendNewsMessage(news, user.getOpenid());
+	}
+
+	@Override
+	public void notifyCustomerPaidFail(Lottery lottery) {
+		WxArticle news = new WxArticle();
+		news.setTitle("支付失败");
+		news.setPicUrl("");
+
+		String descStr = "失败原因可能是: \n";
+//		String descStr = lottery.getLotteryType().getTypeName() + " - " + period.getPeriod() + " 期\n";
+		descStr += "     1.上传的支付凭证无效\n";
+		descStr += "     2.支付金额有误";
+		
+		User user = userService.getUserById(lottery.getOwner());
+		news.setUrl("http://cai.southwisdom.cn/lottery.html?openid=" + user.getOpenid()  + "&lotteryId=" + lottery.getId() + "#/detail");
+		
+		news.setDescription(descStr);
+		
+		sendNewsMessage(news, user.getOpenid());
 	}
 
 	@Override

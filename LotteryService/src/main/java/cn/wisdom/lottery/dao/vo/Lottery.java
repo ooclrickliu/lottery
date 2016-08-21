@@ -65,6 +65,9 @@ public class Lottery extends BaseEntity
 
     @Column("merchant")
     private long merchant;
+    
+    @Column("pay_img_url")
+    private String payImgUrl;
 
     @Column("distribute_time")
     private Timestamp distributeTime;
@@ -267,5 +270,13 @@ public class Lottery extends BaseEntity
 
 	public void setOwnerObj(User ownerObj) {
 		this.ownerObj = ownerObj;
+	}
+
+	public String getPayImgUrl() {
+		return payImgUrl;
+	}
+
+	public void setPayImgUrl(String payImgUrl) {
+		this.payImgUrl = payImgUrl;
 	}
 }

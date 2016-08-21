@@ -4,7 +4,11 @@ public enum PayState {
 
 	UnPaid("未支付"), 
 	
-	Paid("已支付"); 
+	PaidApproving("待确认支付"), 
+	
+	Paid("已支付"),
+	
+	PaidFail("支付失败"); 
 	
 	private String name;
 	

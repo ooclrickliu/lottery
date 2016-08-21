@@ -141,5 +141,22 @@ public interface LotteryService
      */
 	Lottery snatchRedpack(long lotteryId) throws ServiceException;
 
+	/**
+	 * Submit pay screenshot.
+	 * 
+	 * @param lotteryId
+	 * @param payImgUrl
+	 */
+	void submitPayRequest(long lotteryId, String payImgUrl);
+
+	/**
+	 * Merchant confirm customer's pay request.
+	 * 
+	 * @param lotteryId
+	 */
+	void confirmPay(long lotteryId);
+
+	void confirmPayFail(long lotteryId);
+
 	
 }

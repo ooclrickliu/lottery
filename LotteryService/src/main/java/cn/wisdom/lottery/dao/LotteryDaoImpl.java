@@ -73,6 +73,9 @@ public class LotteryDaoImpl implements LotteryDao {
 	private static final String GET_PERIOD_BY_ID = "select * from lottery_period "
 			+ " where id = ? limit 1";
 
+	private static final String UPDATE_LOTTERY_PAY_IMG = "update lottery set pay_img_url = ?, pay_state = ?, update_time = current_timestamp "
+			+ "where id = ?";
+	
 	private static final String UPDATE_LOTTERY_PAY_STATE = "update lottery set pay_state = ?, update_time = current_timestamp "
 			+ "where id = ?";
 	
@@ -393,6 +396,15 @@ public class LotteryDaoImpl implements LotteryDao {
 		getLotteryNumbers(lotteries);
 		
 		return lotteries;
+	}
+	
+	@Override
+	public void updatePayImg(Lottery lottery) {
+		String errMsg = MessageFormat
+				.format("Failed to update lottery payState to [{0}] by id [{1}]",
+						lottery.getPayState(), lottery.getId());
+		daoHelper.update(UPDATE_LOTTERY_PAY_IMG, errMsg, lottery.getPayImgUrl(), lottery
+				.getPayState().toString(), lottery.getId());
 	}
 
 	@Override

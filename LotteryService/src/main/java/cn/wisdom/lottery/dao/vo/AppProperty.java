@@ -30,6 +30,12 @@ public class AppProperty
 	@Value("${wxPay.notify_url}")
     public String wxPayNotifyUrl;
 	
+	@Value("${img.server.url}")
+	public String imgServerUrl;
+	
+	@Value("${lottery.default.operator}")
+	public long defaultOperator;
+	
 	@Value("${lottery.default.merchant}")
 	public long defaultMerchant;
 }

@@ -107,6 +107,16 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
 
     // //////////////////////////////////
     @Override
+    public void confirmPay(long lotteryId) {
+    	lotteryService.confirmPay(lotteryId);
+    }
+    
+    @Override
+    public void confirmPayFail(long lotteryId) {
+    	lotteryService.confirmPayFail(lotteryId);
+    }
+    
+    @Override
     public void printTicket(long periodId)
     		throws ServiceException {
     	lotteryService.printTicket(periodId);
@@ -183,5 +193,11 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
 	@Override
 	public void calculateRedpacksPrize(Lottery lottery) {
 		lotteryPrizeService.calculateRedpacksPrize(lottery);
+	}
+	
+	@Override
+	public void submitPayRequest(long lotteryId, String payImgUrl) {
+		lotteryService.submitPayRequest(lotteryId, payImgUrl);
+		
 	}
 }

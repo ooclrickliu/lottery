@@ -37,6 +37,26 @@ public class MerchantLotteryController
     @Autowired
     private UserService userService;
 
+	@RequestMapping(method = RequestMethod.POST, value = "/pay/confirm/success")
+    @ResponseBody
+    public JsonDocument confirmPay(@RequestParam long lotteryId)
+            throws ServiceException
+    {
+        lotteryServiceFacade.confirmPay(lotteryId);
+
+        return new LotteryAPIResult();
+    }
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/pay/confirm/fail")
+	@ResponseBody
+	public JsonDocument confirmPayFail(@RequestParam long lotteryId)
+			throws ServiceException
+			{
+		lotteryServiceFacade.confirmPayFail(lotteryId);
+		
+		return new LotteryAPIResult();
+			}
+
     @RequestMapping(method = RequestMethod.GET, value = "/query")
     @ResponseBody
     public JsonDocument queryLottery(@RequestParam String lotteryType,

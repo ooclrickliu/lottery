@@ -43,7 +43,13 @@ public interface LotteryServiceFacade
 
 	Lottery snatchRedpack(long lotteryId) throws ServiceException;
 
+	void submitPayRequest(long lotteryId, String payImgUrl);
+
     // /////////Merchant///////////
+
+	void confirmPay(long lotteryId);
+
+	void confirmPayFail(long lotteryId);
 
     void printTicket(long periodId)
             throws ServiceException;
