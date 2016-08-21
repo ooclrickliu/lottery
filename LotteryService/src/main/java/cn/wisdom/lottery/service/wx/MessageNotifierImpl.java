@@ -64,15 +64,17 @@ public class MessageNotifierImpl implements MessageNotifier {
 		WxArticle news = new WxArticle();
 		news.setTitle("新支付确认");
 		news.setPicUrl(appProperty.imgServerUrl + lottery.getPayImgUrl());
-		
-		String descStr = "应付金额: " + lottery.getTotalFee() + "元";
 
-		User user = userService.getUserById(appProperty.defaultOperator);
-		news.setUrl("http://cai.southwisdom.cn/lottery.html?openid=" + user.getOpenid() + "&lotteryId=" + lottery.getId() + "#/detail");
+		User customer = lottery.getOwnerObj();
+		String descStr = "购买人: " + customer.getNickName();
+		descStr += "\n应付金额: " + lottery.getTotalFee() + "元";
+
+		User operator = userService.getUserById(appProperty.defaultOperator);
+		news.setUrl("http://cai.southwisdom.cn/lottery.html?openid=" + operator.getOpenid() + "&lotteryId=" + lottery.getId() + "#/detail");
 
 		news.setDescription(descStr);
 		
-		sendNewsMessage(news, user.getOpenid());
+		sendNewsMessage(news, operator.getOpenid());
 		
 	}
 	

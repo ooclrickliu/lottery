@@ -262,6 +262,10 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 
 			String desc = latestOpenInfo.getOpencode().replaceAll("\\+", " \\+ ")
 					.replaceAll(",", " ");
+			if (StringUtils.isBlank(desc)) {
+				desc = "即将开奖, 先喝杯茶, 不要太激动...";
+			}
+			
 			desc += "\n\n";
 			desc += "开   奖   时  间: " + latestOpenInfo.getOpentime() + "\n\n";
 			desc += "下期开奖时间: " + currentPeriod.getOpentime();
