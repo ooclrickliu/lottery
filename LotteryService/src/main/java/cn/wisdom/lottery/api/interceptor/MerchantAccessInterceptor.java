@@ -40,6 +40,8 @@ import cn.wisdom.lottery.service.exception.ServiceException;
 public class MerchantAccessInterceptor extends HandlerInterceptorAdapter
 {
     private static final String ACCESS_TOKEN = "access_token";
+    
+    private static final String OPENID = "openid";
 
     @Autowired
     private UserService userService;
@@ -51,18 +53,24 @@ public class MerchantAccessInterceptor extends HandlerInterceptorAdapter
         super.preHandle(request, response, handler);
         
         User user = null;
-        String accessToken = HttpUtils.getParamValue(request, ACCESS_TOKEN);
-        if (StringUtils.isNotBlank(accessToken)) {
-        	user = userService.getUserByAccessToken(accessToken);
+        String openId = HttpUtils.getParamValue(request, OPENID);
+        if (StringUtils.isNotBlank(openId)) {
+        	user = userService.getUserByOpenId(openId); 
+        	
 		}
         if (user == null) {
-        	writeResponse(response, ServiceErrorCode.NOT_LOGIN);
-        	return false;
-		}
-        else {
-        	initSessionContext(user);
-		}
-
+        	String accessToken = HttpUtils.getParamValue(request, ACCESS_TOKEN);
+        	if (StringUtils.isNotBlank(accessToken)) {
+        		user = userService.getUserByAccessToken(accessToken);
+        	}
+        	if (user == null) {
+        		writeResponse(response, ServiceErrorCode.NOT_LOGIN);
+        		return false;
+        	}
+        }
+        
+        initSessionContext(user);
+        
         return true;
     }
 

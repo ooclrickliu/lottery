@@ -65,7 +65,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 		news.setTitle("新支付确认");
 		news.setPicUrl(appProperty.imgServerUrl + lottery.getPayImgUrl());
 
-		User customer = lottery.getOwnerObj();
+		User customer = userService.getUserById(lottery.getOwner());
 		String descStr = "购买人: " + customer.getNickName();
 		descStr += "\n应付金额: " + lottery.getTotalFee() + "元";
 
