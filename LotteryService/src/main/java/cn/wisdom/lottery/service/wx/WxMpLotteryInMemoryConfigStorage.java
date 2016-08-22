@@ -1,5 +1,6 @@
 package cn.wisdom.lottery.service.wx;
 
+import java.io.File;
 import java.io.InputStream;
 
 import me.chanjar.weixin.common.util.xml.XStreamInitializer;
@@ -11,6 +12,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("xml")
 public class WxMpLotteryInMemoryConfigStorage extends WxMpInMemoryConfigStorage {
 
+	protected volatile String uploadDir;
+	
 	public static WxMpLotteryInMemoryConfigStorage fromXml(InputStream is) {
 		XStream xstream = XStreamInitializer.getInstance();
 		xstream.processAnnotations(WxMpLotteryInMemoryConfigStorage.class);
@@ -21,5 +24,14 @@ public class WxMpLotteryInMemoryConfigStorage extends WxMpInMemoryConfigStorage 
 	public String toString() {
 		return "SimpleWxConfigProvider [appId=" + appId + ", secret=" + secret + ", accessToken=" + accessToken
 		        + ", expiresTime=" + expiresTime + ", token=" + token + ", aesKey=" + aesKey + "]";
+	}
+	
+	@Override
+	public File getTmpDirFile() {
+		if (tmpDirFile == null) {
+			tmpDirFile = new File(uploadDir);
+		}
+		
+		return tmpDirFile;
 	}
 }

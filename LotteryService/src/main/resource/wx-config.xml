@@ -8,5 +8,6 @@
     <accessToken>BRdO_IpPCpH_nATHTnPF7afgZOeZXJzdok6TeD05IKleufgIFKvm3ZOK9sGpcPF7a_APqqISIeKdXlr2ylHGgzCkHgsmWC8MXPOvHogeD7p1Y9u_9Dcx3LtKlIkY8EU1AKRaAEADNU</accessToken>
     <expiresTime>1468483546201</expiresTime>
     <openId>olz_hvioOM7d9KbXzZ1F0bOvXW7A</openId>
-    <oauth2redirectUri>http://www.southwisdom.cn</oauth2redirectUri>
+    <oauth2redirectUri>http://cai.southwisdom.cn</oauth2redirectUri>
+    <uploadDir>/home/credit/upload</uploadDir>
 </xml>
