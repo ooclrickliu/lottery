@@ -36,7 +36,7 @@ public class UserDaoImpl implements UserDao
             + "create_time, update_time) "
             + "VALUES(?, ?, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
     
-    private static final String SQL_INSERT_USER2 = "INSERT IGNORE INTO user(openid, role, nick_name, head_img_url, country, province, city, sex, subscribe_time, union_id, "
+    private static final String SQL_INSERT_USER2 = "INSERT IGNORE INTO user(openid, role, nick_name, head_img_url, country, province, city, sex, subscribe_time, unionid, "
     		+ "create_time, update_time) "
     		+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
 
