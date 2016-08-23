@@ -23,6 +23,7 @@ import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
+import cn.wisdom.lottery.dao.constant.PayState;
 import cn.wisdom.lottery.dao.constant.RoleType;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
@@ -159,8 +160,20 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		descStr += "购买日期: "
 				+ DateTimeUtils.formatSqlDateTime(lottery
 						.getCreateTime()) + "\n";
-		descStr += "开奖日期: " + openInfo.getOpentime() + "\n";
-		descStr += "中奖结果: " + hintPeriod.getPrizeState().getName() + "\n";
+		
+		PayState payState = lottery.getPayState();
+		if (payState == PayState.Paid) {
+			descStr += "开奖日期: " + openInfo.getOpentime() + "\n";
+			descStr += "中奖结果: " + hintPeriod.getPrizeState().getName() + "\n";
+		}
+		else if (payState == PayState.PaidApproving) {
+			descStr += "开奖日期: " + openInfo.getOpentime() + "\n";
+			descStr += "支付状态: " + payState.getName() + "\n";
+		}
+		else if (payState == PayState.PaidFail) {
+			descStr += "支付状态: " + payState.getName() + "\n";
+		}
+
 		descStr += "追号: 第" + (lottery.getPeriods().indexOf(hintPeriod) + 1) + "/" + lottery.getPeriods().size() + " 期\n";
 		descStr += "投注号码:  (×" + lottery.getTimes() + "倍)\n";
 		
@@ -230,10 +243,21 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		descStr += "购买日期: "
 				+ DateTimeUtils.formatSqlDateTime(lottery
 						.getCreateTime()) + "\n";
-		descStr += "开奖日期: " + openInfo.getOpentime() + "\n";
-		descStr += "中奖结果: " + period.getPrizeState().getName() + "\n";
-		descStr += "投注号码:  (×" + lottery.getTimes() + "倍)\n";
 		
+		PayState payState = lottery.getPayState();
+		if (payState == PayState.Paid) {
+			descStr += "开奖日期: " + openInfo.getOpentime() + "\n";
+			descStr += "中奖结果: " + period.getPrizeState().getName() + "\n";
+		}
+		else if (payState == PayState.PaidApproving) {
+			descStr += "开奖日期: " + openInfo.getOpentime() + "\n";
+			descStr += "支付状态: " + payState.getName() + "\n";
+		}
+		else if (payState == PayState.PaidFail) {
+			descStr += "支付状态: " + payState.getName() + "\n";
+		}
+
+		descStr += "投注号码:  (×" + lottery.getTimes() + "倍)\n";
 		int num = lottery.getNumbers().size();
 		for (int i = 0; i < num && i < 5; i++) { // 最多显示5组号码
 			descStr += "    "
