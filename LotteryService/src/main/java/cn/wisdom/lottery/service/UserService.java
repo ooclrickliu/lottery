@@ -29,9 +29,12 @@ public interface UserService
 	 * 
 	 * @param openId
 	 * @param role TODO
+	 * @return TODO
 	 * @throws ServiceException
 	 */
-	void createUser(String openId, RoleType role) throws ServiceException;
+	long createUser(String openId, RoleType role) throws ServiceException;
+
+    long createUser(User user) throws ServiceException;
 	
 	/**
 	 * 更新用户基本信息, 基本信息通过OAuth2.0获得

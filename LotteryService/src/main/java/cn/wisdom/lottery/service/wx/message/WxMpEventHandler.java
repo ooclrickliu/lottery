@@ -12,6 +12,7 @@ import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
 import me.chanjar.weixin.mp.bean.outxmlbuilder.NewsBuilder;
+import me.chanjar.weixin.mp.bean.result.WxMpUser;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,10 +26,12 @@ import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.RoleType;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
 import cn.wisdom.lottery.service.UserService;
 import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
+import cn.wisdom.lottery.service.wx.MessageNotifier;
 import cn.wisdom.lottery.service.wx.WXService;
 
 @Component
@@ -42,6 +45,9 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 
 	@Autowired
 	private LotteryServiceFacade lotteryServiceFacade;
+	
+	@Autowired
+	private MessageNotifier messageNotifyer;
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 	
@@ -288,10 +294,20 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		
 		// 保存用户
 		try {
-			userService.createUser(wxMessage.getFromUserName(), RoleType.CUSTOMER);
+			WxMpUser wxMpUser = wxService.getWxMpService().userInfo(wxMessage.getFromUserName(), null);
+			
+			User user  = new User(wxMpUser);
+			user.setRole(RoleType.CUSTOMER);
+			userService.createUser(user);
+			
+			messageNotifyer.notifyOperatorNewCustomerSubscribed(user);
+		} 
+		catch (WxErrorException e) {
+			logger.error("failed get user info from wx.", e);
 		} catch (ServiceException e) {
-			logger.error("failed handle subscribe event.", e);
+			logger.error("failed save new user.", e);
 		}
+		
 		return buildOutMessage(wxMessage, "欢迎来到千彩慧友公众平台!");
 	}
 

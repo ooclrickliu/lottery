@@ -5,6 +5,7 @@ import java.util.List;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
+import cn.wisdom.lottery.dao.vo.User;
 
 public interface MessageNotifier {
 
@@ -19,5 +20,7 @@ public interface MessageNotifier {
 	void notifyCustomerPrizeInfo(List<Lottery> prizeLotteries);
 
 	void notifyMerchantNewPayRequest(Lottery lottery);
+
+	void notifyOperatorNewCustomerSubscribed(User customer);
 
 }

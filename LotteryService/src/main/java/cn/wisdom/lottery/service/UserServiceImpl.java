@@ -167,13 +167,19 @@ public class UserServiceImpl implements UserService
     }
 
 	@Override
-	public void createUser(String openId, RoleType role) throws ServiceException {
+	public long createUser(String openId, RoleType role) throws ServiceException {
 		User user = new User();
 		
 		user.setRole(role);
 		user.setOpenid(openId);
 		
-		userDao.save(user);
+		return userDao.save(user);
+	}
+
+	@Override
+	public long createUser(User user) {
+		
+		return userDao.saveWithWxInfo(user);
 	}
 
 	@Override

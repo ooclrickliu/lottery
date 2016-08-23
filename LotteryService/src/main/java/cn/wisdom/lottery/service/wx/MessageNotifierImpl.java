@@ -37,16 +37,16 @@ public class MessageNotifierImpl implements MessageNotifier {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageNotifierImpl.class.getName());
 
-//	private void sendTextMessage(String content, String openid)
-//	{
-//		WxMpCustomMessage message = WxMpCustomMessage.TEXT()
-//				.content(content).toUser(openid).build();
-//		try {
-//			wxService.getWxMpService().customMessageSend(message);
-//		} catch (WxErrorException e) {
-//			LOGGER.error("Failed to send text messages", message);
-//		}
-//	}
+	private void sendTextMessage(String content, String openid)
+	{
+		WxMpCustomMessage message = WxMpCustomMessage.TEXT()
+				.content(content).toUser(openid).build();
+		try {
+			wxService.getWxMpService().customMessageSend(message);
+		} catch (WxErrorException e) {
+			LOGGER.error("Failed to send text messages", message);
+		}
+	}
 	
 	private void sendNewsMessage(WxArticle article, String openid)
 	{
@@ -69,12 +69,11 @@ public class MessageNotifierImpl implements MessageNotifier {
 		String descStr = "购买人: " + customer.getNickName();
 		descStr += "\n应付金额: " + lottery.getTotalFee() + "元";
 
-		User operator = userService.getUserById(appProperty.defaultOperator);
-		news.setUrl("http://cai.southwisdom.cn/lottery.html?openid=" + operator.getOpenid() + "&lotteryId=" + lottery.getId() + "#/detail");
+		news.setUrl("http://cai.southwisdom.cn/lottery.html?openid=" + appProperty.defaultOperator + "&lotteryId=" + lottery.getId() + "#/detail");
 
 		news.setDescription(descStr);
 		
-		sendNewsMessage(news, operator.getOpenid());
+		sendNewsMessage(news, appProperty.defaultOperator);
 		
 	}
 	
@@ -240,6 +239,12 @@ public class MessageNotifierImpl implements MessageNotifier {
 	public void notifyCustomerPrizeInfo(List<Lottery> prizeLotteries) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void notifyOperatorNewCustomerSubscribed(User customer) {
+		
+		sendTextMessage("新用户关注 - " + customer.getNickName(), appProperty.defaultOperator);
 	}
 
 }
