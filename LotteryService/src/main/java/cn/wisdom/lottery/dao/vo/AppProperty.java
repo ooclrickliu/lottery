@@ -36,6 +36,9 @@ public class AppProperty
 	@Value("${lottery.default.operator}")
 	public String defaultOperator;
 	
+	@Value("${lottery.default.kf}")
+	public String defaultKf;
+	
 	@Value("${lottery.default.merchant}")
 	public long defaultMerchant;
 }
