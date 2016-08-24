@@ -162,18 +162,23 @@ public class MessageNotifierImpl implements MessageNotifier {
 	@Override
 	public void notifyMerchantPrizeInfo(LotteryType lotteryType, PrizeLotterySSQ openInfo, List<Lottery> prizeLotteries) {
 		
-		Map<Long, List<Lottery>> prizeLotteryMap = this.groupByMerchant(prizeLotteries);
-		for (long merchantId : prizeLotteryMap.keySet()) {
-			
-			Map<String, Integer> prizeInfoSummary = this.sumPrizeInfo(prizeLotteryMap.get(merchantId));
-			
-			WxArticle news = this.buildMerchantPrizeNotifyMessage(lotteryType, openInfo, prizeInfoSummary);
-			
-			User merchant = userService.getUserById(merchantId);
-			
-			if (merchant != null) {
-				sendNewsMessage(news, merchant.getOpenid());
+		if (CollectionUtils.isNotEmpty(prizeLotteries)) {
+			Map<Long, List<Lottery>> prizeLotteryMap = this.groupByMerchant(prizeLotteries);
+			for (long merchantId : prizeLotteryMap.keySet()) {
+				
+				Map<String, Integer> prizeInfoSummary = this.sumPrizeInfo(prizeLotteryMap.get(merchantId));
+				
+				WxArticle news = this.buildMerchantPrizeNotifyMessage(lotteryType, openInfo, prizeInfoSummary);
+				
+				User merchant = userService.getUserById(merchantId);
+				
+				if (merchant != null) {
+					sendNewsMessage(news, merchant.getOpenid());
+				}
 			}
+		}
+		else {
+			sendTextMessage("本期(" + openInfo.getPeriod() + ")无中奖！", appProperty.defaultOperator);
 		}
 
 	}
