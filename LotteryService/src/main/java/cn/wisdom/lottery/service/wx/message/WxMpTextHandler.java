@@ -81,6 +81,10 @@ public class WxMpTextHandler extends AbstractWxMpHandler {
 				User user = (User) session.getAttribute(PARAM_USER);
 				if (user == null) {
 					user = userService.getUserById(DataConvertUtils.toLong(customerId));
+					if (user == null) {
+						return;
+					}
+					
 					session.setAttribute(PARAM_USER, user);
 				}
 				
