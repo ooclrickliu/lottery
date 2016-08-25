@@ -83,6 +83,10 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ "ticket_print_time = current_timestamp "
 			+ "where id = ?";
 	
+	private static final String UPDATE_LOTTERY_TICKET_IMG = "update lottery_period set "
+			+ "ticket_img_url = ?, ticket_print_time = current_timestamp "
+			+ "where id = ?";
+	
 	private static final String UPDATE_LOTTERY_DISTRIBUTE_STATE = "update lottery set "
 			+ "merchant = ?, distribute_time = current_timestamp, update_time = current_timestamp "
 			+ "where id = ?";
@@ -405,6 +409,14 @@ public class LotteryDaoImpl implements LotteryDao {
 						lottery.getPayState(), lottery.getId());
 		daoHelper.update(UPDATE_LOTTERY_PAY_IMG, errMsg, lottery.getPayImgUrl(), lottery
 				.getPayState().toString(), lottery.getId());
+	}
+	
+	@Override
+	public void updateTicketImage(long periodId, String ticketImgUrl) {
+		String errMsg = MessageFormat
+				.format("Failed to update lottery period ticketImgUrl to [{0}] by id [{1}]",
+						ticketImgUrl, periodId);
+		daoHelper.update(UPDATE_LOTTERY_TICKET_IMG, errMsg, ticketImgUrl, periodId);
 	}
 
 	@Override

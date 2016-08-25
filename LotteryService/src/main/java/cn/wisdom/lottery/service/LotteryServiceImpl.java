@@ -218,6 +218,18 @@ public class LotteryServiceImpl implements LotteryService
     		messageNotifier.notifyCustomerPaidFail(lottery);
     	}
     }
+    
+    @Override
+    public void uploadTicket(long periodId, String ticketImgUrl) {
+    	try {
+			File ticketImg = wxService.getWxMpService().mediaDownload(
+					ticketImgUrl);
+
+			lotteryDao.updateTicketImage(periodId, ticketImg.getName());
+		} catch (WxErrorException e) {
+			logger.error("failed to upload ticketImg", e);
+		}
+    }
 
     @Override
     public void onPaidSuccess(String orderNo, String openid)

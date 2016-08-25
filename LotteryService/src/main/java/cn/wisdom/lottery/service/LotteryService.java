@@ -158,5 +158,13 @@ public interface LotteryService
 
 	void confirmPayFail(long lotteryId);
 
+	/**
+	 * Merchant upload ticket image after printed.
+	 * 
+	 * @param periodId
+	 * @param ticketImgUrl
+	 */
+	void uploadTicket(long periodId, String ticketImgUrl);
+
 	
 }

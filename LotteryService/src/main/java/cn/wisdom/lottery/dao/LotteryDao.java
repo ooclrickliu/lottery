@@ -46,5 +46,7 @@ public interface LotteryDao {
 
 	void updatePayImg(Lottery lottery);
 
+	void updateTicketImage(long periodId, String name);
+
 	
 }

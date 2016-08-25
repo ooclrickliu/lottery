@@ -30,6 +30,9 @@ public class LotteryPeriod extends BaseEntity {
     @Column("ticket_print_time")
     private Timestamp ticketPrintTime;
     
+    @Column("ticket_img_url")
+    private String ticketImgUrl;
+    
     @Column("prize_open_time")
     private Timestamp prizeOpenTime;
 
@@ -213,5 +216,13 @@ public class LotteryPeriod extends BaseEntity {
 
 	public void setPrizeOpenTime(Timestamp prizeOpenTime) {
 		this.prizeOpenTime = prizeOpenTime;
+	}
+
+	public String getTicketImgUrl() {
+		return ticketImgUrl;
+	}
+
+	public void setTicketImgUrl(String ticketImgUrl) {
+		this.ticketImgUrl = ticketImgUrl;
 	}
 }

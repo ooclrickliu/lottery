@@ -121,6 +121,11 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     		throws ServiceException {
     	lotteryService.printTicket(periodId);
     }
+    
+    @Override
+    public void uploadTicket(long periodId, String ticketImgUrl) {
+    	lotteryService.uploadTicket(periodId, ticketImgUrl);
+    }
 
     @Override
     public List<Lottery> queryLottery(LotteryType lotteryType, int period,

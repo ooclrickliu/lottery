@@ -29,73 +29,79 @@ import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 
 @RequestMapping("/lottery/merchant")
 @Controller
-public class MerchantLotteryController
-{
-    @Autowired
-    private LotteryServiceFacade lotteryServiceFacade;
-    
-    @Autowired
-    private UserService userService;
+public class MerchantLotteryController {
+	@Autowired
+	private LotteryServiceFacade lotteryServiceFacade;
+
+	@Autowired
+	private UserService userService;
 
 	@RequestMapping(method = RequestMethod.POST, value = "/pay/confirm/success")
-    @ResponseBody
-    public JsonDocument confirmPay(@RequestParam long lotteryId)
-            throws ServiceException
-    {
-        lotteryServiceFacade.confirmPay(lotteryId);
+	@ResponseBody
+	public JsonDocument confirmPay(@RequestParam long lotteryId)
+			throws ServiceException {
+		lotteryServiceFacade.confirmPay(lotteryId);
 
-        return new LotteryAPIResult();
-    }
-	
+		return new LotteryAPIResult();
+	}
+
 	@RequestMapping(method = RequestMethod.POST, value = "/pay/confirm/fail")
 	@ResponseBody
 	public JsonDocument confirmPayFail(@RequestParam long lotteryId)
-			throws ServiceException
-			{
+			throws ServiceException {
 		lotteryServiceFacade.confirmPayFail(lotteryId);
+
+		return new LotteryAPIResult();
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/upload/ticket")
+	@ResponseBody
+	public JsonDocument uploadTicket(@RequestParam long periodId, @RequestParam String ticketImgUrl)
+			throws ServiceException {
+		lotteryServiceFacade.uploadTicket(periodId, ticketImgUrl);
 		
 		return new LotteryAPIResult();
-			}
+	}
 
-    @RequestMapping(method = RequestMethod.GET, value = "/query")
-    @ResponseBody
-    public JsonDocument queryLottery(@RequestParam String lotteryType,
-            @RequestParam int period) throws ServiceException
-    {
-    	QueryLotteryResponse response = new QueryLotteryResponse();
-    	
-    	// lottery
-        long userId = SessionContext.getCurrentUser().getId();
-        List<Lottery> lotteries = lotteryServiceFacade.queryLottery(
-                LotteryType.valueOf(lotteryType), period, userId);
-        response.setLotteries(lotteries);
-        
-        // open info
-        LotteryOpenData openInfo = lotteryServiceFacade.getOpenInfo(LotteryType.valueOf(lotteryType), period);
-        response.setOpenInfo(openInfo);
-        
-        // prize info
-        this.summarize(lotteries, response);
-        
-        // owner user info
-        this.addUserInfo(lotteries);
+	@RequestMapping(method = RequestMethod.GET, value = "/query")
+	@ResponseBody
+	public JsonDocument queryLottery(@RequestParam String lotteryType,
+			@RequestParam int period) throws ServiceException {
+		QueryLotteryResponse response = new QueryLotteryResponse();
 
-        return new LotteryAPIResult(response);
-    }
+		// lottery
+		long userId = SessionContext.getCurrentUser().getId();
+		List<Lottery> lotteries = lotteryServiceFacade.queryLottery(
+				LotteryType.valueOf(lotteryType), period, userId);
+		response.setLotteries(lotteries);
 
-    private void addUserInfo(List<Lottery> lotteries) {
+		// open info
+		LotteryOpenData openInfo = lotteryServiceFacade.getOpenInfo(
+				LotteryType.valueOf(lotteryType), period);
+		response.setOpenInfo(openInfo);
+
+		// prize info
+		this.summarize(lotteries, response);
+
+		// owner user info
+		this.addUserInfo(lotteries);
+
+		return new LotteryAPIResult(response);
+	}
+
+	private void addUserInfo(List<Lottery> lotteries) {
 		List<Long> userIds = new ArrayList<Long>();
 		if (CollectionUtils.isNotEmpty(lotteries)) {
 			for (Lottery lottery : lotteries) {
 				userIds.add(lottery.getOwner());
 			}
-			
+
 			List<User> users = userService.getUserByIdList(userIds);
 			Map<Long, User> userMap = new HashMap<Long, User>();
 			for (User user : users) {
 				userMap.put(user.getId(), user);
 			}
-			
+
 			for (Lottery lottery : lotteries) {
 				lottery.setOwnerObj(userMap.get(lottery.getOwner()));
 			}
@@ -103,14 +109,13 @@ public class MerchantLotteryController
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/print")
-    @ResponseBody
-    public JsonDocument printTickets(@RequestParam long periodId)
-            throws ServiceException
-    {
-        lotteryServiceFacade.printTicket(periodId);
+	@ResponseBody
+	public JsonDocument printTickets(@RequestParam long periodId)
+			throws ServiceException {
+		lotteryServiceFacade.printTicket(periodId);
 
-        return new LotteryAPIResult();
-    }
+		return new LotteryAPIResult();
+	}
 
 	private void summarize(List<Lottery> lotteries,
 			QueryLotteryResponse response) {
@@ -119,16 +124,16 @@ public class MerchantLotteryController
 		Map<String, Integer> prizeMap = new HashMap<String, Integer>();
 		for (Lottery lottery : lotteries) {
 			totalFee += lottery.getTotalFee();
-			
+
 			LotteryPeriod period = lottery.getPeriods().get(0);
-			
+
 			totalPrize += period.getPrizeBonus();
 			summarizeMap(prizeMap, period.getPrizeMap());
 		}
-		
+
 		response.setTotalFee(NumberUtils.formatFloat(totalFee));
 		response.setTotalPrize(NumberUtils.formatFloat(totalPrize));
-		
+
 		response.setPrizeInfo(prizeMap);
 	}
 
@@ -141,9 +146,9 @@ public class MerchantLotteryController
 				if (count == null) {
 					count = 0;
 				}
-				
+
 				count += lotteryPrizeMap.get(rank);
-				
+
 				prizeMap.put(rank, count);
 			}
 		}
