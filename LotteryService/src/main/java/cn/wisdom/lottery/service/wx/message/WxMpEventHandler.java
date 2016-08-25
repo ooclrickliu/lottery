@@ -190,7 +190,7 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		
 		news.setDescription(descStr);
 		
-		String url = "http://cai.southwisdom.cn/lottery.html?openid=" + wxMessage.getFromUserName();
+		String url = "http://cai.southwisdom.cn/lottery/list?openid=" + wxMessage.getFromUserName();
 		news.setUrl(url);
 		
 		response = builder.addArticle(news).build();
@@ -271,7 +271,7 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		
 		news.setDescription(descStr);
 		
-		String url = "http://cai.southwisdom.cn/lottery.html?openid=" + wxMessage.getFromUserName();
+		String url = "http://cai.southwisdom.cn/lottery/list?openid=" + wxMessage.getFromUserName();
 		news.setUrl(url);
 		
 		response = builder.addArticle(news).build();
