@@ -44,7 +44,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 		try {
 			wxService.getWxMpService().customMessageSend(message);
 		} catch (WxErrorException e) {
-			LOGGER.error("Failed to send text messages", message);
+			LOGGER.error("Failed to send text messages", e);
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 		try {
 			wxService.getWxMpService().customMessageSend(message);
 		} catch (WxErrorException e) {
-			LOGGER.error("Failed to send news messages", message);
+			LOGGER.error("Failed to send news messages", e);
 		}
 	}
 	
