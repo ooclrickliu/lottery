@@ -60,7 +60,9 @@ public class MerchantLotteryController {
 			throws ServiceException {
 		String returnUrl = lotteryServiceFacade.uploadTicket(periodId, ticketImgUrl);
 		
-		return new LotteryAPIResult(returnUrl);
+		JsonDocument result = new LotteryAPIResult(); 
+		result.setData(returnUrl);
+		return result;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/query")
