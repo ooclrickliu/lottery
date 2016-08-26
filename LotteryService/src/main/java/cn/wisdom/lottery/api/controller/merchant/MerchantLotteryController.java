@@ -42,7 +42,7 @@ public class MerchantLotteryController {
 			throws ServiceException {
 		lotteryServiceFacade.confirmPay(lotteryId);
 
-		return new LotteryAPIResult();
+		return LotteryAPIResult.SUCCESS;
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/pay/confirm/fail")
@@ -51,16 +51,16 @@ public class MerchantLotteryController {
 			throws ServiceException {
 		lotteryServiceFacade.confirmPayFail(lotteryId);
 
-		return new LotteryAPIResult();
+		return LotteryAPIResult.SUCCESS;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/upload/ticket")
 	@ResponseBody
 	public JsonDocument uploadTicket(@RequestParam long periodId, @RequestParam String ticketImgUrl)
 			throws ServiceException {
-		lotteryServiceFacade.uploadTicket(periodId, ticketImgUrl);
+		String returnUrl = lotteryServiceFacade.uploadTicket(periodId, ticketImgUrl);
 		
-		return new LotteryAPIResult();
+		return new LotteryAPIResult(returnUrl);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/query")
@@ -114,7 +114,7 @@ public class MerchantLotteryController {
 			throws ServiceException {
 		lotteryServiceFacade.printTicket(periodId);
 
-		return new LotteryAPIResult();
+		return LotteryAPIResult.SUCCESS;
 	}
 
 	private void summarize(List<Lottery> lotteries,

@@ -220,15 +220,20 @@ public class LotteryServiceImpl implements LotteryService
     }
     
     @Override
-    public void uploadTicket(long periodId, String ticketImgUrl) {
+    public String uploadTicket(long periodId, String ticketImgUrl) {
+    	
+    	String returUrl = null;
     	try {
 			File ticketImg = wxService.getWxMpService().mediaDownload(
 					ticketImgUrl);
 
+			returUrl = ticketImg.getName();
 			lotteryDao.updateTicketImage(periodId, ticketImg.getName());
 		} catch (WxErrorException e) {
 			logger.error("failed to upload ticketImg", e);
 		}
+    	
+    	return returUrl;
     }
 
     @Override

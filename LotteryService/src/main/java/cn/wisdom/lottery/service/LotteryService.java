@@ -164,7 +164,7 @@ public interface LotteryService
 	 * @param periodId
 	 * @param ticketImgUrl
 	 */
-	void uploadTicket(long periodId, String ticketImgUrl);
+	String uploadTicket(long periodId, String ticketImgUrl);
 
 	
 }

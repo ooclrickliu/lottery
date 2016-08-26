@@ -123,8 +123,8 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     }
     
     @Override
-    public void uploadTicket(long periodId, String ticketImgUrl) {
-    	lotteryService.uploadTicket(periodId, ticketImgUrl);
+    public String uploadTicket(long periodId, String ticketImgUrl) {
+    	return lotteryService.uploadTicket(periodId, ticketImgUrl);
     }
 
     @Override
