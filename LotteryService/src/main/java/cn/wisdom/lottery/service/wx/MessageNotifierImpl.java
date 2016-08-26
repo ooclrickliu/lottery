@@ -69,7 +69,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 		String descStr = "购买人: " + customer.getNickName();
 		descStr += "\n应付金额: " + lottery.getTotalFee() + "元";
 
-		news.setUrl("http://cai.southwisdom.cn/lottery/" + lottery.getId() + "?openid=" + appProperty.defaultOperator);
+		news.setUrl("http://cai.southwisdom.cn" + "?openid=" + appProperty.defaultOperator + "#/lottery/" + lottery.getId());
 
 		news.setDescription(descStr);
 		
@@ -102,7 +102,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 			descStr += "    ...";
 		}
 		User user = userService.getUserById(lottery.getOwner());
-		news.setUrl("http://cai.southwisdom.cn/lottery/" + lottery.getId() + "?openid=" + user.getOpenid());
+		news.setUrl("http://cai.southwisdom.cn" + "?openid=" + user.getOpenid() + "#/lottery/" + lottery.getId());
 		
 //		descStr += news.getUrl();
 		news.setDescription(descStr);
@@ -122,7 +122,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 		descStr += "     2.支付金额有误";
 		
 		User user = userService.getUserById(lottery.getOwner());
-		news.setUrl("http://cai.southwisdom.cn/lottery/" + lottery.getId() + "?openid=" + user.getOpenid());
+		news.setUrl("http://cai.southwisdom.cn" + "?openid=" + user.getOpenid() + "#/lottery/" + lottery.getId());
 		
 		news.setDescription(descStr);
 		
@@ -151,7 +151,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 		}
 		descStr += "\n金额: " + lottery.getTotalFee() + "元";
 		
-		news.setUrl("http://cai.southwisdom.cn/lottery/" + lottery.getId() + "?openid=" + openid);
+		news.setUrl("http://cai.southwisdom.cn" + "?openid=" + openid + "#/lottery/" + lottery.getId());
 
 //		descStr += news.getUrl();
 		news.setDescription(descStr);
