@@ -12,6 +12,7 @@ import me.chanjar.weixin.mp.bean.WxMpCustomMessage.WxArticle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.wisdom.lottery.api.response.QueryLotteryResponse;
 import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
 import cn.wisdom.lottery.common.utils.CollectionUtils;
@@ -250,6 +251,26 @@ public class MessageNotifierImpl implements MessageNotifier {
 	public void notifyOperatorNewCustomerSubscribed(User customer) {
 		
 		sendTextMessage("新用户关注 - " + customer.getNickName(), appProperty.defaultOperator);
+	}
+	
+	@Override
+	public void notifyMerchantPrintTickets(long merchant, QueryLotteryResponse response) {
+		WxArticle news = new WxArticle();
+		String title = LotteryType.SSQ.getTypeName() + response.getOpenInfo().getExpect() + "期销售统计";
+		news.setTitle(title);
+		news.setPicUrl("");
+		
+		String descStr = "销售量: " + response.getLotteries().size() + " 张\n";
+		descStr = "销售额: " + response.getTotalFee() + " 元\n\n";
+		descStr = "请点击查看彩票清单，及时打印并上传彩票！\n";
+		
+		news.setDescription(descStr);
+		
+		User merchantObj = userService.getUserById(merchant);
+		String url = "http://cai.southwisdom.cn?openid=" + merchantObj.getOpenid() + "#/lottery/list";
+		news.setUrl(url);
+		
+		sendNewsMessage(news, merchantObj.getOpenid());
 	}
 
 }

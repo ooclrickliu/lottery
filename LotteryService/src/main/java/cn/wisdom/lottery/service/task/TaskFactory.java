@@ -29,4 +29,10 @@ public class TaskFactory
     {
         return new LotteryOpenPrizeTask();
     }
+    
+    @Bean
+    public LotteryPrintNotifyTask newLotteryPrintNotifyTask()
+    {
+    	return new LotteryPrintNotifyTask();
+    }
 }

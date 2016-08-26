@@ -2,6 +2,7 @@ package cn.wisdom.lottery.service.wx;
 
 import java.util.List;
 
+import cn.wisdom.lottery.api.response.QueryLotteryResponse;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
@@ -22,5 +23,7 @@ public interface MessageNotifier {
 	void notifyMerchantNewPayRequest(Lottery lottery);
 
 	void notifyOperatorNewCustomerSubscribed(User customer);
+
+	void notifyMerchantPrintTickets(long merchant, QueryLotteryResponse response);
 
 }
