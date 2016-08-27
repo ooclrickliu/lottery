@@ -19,6 +19,7 @@ import cn.wisdom.lottery.service.SSQPeriodGenerator;
 import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 import cn.wisdom.lottery.service.task.LotteryOpenPrizeTask;
+import cn.wisdom.lottery.service.task.LotteryPrintNotifyTask;
 
 @RequestMapping("/prize")
 @Controller
@@ -32,6 +33,9 @@ public class PrizeController {
 	
 	@Autowired
 	private LotteryOpenPrizeTask lotteryOpenPrizeTask;
+	
+	@Autowired
+	private LotteryPrintNotifyTask lotteryPrintNotifyTask;
 
 	@RequestMapping(method = RequestMethod.GET, value = "/generate/period")
 	@ResponseBody
@@ -78,6 +82,16 @@ public class PrizeController {
 			throws ServiceException {
 		
 		lotteryOpenPrizeTask.reopenSSQPrize(period);
+		
+		return LotteryAPIResult.SUCCESS;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/notify/print")
+	@ResponseBody
+	public JsonDocument notifyMerchantPrint()
+			throws ServiceException {
+		
+		lotteryPrintNotifyTask.notifyPrint();
 		
 		return LotteryAPIResult.SUCCESS;
 	}

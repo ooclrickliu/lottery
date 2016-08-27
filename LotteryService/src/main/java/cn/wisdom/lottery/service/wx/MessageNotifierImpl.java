@@ -261,16 +261,18 @@ public class MessageNotifierImpl implements MessageNotifier {
 		news.setPicUrl("");
 		
 		String descStr = "销售量: " + response.getLotteries().size() + " 张\n";
-		descStr = "销售额: " + response.getTotalFee() + " 元\n\n";
-		descStr = "请点击查看彩票清单，及时打印并上传彩票！\n";
+		descStr += "销售额: " + response.getTotalFee() + " 元\n\n";
+		descStr += "请点击查看彩票清单，及时打印并上传彩票！\n";
 		
 		news.setDescription(descStr);
 		
 		User merchantObj = userService.getUserById(merchant);
-		String url = "http://cai.southwisdom.cn?openid=" + merchantObj.getOpenid() + "#/lottery/list";
+		String url = "http://cai.southwisdom.cn?openid=" + merchantObj.getOpenid() 
+				+ "&period=" + response.getOpenInfo().getExpect() + "&lotteryType=SSQ#/mclottery/list";
 		news.setUrl(url);
 		
-		sendNewsMessage(news, merchantObj.getOpenid());
+//		sendNewsMessage(news, merchantObj.getOpenid());
+		sendNewsMessage(news, appProperty.defaultOperator);
 	}
 
 }

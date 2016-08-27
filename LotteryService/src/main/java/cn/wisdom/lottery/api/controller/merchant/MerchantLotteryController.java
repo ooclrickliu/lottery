@@ -72,9 +72,9 @@ public class MerchantLotteryController {
 		QueryLotteryResponse response = new QueryLotteryResponse();
 
 		// lottery
-		long userId = SessionContext.getCurrentUser().getId();
+		long merchant = SessionContext.getCurrentUser().getId();
 		List<Lottery> lotteries = lotteryServiceFacade.queryLottery(
-				LotteryType.valueOf(lotteryType), period, userId);
+				LotteryType.valueOf(lotteryType), period, merchant);
 		response.setLotteries(lotteries);
 
 		// open info
