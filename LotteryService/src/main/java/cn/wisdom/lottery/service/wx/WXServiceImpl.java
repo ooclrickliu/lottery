@@ -17,6 +17,7 @@ import cn.wisdom.lottery.service.wx.message.WxMpEventHandler;
 import cn.wisdom.lottery.service.wx.message.WxMpImageHandler;
 import cn.wisdom.lottery.service.wx.message.WxMpLogHandler;
 import cn.wisdom.lottery.service.wx.message.WxMpTextHandler;
+import cn.wisdom.lottery.service.wx.message.WxMpVideoHandler;
 import cn.wisdom.lottery.service.wx.message.WxMpVoiceHandler;
 
 @Service
@@ -41,6 +42,9 @@ public class WXServiceImpl implements WXService {
 	private WxMpVoiceHandler voiceHandler;
 	
 	@Autowired
+	private WxMpVideoHandler videoHandler;
+	
+	@Autowired
 	private WxMpEventHandler eventHandler;
 
 	@PostConstruct
@@ -60,6 +64,7 @@ public class WXServiceImpl implements WXService {
 				.rule().msgType(WxConsts.XML_MSG_EVENT).async(false).handler(eventHandler).end()
 				.rule().msgType(WxConsts.XML_MSG_IMAGE).async(false).handler(imageHandler).end()
 				.rule().msgType(WxConsts.XML_MSG_VOICE).async(false).handler(voiceHandler).end()
+				.rule().msgType(WxConsts.XML_MSG_VIDEO).async(false).handler(videoHandler).end()
 		// .rule().async(false).content("oauth").handler(oauth2handler).end()
 		;
 
