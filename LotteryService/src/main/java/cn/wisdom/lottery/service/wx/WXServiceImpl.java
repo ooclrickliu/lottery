@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.wisdom.lottery.service.wx.message.WxMpEventHandler;
+import cn.wisdom.lottery.service.wx.message.WxMpImageHandler;
 import cn.wisdom.lottery.service.wx.message.WxMpLogHandler;
 import cn.wisdom.lottery.service.wx.message.WxMpTextHandler;
+import cn.wisdom.lottery.service.wx.message.WxMpVoiceHandler;
 
 @Service
 public class WXServiceImpl implements WXService {
@@ -31,6 +33,12 @@ public class WXServiceImpl implements WXService {
 	
 	@Autowired
 	private WxMpTextHandler textHandler;
+	
+	@Autowired
+	private WxMpImageHandler imageHandler;
+	
+	@Autowired
+	private WxMpVoiceHandler voiceHandler;
 	
 	@Autowired
 	private WxMpEventHandler eventHandler;
@@ -50,7 +58,8 @@ public class WXServiceImpl implements WXService {
 				// .rule().msgType(WxConsts.XML_MSG_TEXT).matcher(guessNumberHandler).handler(guessNumberHandler).end()
 				.rule().msgType(WxConsts.XML_MSG_TEXT).async(false).handler(textHandler).end()
 				.rule().msgType(WxConsts.XML_MSG_EVENT).async(false).handler(eventHandler).end()
-		// .rule().async(false).content("图片").handler(imageHandler).end()
+				.rule().msgType(WxConsts.XML_MSG_IMAGE).async(false).handler(imageHandler).end()
+				.rule().msgType(WxConsts.XML_MSG_VOICE).async(false).handler(voiceHandler).end()
 		// .rule().async(false).content("oauth").handler(oauth2handler).end()
 		;
 
