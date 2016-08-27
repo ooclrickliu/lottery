@@ -152,7 +152,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 		}
 		descStr += "\n金额: " + lottery.getTotalFee() + "元";
 		
-		news.setUrl("http://cai.southwisdom.cn" + "?openid=" + openid + "#/lottery/" + lottery.getId());
+		news.setUrl("http://cai.southwisdom.cn" + "?openid=" + openid + "#/mclottery/" + lottery.getId());
 
 //		descStr += news.getUrl();
 		news.setDescription(descStr);
