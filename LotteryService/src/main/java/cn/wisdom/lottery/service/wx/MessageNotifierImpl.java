@@ -250,23 +250,24 @@ public class MessageNotifierImpl implements MessageNotifier {
 	@Override
 	public void notifyOperatorNewCustomerSubscribed(User customer) {
 		
-		sendTextMessage("新用户关注 - " + customer.getNickName(), appProperty.defaultOperator);
+		sendTextMessage("新用户关注 - " + customer.getNickName() + "(" + customer.getId() + ")", appProperty.defaultOperator);
 	}
 	
 	@Override
 	public void notifyMerchantPrintTickets(long merchant, QueryLotteryResponse response) {
+		User merchantObj = userService.getUserById(merchant);
+		
 		WxArticle news = new WxArticle();
 		String title = LotteryType.SSQ.getTypeName() + response.getOpenInfo().getExpect() + "期销售统计";
 		news.setTitle(title);
 		news.setPicUrl("");
 		
-		String descStr = "销售量: " + response.getLotteries().size() + " 张\n";
+		String descStr = "彩票站: 【" + merchantObj.getNickName() + "】 的彩票店\n";
+		descStr += "销售量: " + response.getLotteries().size() + " 张\n";
 		descStr += "销售额: " + response.getTotalFee() + " 元\n\n";
-		descStr += "请点击查看彩票清单，及时打印并上传彩票！\n";
+		descStr += "请点击查看彩票清单，及时打印并上传彩票！";
 		
 		news.setDescription(descStr);
-		
-		User merchantObj = userService.getUserById(merchant);
 		String url = "http://cai.southwisdom.cn?openid=" + merchantObj.getOpenid() 
 				+ "&period=" + response.getOpenInfo().getExpect() + "&lotteryType=SSQ#/mclottery/list";
 		news.setUrl(url);

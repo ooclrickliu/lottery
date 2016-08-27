@@ -31,48 +31,73 @@ public class LotteryPrintNotifyTask {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(LotteryPrintNotifyTask.class.getName());
 
-	@Scheduled(cron = "0 1 19 ? * SUN,TUE,THU")
-	public void notifyPrint()
+	@Scheduled(cron = "0 0 12,19 ? * SUN,TUE,THU")
+	public void notifyPrintOnOpenDays()
 	{
 		try {
 			LOGGER.info("Notify merchant print tickets task start...");
 			
 			// 1. get period
-			LotteryOpenData latestOpenInfo = lotteryServiceFacade.getLatestOpenInfo(LotteryType.SSQ);
-			int period = DataConvertUtils.toInt(latestOpenInfo.getExpect());
+			LotteryOpenData periodInfo = lotteryServiceFacade.getLatestOpenInfo(LotteryType.SSQ);
 			
-			LOGGER.info("Period - {}", latestOpenInfo.getExpect());
+			LOGGER.info("Period - {}", periodInfo.getExpect());
 			
-			// 2. get paid lotteries of period & group by merchant
-			List<Lottery> paidLotteries = lotteryServiceFacade.getPaidLotteries(LotteryType.SSQ, period);
-			if (CollectionUtils.isNotEmpty(paidLotteries)) {
-				Map<Long, List<Lottery>> merchantLotteryMap = new HashMap<Long, List<Lottery>>();
-				for (Lottery lottery : paidLotteries) {
-					List<Lottery> list = merchantLotteryMap.get(lottery.getMerchant());
-					if (list == null) {
-						list = new ArrayList<Lottery>();
-						merchantLotteryMap.put(lottery.getMerchant(), list);
-					}
-					list.add(lottery);
+			notifyPrint(periodInfo);
+			
+			LOGGER.info("Notify merchant print tickets task over!");
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void notifyPrint(LotteryOpenData periodInfo)
+			throws ServiceException {
+		int period = DataConvertUtils.toInt(periodInfo.getExpect());
+		
+		// 2. get paid lotteries of period & group by merchant
+		List<Lottery> paidLotteries = lotteryServiceFacade.getPaidLotteries(LotteryType.SSQ, period);
+		if (CollectionUtils.isNotEmpty(paidLotteries)) {
+			Map<Long, List<Lottery>> merchantLotteryMap = new HashMap<Long, List<Lottery>>();
+			for (Lottery lottery : paidLotteries) {
+				List<Lottery> list = merchantLotteryMap.get(lottery.getMerchant());
+				if (list == null) {
+					list = new ArrayList<Lottery>();
+					merchantLotteryMap.put(lottery.getMerchant(), list);
 				}
-				
-				// 3. send notification to merchant one by one
-				for (long merchant : merchantLotteryMap.keySet()) {
-					LOGGER.info("Notify merchant({}) to print tickets ...", merchant);
-					QueryLotteryResponse response = new QueryLotteryResponse();
-					response.setOpenInfo(latestOpenInfo);
-					response.setLotteries(merchantLotteryMap.get(merchant));
-					
-					// 4. sum fee
-					float totalFee = 0;
-					for (Lottery lottery : response.getLotteries()) {
-						totalFee += lottery.getTotalFee();
-					}
-					response.setTotalFee(NumberUtils.formatFloat(totalFee));
-					
-					messageNotifier.notifyMerchantPrintTickets(merchant, response);
-				}
+				list.add(lottery);
 			}
+			
+			// 3. send notification to merchant one by one
+			for (long merchant : merchantLotteryMap.keySet()) {
+				LOGGER.info("Notify merchant({}) to print tickets ...", merchant);
+				QueryLotteryResponse response = new QueryLotteryResponse();
+				response.setOpenInfo(periodInfo);
+				response.setLotteries(merchantLotteryMap.get(merchant));
+				
+				// 4. sum fee
+				float totalFee = 0;
+				for (Lottery lottery : response.getLotteries()) {
+					totalFee += lottery.getTotalFee();
+				}
+				response.setTotalFee(NumberUtils.formatFloat(totalFee));
+				
+				messageNotifier.notifyMerchantPrintTickets(merchant, response);
+			}
+		}
+	}
+	
+	@Scheduled(cron = "0 0 12,21 ? * MON,WED,FRI,SAT")
+	public void notifyPrintNotOnOpenDays()
+	{
+		try {
+			LOGGER.info("Notify merchant print tickets task start...");
+			
+			// 1. get period
+			LotteryOpenData periodInfo = lotteryServiceFacade.getCurrentPeriod(LotteryType.SSQ);
+			
+			LOGGER.info("Period - {}", periodInfo.getExpect());
+			
+			notifyPrint(periodInfo);
 			
 			LOGGER.info("Notify merchant print tickets task over!");
 		} catch (ServiceException e) {

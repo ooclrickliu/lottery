@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import cn.wisdom.lottery.api.model.LatestOpenInfo;
 import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.model.JsonDocument;
+import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
@@ -88,10 +89,12 @@ public class PrizeController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/notify/print")
 	@ResponseBody
-	public JsonDocument notifyMerchantPrint()
+	public JsonDocument notifyMerchantPrint(@RequestParam int period)
 			throws ServiceException {
+		LotteryOpenData periodInfo = new LotteryOpenData();
+		periodInfo.setExpect(DataConvertUtils.toString(period));
 		
-		lotteryPrintNotifyTask.notifyPrint();
+		lotteryPrintNotifyTask.notifyPrint(periodInfo);
 		
 		return LotteryAPIResult.SUCCESS;
 	}
