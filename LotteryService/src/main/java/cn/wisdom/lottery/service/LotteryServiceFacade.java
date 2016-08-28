@@ -57,6 +57,8 @@ public interface LotteryServiceFacade
     List<Lottery> queryLottery(LotteryType lotteryType, int period,
             long merchantId) throws ServiceException;
 
+	Lottery getLotteryByPeriod(long periodId);
+
 	String uploadTicket(long periodId, String ticketImgUrl);
 
     // /////////Other////////////////

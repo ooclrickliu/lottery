@@ -41,6 +41,15 @@ public interface LotteryService
 	 * @return
 	 */
 	Lottery getLottery(long lotteryId) throws ServiceException;
+
+	/**
+	 * Get lottery by period, so just return the specified period and not include other periods.
+	 * 
+	 * @param periodId
+	 * @return
+	 */
+	Lottery getLotteryByPeriod(long periodId);
+
 	
 	/**
 	 * Distribute ticket to merchant.
@@ -165,6 +174,5 @@ public interface LotteryService
 	 * @param ticketImgUrl
 	 */
 	String uploadTicket(long periodId, String ticketImgUrl);
-
 	
 }

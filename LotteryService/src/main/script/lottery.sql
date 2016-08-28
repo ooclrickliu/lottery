@@ -356,6 +356,8 @@ alter table `lottery` add `pay_img_url` varchar(500) NULL;
 
 alter table `lottery_period` add ticket_img_url varchar(500) NULL after ticket_print_time;
 
+alter table `lottery` add `period_num` int NULL after business_type;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

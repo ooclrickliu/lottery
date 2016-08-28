@@ -42,6 +42,9 @@ public class Lottery extends BaseEntity
     private String businessTypeValue;
     private BusinessType businessType;
 
+    @Column("period_num")
+    private int periodNum;
+    
     private List<LotteryPeriod> periods = new ArrayList<LotteryPeriod>();
 
     @Column("times")
@@ -278,5 +281,13 @@ public class Lottery extends BaseEntity
 
 	public void setPayImgUrl(String payImgUrl) {
 		this.payImgUrl = payImgUrl;
+	}
+
+	public int getPeriodNum() {
+		return periodNum;
+	}
+
+	public void setPeriodNum(int periodNum) {
+		this.periodNum = periodNum;
 	}
 }

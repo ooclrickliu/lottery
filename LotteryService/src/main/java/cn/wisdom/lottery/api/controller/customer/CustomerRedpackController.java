@@ -58,6 +58,7 @@ public class CustomerRedpackController {
 		}
 
 		//
+		lottery.setPeriodNum(1);
 		List<PrizeLotterySSQ> period = lotteryServiceFacade.getNextNPeriods(
 				LotteryType.SSQ, 1);
 		LotteryPeriod lotteryPeriod = new LotteryPeriod();

@@ -72,6 +72,7 @@ public class CustomerLotteryController {
 		}
 
 		// 追号
+		lottery.setPeriodNum(request.getPeriods());
 		List<PrizeLotterySSQ> nextNPeriods = lotteryServiceFacade.getNextNPeriods(
 				LotteryType.SSQ, request.getPeriods());
 		for (PrizeLotterySSQ period : nextNPeriods) {

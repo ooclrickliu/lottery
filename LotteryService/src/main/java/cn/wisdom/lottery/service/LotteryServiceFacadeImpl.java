@@ -133,6 +133,12 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     {
         return lotteryService.queryLottery(lotteryType, period, merchantId);
     }
+    
+    @Override
+    public Lottery getLotteryByPeriod(long periodId) {
+    	
+    	return lotteryService.getLotteryByPeriod(periodId);
+    }
 
     @Override
     public void savePrizeLottery(PrizeLotterySSQ prizeLotterySSQ,

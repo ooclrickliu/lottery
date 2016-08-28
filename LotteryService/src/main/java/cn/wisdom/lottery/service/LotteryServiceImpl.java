@@ -103,6 +103,12 @@ public class LotteryServiceImpl implements LotteryService
     {
         return lotteryDao.getLottery(lotteryId);
     }
+    
+    @Override
+    public Lottery getLotteryByPeriod(long periodId) {
+    	
+    	return lotteryDao.getLotteryByPeriod(periodId);
+    }
 
     @Override
     public void distributeTicket(long lotteryId, long merchantId)

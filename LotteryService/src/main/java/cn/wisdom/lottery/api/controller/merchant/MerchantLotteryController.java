@@ -91,6 +91,15 @@ public class MerchantLotteryController {
 		return new LotteryAPIResult(response);
 	}
 
+	@RequestMapping(method = RequestMethod.GET, value = "/detail")
+	@ResponseBody
+	public JsonDocument viewLottery(@RequestParam long periodId)
+			throws ServiceException {
+		Lottery lottery = lotteryServiceFacade.getLotteryByPeriod(periodId);
+
+		return new LotteryAPIResult(lottery);
+	}
+
 	private void addUserInfo(List<Lottery> lotteries) {
 		List<Long> userIds = new ArrayList<Long>();
 		if (CollectionUtils.isNotEmpty(lotteries)) {
