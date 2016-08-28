@@ -45,6 +45,8 @@ public interface LotteryServiceFacade
 
 	void submitPayRequest(long lotteryId, String payImgUrl);
 
+	List<Lottery> getUnPaidLotteries(long owner);
+
     // /////////Merchant///////////
 
 	void confirmPay(long lotteryId);
@@ -84,4 +86,6 @@ public interface LotteryServiceFacade
 	void updatePrizeState(int period, PrizeState prizeState);
 	
 	void calculateRedpacksPrize(Lottery lottery);
+
+	void clearUnpaidLottery();
 }

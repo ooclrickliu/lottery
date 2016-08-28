@@ -143,6 +143,15 @@ public class CustomerLotteryController {
 
 		return new LotteryAPIResult(lotteries);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/list/unpaid")
+	@ResponseBody
+	public JsonDocument getMyUnPaidLotteries() throws ServiceException {
+		long owner = SessionContext.getCurrentUser().getId();
+		List<Lottery> lotteries = lotteryServiceFacade.getUnPaidLotteries(owner);
+		
+		return new LotteryAPIResult(lotteries);
+	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/wxnotify")
 	@ResponseBody

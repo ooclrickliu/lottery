@@ -67,6 +67,9 @@ public class LotteryDaoImpl implements LotteryDao {
 	private static final String GET_LOTTERY_BY_USER = GET_LOTTERY_PREFIX
 			+ " where owner = ? and pay_state <> 'UnPaid' order by id desc limit ?";
 	
+	private static final String GET_UNPAID_LOTTERY_BY_USER = GET_LOTTERY_PREFIX
+			+ " where owner = ? and pay_state = 'UnPaid' order by id desc limit ?";
+	
 	private static final String GET_LOTTERY_BY_ORDER = GET_LOTTERY_PREFIX
 			+ " where order_no = ? limit 1";
 	
@@ -101,6 +104,16 @@ public class LotteryDaoImpl implements LotteryDao {
 	private static final String UPDATE_LOTTERY_PRIZE_INFO = "update lottery_period set prize_info = ?, "
 			+ "prize_bonus = ?, prize_state = 'Win' "
 			+ "where lottery_id = ? and period= ?";
+	
+	private static final String GET_UNPAID_LOTTERY = "select id from lottery where pay_state = 'UnPaid'";
+	
+	private static final String DELETE_UNPAID_PERIOD = "delete from lottery_period "
+			+ "where lottery_id in (" + GET_UNPAID_LOTTERY + ")";
+	
+	private static final String DELETE_UNPAID_NUMBER = "delete from lottery_number "
+			+ "where lottery_id in (" + GET_UNPAID_LOTTERY + ")";
+	
+	private static final String DELETE_UNPAID_LOTTERY = "delete from lottery where pay_state = 'UnPaid'";
 
     private static final DaoRowMapper<Lottery> lotteryMapper = new DaoRowMapper<Lottery>(Lottery.class);
 	
@@ -404,6 +417,21 @@ public class LotteryDaoImpl implements LotteryDao {
 	}
 	
 	@Override
+	public List<Lottery> getUnPaidLotteries(long owner) {
+		String errMsg = MessageFormat.format(
+				"Failed to query lottery by openid [{0}]",
+				owner);
+		List<Lottery> lotteries = daoHelper.queryForList(
+				GET_UNPAID_LOTTERY_BY_USER, lotteryMapper, errMsg, owner, 100);
+		
+		getLotteryPeriods(lotteries);
+		
+		getLotteryNumbers(lotteries);
+		
+		return lotteries;
+	}
+	
+	@Override
 	public void updatePayImg(Lottery lottery) {
 		String errMsg = MessageFormat
 				.format("Failed to update lottery payState to [{0}] by id [{1}]",
@@ -495,5 +523,19 @@ public class LotteryDaoImpl implements LotteryDao {
 		String errMsg = "Failed to update lottery prize info.";
 
 		daoHelper.batchUpdate(UPDATE_LOTTERY_PRIZE_INFO, batchArgs, errMsg);
+	}
+	
+	@Override
+	public void deleteUnPaidLottery() {
+		
+		String errMsg = "Failed delete unpaid lottery period";
+		daoHelper.update(DELETE_UNPAID_PERIOD, errMsg);
+		
+		errMsg = "Failed delete unpaid lottery number";
+		daoHelper.update(DELETE_UNPAID_NUMBER, errMsg);
+		
+		errMsg = "Failed delete unpaid lottery";
+		daoHelper.update(DELETE_UNPAID_LOTTERY, errMsg);
+		
 	}
 }

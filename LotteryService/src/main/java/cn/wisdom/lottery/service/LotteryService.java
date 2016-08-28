@@ -159,6 +159,14 @@ public interface LotteryService
 	void submitPayRequest(long lotteryId, String payImgUrl);
 
 	/**
+	 * Get user unpaid lottery.
+	 * 
+	 * @param owner
+	 * @return
+	 */
+	List<Lottery> getUnPaidLotteries(long owner);
+
+	/**
 	 * Merchant confirm customer's pay request.
 	 * 
 	 * @param lotteryId
@@ -174,5 +182,12 @@ public interface LotteryService
 	 * @param ticketImgUrl
 	 */
 	String uploadTicket(long periodId, String ticketImgUrl);
+
+	/**
+	 * Clear unpaid lottery.
+	 * 
+	 * @param period
+	 */
+	void clearUnpaidLottery();
 	
 }

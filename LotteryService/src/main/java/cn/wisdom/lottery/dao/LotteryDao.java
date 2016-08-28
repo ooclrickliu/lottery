@@ -28,6 +28,8 @@ public interface LotteryDao {
 
 	List<Lottery> getLotteries(long owner);
 
+	List<Lottery> getUnPaidLotteries(long owner);
+
 	void updatePayState(Lottery lottery);
 
 	void updatePrintState(long periodId);
@@ -47,6 +49,8 @@ public interface LotteryDao {
 	void updatePayImg(Lottery lottery);
 
 	void updateTicketImage(long periodId, String name);
+
+	void deleteUnPaidLottery();
 
 	
 }

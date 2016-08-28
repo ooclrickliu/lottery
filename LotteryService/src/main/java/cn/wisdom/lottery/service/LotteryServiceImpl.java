@@ -311,6 +311,12 @@ public class LotteryServiceImpl implements LotteryService
     	
     	return lotteryDao.getLotteries(owner);
     }
+    
+    @Override
+    public List<Lottery> getUnPaidLotteries(long owner) {
+    	
+    	return lotteryDao.getUnPaidLotteries(owner);
+    }
 
 	@Override
 	public Lottery snatchRedpack(long lotteryId) throws ServiceException {
@@ -368,5 +374,12 @@ public class LotteryServiceImpl implements LotteryService
 		}
 		
 		return rate;
+	}
+	
+	@Override
+	public void clearUnpaidLottery() {
+		
+		lotteryDao.deleteUnPaidLottery();
+		
 	}
 }

@@ -211,4 +211,15 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
 		lotteryService.submitPayRequest(lotteryId, payImgUrl);
 		
 	}
+	
+	@Override
+	public List<Lottery> getUnPaidLotteries(long owner) {
+		
+		return lotteryService.getUnPaidLotteries(owner);
+	}
+	
+	@Override
+	public void clearUnpaidLottery() {
+		lotteryService.clearUnpaidLottery();
+	}
 }

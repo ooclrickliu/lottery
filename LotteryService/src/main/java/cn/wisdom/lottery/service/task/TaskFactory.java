@@ -35,4 +35,10 @@ public class TaskFactory
     {
     	return new LotteryPrintNotifyTask();
     }
+    
+    @Bean
+    public ClearUnPaidLottery newClearUnPaidLottery()
+    {
+    	return new ClearUnPaidLottery();
+    }
 }
