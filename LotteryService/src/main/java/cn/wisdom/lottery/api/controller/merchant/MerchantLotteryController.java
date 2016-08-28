@@ -134,7 +134,7 @@ public class MerchantLotteryController {
 		float totalPrize = 0;
 		Map<String, Integer> prizeMap = new HashMap<String, Integer>();
 		for (Lottery lottery : lotteries) {
-			totalFee += lottery.getTotalFee();
+			totalFee += (lottery.getTotalFee() / lottery.getPeriodNum());
 
 			LotteryPeriod period = lottery.getPeriods().get(0);
 
