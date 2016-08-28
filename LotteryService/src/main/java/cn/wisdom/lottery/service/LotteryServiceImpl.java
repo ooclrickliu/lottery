@@ -172,10 +172,11 @@ public class LotteryServiceImpl implements LotteryService
     }
     
     @Override
-    public void submitPayRequest(long lotteryId, String payImgUrl) {
+    public String submitPayRequest(long lotteryId, String payImgUrl) {
 
     	logger.info("Receive order pay request: lottery[{}]", lotteryId);
-    	
+
+    	String returnUrl = "";
         final Lottery lottery = lotteryDao.getLottery(lotteryId);
     	if (lottery != null && lottery.getPayState() == PayState.UnPaid) {
     		try {
@@ -191,7 +192,11 @@ public class LotteryServiceImpl implements LotteryService
     			logger.error("failed to upload payImg", e);
     			lottery.setPayImgUrl(payImgUrl);
     		}
+    		
+    		returnUrl = lottery.getPayImgUrl();
     	}
+    	
+    	return returnUrl;
     }
     
     @Override

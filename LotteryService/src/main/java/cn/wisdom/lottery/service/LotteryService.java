@@ -156,7 +156,7 @@ public interface LotteryService
 	 * @param lotteryId
 	 * @param payImgUrl
 	 */
-	void submitPayRequest(long lotteryId, String payImgUrl);
+	String submitPayRequest(long lotteryId, String payImgUrl);
 
 	/**
 	 * Get user unpaid lottery.

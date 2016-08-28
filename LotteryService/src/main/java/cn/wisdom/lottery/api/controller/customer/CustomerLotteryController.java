@@ -106,9 +106,11 @@ public class CustomerLotteryController {
 			@RequestParam String payImgUrl)
 			throws ServiceException {
 
-		lotteryServiceFacade.submitPayRequest(lotteryId, payImgUrl);
+		String returnUrl = lotteryServiceFacade.submitPayRequest(lotteryId, payImgUrl);
 
-		return LotteryAPIResult.SUCCESS;
+		JsonDocument ret = new LotteryAPIResult();
+		ret.setData(returnUrl);
+		return ret;
 	}
 
 	@SuppressWarnings("deprecation")

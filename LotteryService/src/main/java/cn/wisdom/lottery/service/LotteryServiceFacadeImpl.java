@@ -207,8 +207,9 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
 	}
 	
 	@Override
-	public void submitPayRequest(long lotteryId, String payImgUrl) {
-		lotteryService.submitPayRequest(lotteryId, payImgUrl);
+	public String submitPayRequest(long lotteryId, String payImgUrl) {
+		
+		return lotteryService.submitPayRequest(lotteryId, payImgUrl);
 		
 	}
 	
