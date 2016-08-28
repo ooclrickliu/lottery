@@ -98,4 +98,13 @@ public class PrizeController {
 		
 		return LotteryAPIResult.SUCCESS;
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/notify/print/test")
+	@ResponseBody
+	public JsonDocument notifyMerchantPrintTest()
+			throws ServiceException {
+		lotteryPrintNotifyTask.notifyPrintNotOnOpenDays();
+		
+		return LotteryAPIResult.SUCCESS;
+	}
 }

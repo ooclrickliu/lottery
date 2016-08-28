@@ -31,7 +31,7 @@ public class LotteryPrintNotifyTask {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(LotteryPrintNotifyTask.class.getName());
 
-	@Scheduled(cron = "0 0 12,19 ? * SUN,TUE,THU")
+	@Scheduled(cron = "0 0 19 ? * SUN,TUE,THU")
 	public void notifyPrintOnOpenDays()
 	{
 		try {
@@ -84,6 +84,12 @@ public class LotteryPrintNotifyTask {
 				messageNotifier.notifyMerchantPrintTickets(merchant, response);
 			}
 		}
+	}
+	
+	@Scheduled(cron = "0 0 12 ? * SUN,TUE,THU")
+	public void notifyPrintOnOpenDaysBeforeOnpen()
+	{
+		notifyPrintNotOnOpenDays();
 	}
 	
 	@Scheduled(cron = "0 0 12,21 ? * MON,WED,FRI,SAT")

@@ -12,7 +12,8 @@ public class NumberUtils {
 	
 	public static float formatFloat(float number)
 	{
-		return DataConvertUtils.toFloat(df.format(number));
+		String str = df.format(number);
+		return DataConvertUtils.toFloat(str);
 	}
 	
 	public static void main(String[] args) {

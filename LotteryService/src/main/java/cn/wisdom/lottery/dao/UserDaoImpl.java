@@ -115,6 +115,8 @@ public class UserDaoImpl implements UserDao
 
         long id = daoHelper.save(SQL_INSERT_USER2, errMsg, true, params);
 
+        user.setId(id);
+        
         return id;
     }
 

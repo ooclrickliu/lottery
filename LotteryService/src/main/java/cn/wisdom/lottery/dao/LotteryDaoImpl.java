@@ -27,8 +27,8 @@ public class LotteryDaoImpl implements LotteryDao {
 	@Autowired
 	private DaoHelper daoHelper;
 
-	private static final String SAVE_LOTTERY = "insert into lottery(order_no, total_fee, lottery_type, business_type, times, pay_state, owner, remark, create_by, redpack_count, update_time) "
-			+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp)";
+	private static final String SAVE_LOTTERY = "insert into lottery(order_no, total_fee, lottery_type, business_type, period_num, times, pay_state, owner, remark, create_by, redpack_count, update_time) "
+			+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp)";
 
 	private static final String SAVE_LOTTERY_NUMBER = "insert into lottery_number(lottery_id, number) "
 			+ "values (?, ?)";
@@ -112,17 +112,18 @@ public class LotteryDaoImpl implements LotteryDao {
 
 	@Override
 	public void saveLottery(Lottery lottery) {
-		Object[] args = new Object[10];
+		Object[] args = new Object[11];
 		args[0] = lottery.getOrderNo();
 		args[1] = lottery.getTotalFee();
 		args[2] = lottery.getLotteryType().toString();
 		args[3] = lottery.getBusinessType().toString();
-		args[4] = lottery.getTimes();
-		args[5] = lottery.getPayState().toString();
-		args[6] = lottery.getOwner();
-		args[7] = lottery.getRemark();
-		args[8] = lottery.getCreateBy();
-		args[9] = lottery.getRedpackCount();
+		args[4] = lottery.getPeriodNum();
+		args[5] = lottery.getTimes();
+		args[6] = lottery.getPayState().toString();
+		args[7] = lottery.getOwner();
+		args[8] = lottery.getRemark();
+		args[9] = lottery.getCreateBy();
+		args[10] = lottery.getRedpackCount();
 
 		String errMsg = MessageFormat
 				.format("Failed to save lottery!", lottery);
