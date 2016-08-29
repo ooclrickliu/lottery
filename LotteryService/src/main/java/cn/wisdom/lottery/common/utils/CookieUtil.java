@@ -26,6 +26,10 @@ public class CookieUtil
 {
 
     public static final String KEY_ACCESS_TOKEN = "access_token";
+    
+    public static final String OAUTH_CODE = "code";
+    
+    public static final String OPENID = "openid";
 
     public static final int ONE_HOUR = 3600;
 

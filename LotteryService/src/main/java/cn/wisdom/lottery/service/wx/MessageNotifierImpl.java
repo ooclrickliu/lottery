@@ -274,6 +274,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 		
 //		sendNewsMessage(news, merchantObj.getOpenid());
 		sendNewsMessage(news, appProperty.defaultOperator);
+//		sendNewsMessage(news, "olz_hvsELAlrfI_0715gnh8un04Q");
 	}
 
 }

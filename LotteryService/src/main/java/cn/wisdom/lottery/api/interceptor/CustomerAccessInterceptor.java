@@ -20,6 +20,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import cn.wisdom.lottery.api.exception.NoAccessException;
 import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.model.JsonDocument;
+import cn.wisdom.lottery.common.utils.CookieUtil;
 import cn.wisdom.lottery.common.utils.HttpUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.vo.User;
@@ -39,9 +40,6 @@ import cn.wisdom.lottery.service.exception.ServiceException;
  */
 public class CustomerAccessInterceptor extends HandlerInterceptorAdapter
 {
-    private static final String OAUTH_CODE = "code";
-    
-    private static final String OPENID = "openid";
 
     @Autowired
     private UserService userService;
@@ -53,15 +51,18 @@ public class CustomerAccessInterceptor extends HandlerInterceptorAdapter
         super.preHandle(request, response, handler);
         
         User user = null;
-        String openId = HttpUtils.getParamValue(request, OPENID);
+        String openId = HttpUtils.getParamValue(request, CookieUtil.OPENID);
         if (StringUtils.isNotBlank(openId)) {
         	user = userService.getUserByOpenId(openId); 
         	
 		}
     	if (user == null) {
-            String code = HttpUtils.getParamValue(request, OAUTH_CODE);
+    		String code = HttpUtils.getParamValue(request, CookieUtil.OAUTH_CODE);
             if (StringUtils.isNotBlank(code)) {
             	user = userService.getSubscribedUserByOauthCode(code);
+            	
+            	CookieUtil.addCookie(response, CookieUtil.OAUTH_CODE, code, 0);
+            	CookieUtil.addCookie(response, CookieUtil.OPENID, user.getOpenid());
 			}
 		}
         
