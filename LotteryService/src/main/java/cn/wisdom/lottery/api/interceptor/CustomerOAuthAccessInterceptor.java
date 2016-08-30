@@ -44,7 +44,7 @@ public class CustomerOAuthAccessInterceptor extends HandlerInterceptorAdapter {
 		if (user == null) {
 			String code = HttpUtils.getParamValue(request, OAUTH_CODE);
 			if (StringUtils.isNotBlank(code)) {
-				user = userService.getSubscribedUserByOauthCode(code);
+				user = userService.getUserByOauthCode(code);
 			}
 		}
 

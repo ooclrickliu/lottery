@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.common.util.http.URIUtil;
 import me.chanjar.weixin.mp.bean.WxMpCustomMessage;
 import me.chanjar.weixin.mp.bean.WxMpCustomMessage.WxArticle;
 
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -268,8 +270,9 @@ public class MessageNotifierImpl implements MessageNotifier {
 		descStr += "请点击查看彩票清单，及时打印并上传彩票！";
 		
 		news.setDescription(descStr);
-		String url = "http://cai.southwisdom.cn?openid=" + merchantObj.getOpenid() 
-				+ "&period=" + response.getOpenInfo().getExpect() + "&lotteryType=SSQ#/mclottery/list";
+		
+		String redirectUrl = "http://cai.southwisdom.cn/#/mclottery/list/SSQ/" + response.getOpenInfo().getExpect() + "/";
+		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
 		news.setUrl(url);
 		
 //		sendNewsMessage(news, merchantObj.getOpenid());

@@ -59,7 +59,7 @@ public class CustomerAccessInterceptor extends HandlerInterceptorAdapter
     	if (user == null) {
     		String code = HttpUtils.getParamValue(request, CookieUtil.OAUTH_CODE);
             if (StringUtils.isNotBlank(code)) {
-            	user = userService.getSubscribedUserByOauthCode(code);
+            	user = userService.getUserByOauthCode(code);
             	
             	CookieUtil.addCookie(response, CookieUtil.OAUTH_CODE, code, 0);
             	CookieUtil.addCookie(response, CookieUtil.OPENID, user.getOpenid());

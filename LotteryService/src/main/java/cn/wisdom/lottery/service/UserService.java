@@ -58,15 +58,7 @@ public interface UserService
 	 * @param oauthCode
 	 * @return
 	 */
-	User getSubscribedUserByOauthCode(String oauthCode);
-	
-	/**
-	 * 通过OAuth获取未关注公众号用户信息
-	 * 
-	 * @param oauthCode
-	 * @return
-	 */
-	User getOuterUserByOauthCode(String oauthCode);
+	User getUserByOauthCode(String oauthCode);
 
 	/**
 	 * 通过ID获取用户信息
