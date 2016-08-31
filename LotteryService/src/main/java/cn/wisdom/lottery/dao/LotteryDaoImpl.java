@@ -68,7 +68,7 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ " where lottery_type = ? and pay_state = 'Paid' and period = ? and merchant = ?";
 	
 	private static final String GET_OLD_LOTTERY_BY_USER = GET_LOTTERY_PREFIX
-			+ " where id < ? and owner = ? and pay_state <> 'UnPaid' order by id desc limit {0}";
+			+ " where id < ? and owner = ? and pay_state <> ''UnPaid'' order by id desc limit {0}";
 	private static final String GET_NEW_LOTTERY_BY_USER = GET_LOTTERY_PREFIX
 			+ " where id > ? and owner = ? and pay_state <> 'UnPaid' order by id desc";
 	
