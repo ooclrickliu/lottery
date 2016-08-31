@@ -7,6 +7,7 @@ import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 import cn.wisdom.lottery.dao.vo.LotteryRedpack;
+import cn.wisdom.lottery.dao.vo.PageInfo;
 
 public interface LotteryDao {
 	
@@ -26,7 +27,7 @@ public interface LotteryDao {
 
 	Lottery getLatestLottery(long userId);
 
-	List<Lottery> getLotteries(long owner);
+	List<Lottery> getLotteries(long owner, PageInfo pageInfo);
 
 	List<Lottery> getUnPaidLotteries(long owner);
 
@@ -52,5 +53,6 @@ public interface LotteryDao {
 
 	void deleteUnPaidLottery();
 
+	void deleteLottery(long owner, long lotteryId);
 	
 }

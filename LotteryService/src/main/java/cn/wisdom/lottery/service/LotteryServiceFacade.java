@@ -7,6 +7,7 @@ import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.PageInfo;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
@@ -39,13 +40,15 @@ public interface LotteryServiceFacade
 
     Lottery getMyLatestLottery(String openid) throws ServiceException;
     
-    List<Lottery> getLotteries(long owner) throws ServiceException;
+    List<Lottery> getLotteries(long owner, PageInfo pageInfo) throws ServiceException;
 
 	Lottery snatchRedpack(long lotteryId) throws ServiceException;
 
 	String submitPayRequest(long lotteryId, String payImgUrl);
 
 	List<Lottery> getUnPaidLotteries(long owner);
+
+	void deleteLottery(long owner, long lotteryId);
 
     // /////////Merchant///////////
 

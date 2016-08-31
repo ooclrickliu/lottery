@@ -12,6 +12,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import cn.wisdom.lottery.dao.constant.QueryDirection;
+import cn.wisdom.lottery.dao.vo.PageInfo;
+
 /**
  * HttpUtils
  * 
@@ -117,5 +120,32 @@ public class HttpUtils
         }
         
         return parmaValue;
+    }
+    
+    public static PageInfo getPageInfo(HttpServletRequest request)
+    {
+    	PageInfo pageInfo = new PageInfo();
+    	
+    	long start = DataConvertUtils.toLong(getParamValue(request, PageInfo.PARAM_START));
+    	if (start <= 0) {
+			start = Integer.MAX_VALUE;
+		}
+    	pageInfo.setStart(start);
+    	
+    	int count = DataConvertUtils.toInt(getParamValue(request, PageInfo.PARAM_COUNT));
+    	if (count <= 0) {
+			count = 10;
+		}
+		pageInfo.setCount(count);
+		
+    	String direction = getParamValue(request, PageInfo.PARAM_DIRECT);
+    	if (StringUtils.isBlank(direction)) {
+    		pageInfo.setDirection(QueryDirection.DOWN);
+		}
+    	else {
+    		pageInfo.setDirection(QueryDirection.valueOf(direction));
+    	}
+    	
+    	return pageInfo;
     }
 }

@@ -13,6 +13,7 @@ import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.PageInfo;
 import cn.wisdom.lottery.service.exception.ServiceException;
 
 /**
@@ -129,10 +130,11 @@ public interface LotteryService
 	 * Get customer's lotteries.
 	 * 
 	 * @param owner
+	 * @param pageInfo 
 	 * @param limit
 	 * @return
 	 */
-	List<Lottery> getLotteries(long owner);
+	List<Lottery> getLotteries(long owner, PageInfo pageInfo);
 	
     /**
      * Handle paid success order.
@@ -189,5 +191,13 @@ public interface LotteryService
 	 * @param period
 	 */
 	void clearUnpaidLottery();
+
+	/**
+	 * Delete lottery.
+	 * 
+	 * @param owner
+	 * @param lotteryId
+	 */
+	void deleteLottery(long owner, long lotteryId);
 	
 }

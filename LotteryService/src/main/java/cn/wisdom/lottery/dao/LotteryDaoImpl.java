@@ -10,16 +10,19 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.constant.BusinessType;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
+import cn.wisdom.lottery.dao.constant.QueryDirection;
 import cn.wisdom.lottery.dao.mapper.DaoRowMapper;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryNumber;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 import cn.wisdom.lottery.dao.vo.LotteryRedpack;
+import cn.wisdom.lottery.dao.vo.PageInfo;
 
 @Repository
 public class LotteryDaoImpl implements LotteryDao {
@@ -62,10 +65,12 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ " where lottery_id in({0}) and period = ? order by id";
 
 	private static final String GET_LOTTERY_BY_MERCHANT = GET_LOTTERY_JOIN_PREFIX
-			+ " where lottery_type = ? and period = ? and merchant = ?";
+			+ " where lottery_type = ? and pay_state = 'Paid' and period = ? and merchant = ?";
 	
-	private static final String GET_LOTTERY_BY_USER = GET_LOTTERY_PREFIX
-			+ " where owner = ? and pay_state <> 'UnPaid' order by id desc limit ?";
+	private static final String GET_OLD_LOTTERY_BY_USER = GET_LOTTERY_PREFIX
+			+ " where id < ? and owner = ? and pay_state <> 'UnPaid' order by id desc limit {0}";
+	private static final String GET_NEW_LOTTERY_BY_USER = GET_LOTTERY_PREFIX
+			+ " where id > ? and owner = ? and pay_state <> 'UnPaid' order by id desc";
 	
 	private static final String GET_UNPAID_LOTTERY_BY_USER = GET_LOTTERY_PREFIX
 			+ " where owner = ? and pay_state = 'UnPaid' order by id desc limit ?";
@@ -106,14 +111,16 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ "where lottery_id = ? and period= ?";
 	
 	private static final String GET_UNPAID_LOTTERY = "select id from lottery where pay_state = 'UnPaid'";
-	
 	private static final String DELETE_UNPAID_PERIOD = "delete from lottery_period "
 			+ "where lottery_id in (" + GET_UNPAID_LOTTERY + ")";
-	
 	private static final String DELETE_UNPAID_NUMBER = "delete from lottery_number "
 			+ "where lottery_id in (" + GET_UNPAID_LOTTERY + ")";
-	
 	private static final String DELETE_UNPAID_LOTTERY = "delete from lottery where pay_state = 'UnPaid'";
+	
+	private static final String DELETE_LOTTERY_PERIOD = "delete from lottery_period where lottery_id = ?";
+	private static final String DELETE_LOTTERY_NUMBER = "delete from lottery_number where lottery_id = ?";
+	private static final String DELETE_LOTTERY_REDPACK = "delete from lottery_redpack where lottery_id = ?";
+	private static final String DELETE_LOTTERY = "delete from lottery where id = ?";
 
     private static final DaoRowMapper<Lottery> lotteryMapper = new DaoRowMapper<Lottery>(Lottery.class);
 	
@@ -373,7 +380,7 @@ public class LotteryDaoImpl implements LotteryDao {
 		
 		Lottery lottery = null;
 		if (lotteryPeriod != null) {
-			lottery = getLottery(lotteryPeriod.getLotteryId(), false, false);
+			lottery = getLottery(lotteryPeriod.getLotteryId(), true, false);
 			
 			lottery.getPeriods().add(lotteryPeriod);
 		}
@@ -386,8 +393,9 @@ public class LotteryDaoImpl implements LotteryDao {
 		String errMsg = MessageFormat.format(
 				"Failed to query the last lottery by openid [{0}]",
 				userId);
+		String sql = MessageFormat.format(GET_OLD_LOTTERY_BY_USER, "1");
 		Lottery lottery = daoHelper.queryForObject(
-				GET_LOTTERY_BY_USER, lotteryMapper, errMsg, userId, 1);
+				sql, lotteryMapper, errMsg, Integer.MAX_VALUE, userId);
 
 		if (lottery != null) {
 			List<Lottery> lotteries = new ArrayList<Lottery>();
@@ -402,12 +410,17 @@ public class LotteryDaoImpl implements LotteryDao {
 	}
 	
 	@Override
-	public List<Lottery> getLotteries(long owner) {
+	public List<Lottery> getLotteries(long owner, PageInfo pageInfo) {
 		String errMsg = MessageFormat.format(
 				"Failed to query lottery by openid [{0}]",
 				owner);
+		String sql = MessageFormat.format(GET_OLD_LOTTERY_BY_USER, DataConvertUtils.toString(pageInfo.getCount()));
+		if (pageInfo.getDirection() == QueryDirection.UP) {
+			sql = GET_NEW_LOTTERY_BY_USER;
+		}
+		
 		List<Lottery> lotteries = daoHelper.queryForList(
-				GET_LOTTERY_BY_USER, lotteryMapper, errMsg, owner, 100);
+				sql, lotteryMapper, errMsg, pageInfo.getStart(), owner);
 		
 		getLotteryPeriods(lotteries);
 		
@@ -537,5 +550,20 @@ public class LotteryDaoImpl implements LotteryDao {
 		errMsg = "Failed delete unpaid lottery";
 		daoHelper.update(DELETE_UNPAID_LOTTERY, errMsg);
 		
+	}
+	
+	@Override
+	public void deleteLottery(long owner, long lotteryId) {
+		String errMsg = "Failed delete lottery period";
+		daoHelper.update(DELETE_LOTTERY_PERIOD, errMsg);
+		
+		errMsg = "Failed delete lottery number";
+		daoHelper.update(DELETE_LOTTERY_NUMBER, errMsg);
+		
+		errMsg = "Failed delete lottery redpack";
+		daoHelper.update(DELETE_LOTTERY_REDPACK, errMsg);
+		
+		errMsg = "Failed delete lottery";
+		daoHelper.update(DELETE_LOTTERY, errMsg);
 	}
 }

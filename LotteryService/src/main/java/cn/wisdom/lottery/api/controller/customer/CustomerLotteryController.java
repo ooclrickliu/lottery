@@ -21,6 +21,7 @@ import cn.wisdom.lottery.api.request.LotteryOrderRequest;
 import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.exception.OVTException;
 import cn.wisdom.lottery.common.model.JsonDocument;
+import cn.wisdom.lottery.common.utils.HttpUtils;
 import cn.wisdom.lottery.common.utils.JaxbUtil;
 import cn.wisdom.lottery.common.utils.JaxbUtil.CollectionWrapper;
 import cn.wisdom.lottery.dao.constant.BusinessType;
@@ -30,6 +31,7 @@ import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryNumber;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.PageInfo;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.dao.vo.WxPayLog;
@@ -139,9 +141,11 @@ public class CustomerLotteryController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public JsonDocument getMyLotteries() throws ServiceException {
+	public JsonDocument getMyLotteries(HttpServletRequest httpRequest) throws ServiceException {
+		PageInfo pageInfo = HttpUtils.getPageInfo(httpRequest);
+		
 		long owner = SessionContext.getCurrentUser().getId();
-		List<Lottery> lotteries = lotteryServiceFacade.getLotteries(owner);
+		List<Lottery> lotteries = lotteryServiceFacade.getLotteries(owner, pageInfo);
 
 		return new LotteryAPIResult(lotteries);
 	}
@@ -153,6 +157,16 @@ public class CustomerLotteryController {
 		List<Lottery> lotteries = lotteryServiceFacade.getUnPaidLotteries(owner);
 		
 		return new LotteryAPIResult(lotteries);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/delete")
+	@ResponseBody
+	public JsonDocument delete(@RequestParam long lotteryId) throws ServiceException {
+		long owner = SessionContext.getCurrentUser().getId();
+		
+		lotteryServiceFacade.deleteLottery(owner, lotteryId);
+		
+		return LotteryAPIResult.SUCCESS;
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/wxnotify")

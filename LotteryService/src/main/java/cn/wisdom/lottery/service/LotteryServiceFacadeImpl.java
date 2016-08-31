@@ -10,6 +10,7 @@ import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.PageInfo;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.context.SessionContext;
@@ -85,10 +86,10 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
     }
     
     @Override
-    public List<Lottery> getLotteries(long owner)
+    public List<Lottery> getLotteries(long owner, PageInfo pageInfo)
     		throws ServiceException {
     	
-    	return lotteryService.getLotteries(owner);
+    	return lotteryService.getLotteries(owner, pageInfo);
     }
 
     @Override
@@ -217,6 +218,11 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade
 	public List<Lottery> getUnPaidLotteries(long owner) {
 		
 		return lotteryService.getUnPaidLotteries(owner);
+	}
+	
+	@Override
+	public void deleteLottery(long owner, long lotteryId) {
+		lotteryService.deleteLottery(owner, lotteryId);
 	}
 	
 	@Override
