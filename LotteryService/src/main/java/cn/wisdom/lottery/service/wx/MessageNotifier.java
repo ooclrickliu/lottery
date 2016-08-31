@@ -18,7 +18,7 @@ public interface MessageNotifier {
 
 	void notifyMerchantPrizeInfo(LotteryType lotteryType, PrizeLotterySSQ openInfo, List<Lottery> prizeLotteries);
 
-	void notifyCustomerPrizeInfo(List<Lottery> prizeLotteries);
+	void notifyCustomerPrizeInfo(LotteryType lotteryType, PrizeLotterySSQ openInfo, List<Lottery> prizeLotteries);
 
 	void notifyMerchantNewPayRequest(Lottery lottery);
 

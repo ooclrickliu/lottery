@@ -143,7 +143,7 @@ public class LotteryOpenPrizeTask {
 		LOGGER.info("Start to notify prize info ...");
 		
 		messageNotifier.notifyMerchantPrizeInfo(lotteryType, openInfo, prizeLotteries);
-		messageNotifier.notifyCustomerPrizeInfo(prizeLotteries);
+		messageNotifier.notifyCustomerPrizeInfo(lotteryType, openInfo, prizeLotteries);
 		
 		LOGGER.info("Complete notifying prize info.");
 	}

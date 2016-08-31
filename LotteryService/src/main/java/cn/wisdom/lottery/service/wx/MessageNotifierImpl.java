@@ -202,14 +202,9 @@ public class MessageNotifierImpl implements MessageNotifier {
 		news.setPicUrl("");
 		
 		String descStr = "开奖号码: " + openInfo.getNumber() + "\n\n";
-		if (CollectionUtils.isEmpty(prizeInfoSummary)) {
-			descStr += "本店本期无中奖！";
-		}
-		else {
-			descStr += "中奖结果: ";
-			for (String rank : prizeInfoSummary.keySet()) {
-				descStr += "\n      " + rank + "等奖: " + prizeInfoSummary.get(rank) + " 注";
-			}
+		descStr += "中奖结果: ";
+		for (String rank : prizeInfoSummary.keySet()) {
+			descStr += "\n      " + rank + "等奖: " + prizeInfoSummary.get(rank) + " 注";
 		}
 		
 		news.setDescription(descStr);
@@ -252,9 +247,55 @@ public class MessageNotifierImpl implements MessageNotifier {
 	}
 
 	@Override
-	public void notifyCustomerPrizeInfo(List<Lottery> prizeLotteries) {
-		// TODO Auto-generated method stub
+	public void notifyCustomerPrizeInfo(LotteryType lotteryType, PrizeLotterySSQ openInfo, List<Lottery> prizeLotteries) {
+		if (CollectionUtils.isNotEmpty(prizeLotteries)) {
+			Map<Long, List<Lottery>> prizeLotteryMap = this.groupByOwner(prizeLotteries);
+			for (long owner : prizeLotteryMap.keySet()) {
+				
+				Map<String, Integer> prizeInfoSummary = this.sumPrizeInfo(prizeLotteryMap.get(owner));
+				
+				WxArticle news = this.buildCustomerPrizeNotifyMessage(lotteryType, openInfo, prizeInfoSummary);
+				
+				User ownerObj = userService.getUserById(owner);
+				
+				if (ownerObj != null) {
+					sendNewsMessage(news, ownerObj.getOpenid());
+				}
+			}
+		}
+	}
+
+	private WxArticle buildCustomerPrizeNotifyMessage(LotteryType lotteryType,
+			PrizeLotterySSQ openInfo, Map<String, Integer> prizeInfoSummary) {
+		WxArticle news = new WxArticle();
+		String title = "恭喜中奖!" + lotteryType.getTypeName() + openInfo.getPeriod() + "期中奖结果";
+		news.setTitle(title);
+		news.setPicUrl("");
 		
+		String descStr = "开奖号码: " + openInfo.getNumber() + "\n\n";
+		descStr += "中奖结果: ";
+		for (String rank : prizeInfoSummary.keySet()) {
+			descStr += "\n      " + rank + "等奖: " + prizeInfoSummary.get(rank) + " 注";
+		}
+		descStr += "\n\n我们会尽快联系您兑奖，请耐心等待!";
+		
+		news.setDescription(descStr);
+		news.setUrl("");
+		
+		return news;
+	}
+
+	private Map<Long, List<Lottery>> groupByOwner(List<Lottery> prizeLotteries) {
+		Map<Long, List<Lottery>> map = new HashMap<Long, List<Lottery>>();
+		for (Lottery lottery : prizeLotteries) {
+			List<Lottery> prizeList = map.get(lottery.getOwner());
+			if (prizeList == null) {
+				prizeList = new ArrayList<Lottery>();
+				map.put(lottery.getOwner(), prizeList);
+			}
+			prizeList.add(lottery);
+		}
+		return map;
 	}
 
 	@Override
