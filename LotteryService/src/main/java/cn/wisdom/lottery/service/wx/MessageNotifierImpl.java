@@ -161,7 +161,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 		}
 		descStr += "\n金额: " + lottery.getTotalFee() + "元";
 		
-		String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
+		String redirectUrl = "http://cai.southwisdom.cn/#/mclottery/" + lottery.getPeriods().get(0).getId() + "/";
 		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
 		news.setUrl(url);
 
