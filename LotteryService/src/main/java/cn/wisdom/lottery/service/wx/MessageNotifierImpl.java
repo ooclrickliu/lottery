@@ -10,7 +10,6 @@ import me.chanjar.weixin.common.util.http.URIUtil;
 import me.chanjar.weixin.mp.bean.WxMpCustomMessage;
 import me.chanjar.weixin.mp.bean.WxMpCustomMessage.WxArticle;
 
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,8 +70,10 @@ public class MessageNotifierImpl implements MessageNotifier {
 		User customer = userService.getUserById(lottery.getOwner());
 		String descStr = "购买人: " + customer.getNickName();
 		descStr += "\n应付金额: " + lottery.getTotalFee() + "元";
-
-		news.setUrl("http://cai.southwisdom.cn" + "?openid=" + appProperty.defaultOperator + "#/lottery/" + lottery.getId());
+		
+		String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
+		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+		news.setUrl(url);
 
 		news.setDescription(descStr);
 		
@@ -105,7 +106,10 @@ public class MessageNotifierImpl implements MessageNotifier {
 			descStr += "    ...";
 		}
 		User user = userService.getUserById(lottery.getOwner());
-		news.setUrl("http://cai.southwisdom.cn" + "?openid=" + user.getOpenid() + "#/lottery/" + lottery.getId());
+		
+		String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
+		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+		news.setUrl(url);
 		
 //		descStr += news.getUrl();
 		news.setDescription(descStr);
@@ -125,7 +129,10 @@ public class MessageNotifierImpl implements MessageNotifier {
 		descStr += "     2.支付金额有误";
 		
 		User user = userService.getUserById(lottery.getOwner());
-		news.setUrl("http://cai.southwisdom.cn" + "?openid=" + user.getOpenid() + "#/lottery/" + lottery.getId());
+		
+		String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
+		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+		news.setUrl(url);
 		
 		news.setDescription(descStr);
 		
@@ -154,9 +161,10 @@ public class MessageNotifierImpl implements MessageNotifier {
 		}
 		descStr += "\n金额: " + lottery.getTotalFee() + "元";
 		
-		news.setUrl("http://cai.southwisdom.cn" + "?openid=" + openid + "#/mclottery/" + lottery.getId());
+		String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
+		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+		news.setUrl(url);
 
-//		descStr += news.getUrl();
 		news.setDescription(descStr);
 		
 		sendNewsMessage(news, openid);

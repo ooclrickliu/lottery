@@ -11,9 +11,11 @@ import cn.wisdom.lottery.api.model.CurrentPeriodInfo;
 import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.model.JsonDocument;
 import cn.wisdom.lottery.dao.constant.LotteryType;
+import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
 import cn.wisdom.lottery.service.exception.ServiceException;
 import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
+import cn.wisdom.lottery.service.wx.MessageNotifier;
 
 @RequestMapping("/lottery")
 @Controller
@@ -22,6 +24,9 @@ public class LotteryController
 
     @Autowired
     private LotteryServiceFacade lotteryServiceFacade;
+    
+    @Autowired
+    private MessageNotifier messageNotifier;
     
     @RequestMapping(method = RequestMethod.GET, value = "/period/current")
     @ResponseBody
@@ -36,5 +41,18 @@ public class LotteryController
                 currentPeriod);
 
         return new LotteryAPIResult(currentPeriodInfo);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/notify/merchant/newpay")
+    @ResponseBody
+    public JsonDocument notifyMerchantNewPay(@RequestParam long lotteryId)
+    		throws ServiceException
+    {
+    	
+    	Lottery lottery = lotteryServiceFacade.getLottery(lotteryId);
+    	
+    	messageNotifier.notifyMerchantNewPayRequest(lottery);
+    	
+    	return LotteryAPIResult.SUCCESS;
     }
 }
