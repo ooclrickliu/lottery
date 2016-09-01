@@ -37,11 +37,14 @@ public interface LotteryService
 			throws ServiceException;
 
 	/**
-	 * Get lottery by order.
+	 * Get lottery by id.
 	 * 
 	 * @return
 	 */
 	Lottery getLottery(long lotteryId) throws ServiceException;
+
+	Lottery getLottery(long lotteryId, boolean queryNumber,
+			boolean queryPeriod, boolean queryRedpack);
 
 	/**
 	 * Get lottery by period, so just return the specified period and not include other periods.
@@ -150,7 +153,7 @@ public interface LotteryService
      * @return 
      * @throws ServiceException 
      */
-	Lottery snatchRedpack(long lotteryId) throws ServiceException;
+	int snatchRedpack(long lotteryId) throws ServiceException;
 
 	/**
 	 * Submit pay screenshot.
@@ -199,5 +202,18 @@ public interface LotteryService
 	 * @param lotteryId
 	 */
 	void deleteLottery(long owner, long lotteryId);
+
+	/**
+	 * Share lottery as redpack.
+	 * 
+	 * @param lotteryId
+	 * @param count
+	 * @throws ServiceException 
+	 */
+	void shareLotteryAsRedpack(long lotteryId, int count) throws ServiceException;
+
+	List<Lottery> getSentRedpackList(long sender);
+
+	List<Lottery> getReceivedRedpackList(long receiver);
 	
 }

@@ -10,6 +10,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import cn.wisdom.lottery.common.utils.CollectionUtils;
 import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
@@ -63,6 +64,12 @@ public class LotteryDaoImpl implements LotteryDao {
 	
 	private static final String GET_LOTTERY_PERIOD2 = "select * from lottery_period "
 			+ " where lottery_id in({0}) and period = ? order by id";
+	
+	private static final String GET_REDPACK_BY_SENDER = GET_LOTTERY_PREFIX
+			+ " where (business_type = 'RedPack_Bonus' or business_type = 'RedPack_Number') and owner = ? and pay_state == 'Paid' order by id desc";
+	
+	private static final String GET_REDPACK_BY_RECEIVER = "select * from lottery_redpack "
+			+ " where user_id = ? order by id desc";
 
 	private static final String GET_LOTTERY_BY_MERCHANT = GET_LOTTERY_JOIN_PREFIX
 			+ " where lottery_type = ? and pay_state = 'Paid' and period = ? and merchant = ?";
@@ -121,6 +128,14 @@ public class LotteryDaoImpl implements LotteryDao {
 	private static final String DELETE_LOTTERY_NUMBER = "delete from lottery_number where lottery_id = ?";
 	private static final String DELETE_LOTTERY_REDPACK = "delete from lottery_redpack where lottery_id = ?";
 	private static final String DELETE_LOTTERY = "delete from lottery where id = ?";
+	
+	private static final String UPDATE_LOTTERY_REDPACK_INFO = "update lottery set "
+			+ "business_type = ?, redpack_count = ?, update_time = current_timestamp "
+			+ "where id = ?";
+	
+	private static final String INCREASE_LOTTERY_SNATCH_NUM = "update lottery set "
+			+ "snatched_num = snatched_num + 1, update_time = current_timestamp "
+			+ "where id = ? and snatched_num < redpack_count";
 
     private static final DaoRowMapper<Lottery> lotteryMapper = new DaoRowMapper<Lottery>(Lottery.class);
 	
@@ -200,11 +215,11 @@ public class LotteryDaoImpl implements LotteryDao {
 	@Override
 	public Lottery getLottery(long lotteryId) {
 		
-		return this.getLottery(lotteryId, true, true);
+		return this.getLottery(lotteryId, true, true, true);
 	}
 	
 	@Override
-	public Lottery getLottery(long lotteryId, boolean queryNumber, boolean queryPeriod) {
+	public Lottery getLottery(long lotteryId, boolean queryNumber, boolean queryPeriod, boolean queryRedpack) {
 
 		String sql = MessageFormat.format(GET_LOTTERY_BY_ID, "" + lotteryId);
 		
@@ -224,6 +239,12 @@ public class LotteryDaoImpl implements LotteryDao {
 				sql = MessageFormat.format(GET_LOTTERY_PERIOD, "" + lotteryId);
 				List<LotteryPeriod> periods = daoHelper.queryForList(sql, lotteryPeriodMapper, errMsg);
 				lottery.setPeriods(periods);
+			}
+			
+			if (queryRedpack) {
+				sql = MessageFormat.format(GET_LOTTERY_REDPACK, "" + lotteryId);
+				List<LotteryRedpack> redpacks = daoHelper.queryForList(sql, lotteryRedpackMapper, errMsg);
+				lottery.setRedpacks(redpacks);
 			}
 		}
 		
@@ -316,7 +337,7 @@ public class LotteryDaoImpl implements LotteryDao {
 		// lottery redpacks
 		Map<Long, Lottery> lotteryMap = new HashMap<Long, Lottery>();
 		for (Lottery lottery : lotteries) {
-			if (lottery.getBusinessType() == BusinessType.RedPack) {
+			if (lottery.getBusinessType() == BusinessType.RedPack_Bonus) {
 				lotteryMap.put(lottery.getId(), lottery);
 			}
 		}
@@ -380,7 +401,7 @@ public class LotteryDaoImpl implements LotteryDao {
 		
 		Lottery lottery = null;
 		if (lotteryPeriod != null) {
-			lottery = getLottery(lotteryPeriod.getLotteryId(), true, false);
+			lottery = getLottery(lotteryPeriod.getLotteryId(), true, false, false);
 			
 			lottery.getPeriods().add(lotteryPeriod);
 		}
@@ -565,5 +586,61 @@ public class LotteryDaoImpl implements LotteryDao {
 		
 		errMsg = "Failed delete lottery";
 		daoHelper.update(DELETE_LOTTERY, errMsg);
+	}
+	
+	@Override
+	public void updateAsRedpack(Lottery lottery) {
+		String errMsg = "Failed update lottery redpack info";
+		daoHelper.update(UPDATE_LOTTERY_REDPACK_INFO, errMsg, lottery.getBusinessType().toString(), 
+				lottery.getRedpackCount(), lottery.getId());
+	}
+
+	@Override
+	public int increaseSnatchNum(long lotteryId) {
+		String errMsg = "Failed update lottery redpack info";
+		int affected = daoHelper.update(INCREASE_LOTTERY_SNATCH_NUM, errMsg, lotteryId);
+		return affected;
+	}
+	
+	@Override
+	public List<Lottery> getRedpacksBySender(long sender) {
+		String errMsg = MessageFormat.format(
+				"Failed to get redpacks by sender [{0}]", "" + sender);
+		List<Lottery> lotteries = daoHelper.queryForList(
+				GET_REDPACK_BY_SENDER, lotteryMapper, errMsg, sender);
+
+		getLotteryPeriods(lotteries);
+		
+		getLotteryNumbers(lotteries);
+		
+//		getLotteryRedpacks(lotteries);
+
+		return lotteries;
+	}
+	
+	@Override
+	public List<Lottery> getRedpacksByReceiver(long receiver) {
+		String errMsg = MessageFormat.format(
+				"Failed to get redpacks by receiver [{0}]", "" + receiver);
+		List<LotteryRedpack> redpacks = daoHelper.queryForList(
+				GET_REDPACK_BY_RECEIVER, lotteryRedpackMapper, errMsg, receiver);
+
+		List<Lottery> lotteries = null;
+		if (CollectionUtils.isNotEmpty(redpacks)) {
+			List<Long> lotteryIds = new ArrayList<Long>();
+			Map<Long, LotteryRedpack> redpackMap = new HashMap<Long, LotteryRedpack>();
+			for (LotteryRedpack redpack : redpacks) {
+				lotteryIds.add(redpack.getLotteryId());
+				redpackMap.put(redpack.getLotteryId(), redpack);
+			}
+			
+			lotteries = this.getLottery(lotteryIds, true, true);
+			for (Lottery lottery : lotteries) {
+				lottery.getRedpacks().add(redpackMap.get(lottery.getId()));
+			}
+		}
+		
+
+		return lotteries;
 	}
 }

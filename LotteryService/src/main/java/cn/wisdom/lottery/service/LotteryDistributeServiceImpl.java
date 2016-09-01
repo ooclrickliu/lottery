@@ -44,7 +44,7 @@ public class LotteryDistributeServiceImpl implements LotteryDistributeService {
 	@Override
 	public void distribute(long lotteryId, long merchantId)
 			throws ServiceException {
-		Lottery lottery = lotteryDao.getLottery(lotteryId);
+		Lottery lottery = lotteryDao.getLottery(lotteryId, true, true, false);
 		User merchant = userService.getUserById(merchantId); 
 
 		this.distribute(lottery, merchant);

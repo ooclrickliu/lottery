@@ -13,6 +13,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import cn.wisdom.lottery.api.exception.NoAccessException;
 import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.model.JsonDocument;
+import cn.wisdom.lottery.common.utils.CookieUtil;
 import cn.wisdom.lottery.common.utils.HttpUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.vo.User;
@@ -36,15 +37,17 @@ public class CustomerOAuthAccessInterceptor extends HandlerInterceptorAdapter {
 		super.preHandle(request, response, handler);
 
 		User user = null;
-		String openId = HttpUtils.getParamValue(request, OPENID);
-		if (StringUtils.isNotBlank(openId)) {
-			user = userService.getUserByOpenId(openId);
-
+		String code = HttpUtils.getParamValue(request, OAUTH_CODE);
+		if (StringUtils.isNotBlank(code)) {
+			user = userService.getUserByOauthCode(code);
+			
+        	CookieUtil.removeCookie(response, CookieUtil.OAUTH_CODE);
+        	CookieUtil.addCookie(response, CookieUtil.OPENID, user.getOpenid());
 		}
 		if (user == null) {
-			String code = HttpUtils.getParamValue(request, OAUTH_CODE);
-			if (StringUtils.isNotBlank(code)) {
-				user = userService.getUserByOauthCode(code);
+			String openId = HttpUtils.getParamValue(request, OPENID);
+			if (StringUtils.isNotBlank(openId)) {
+				user = userService.getUserByOpenId(openId);
 			}
 		}
 

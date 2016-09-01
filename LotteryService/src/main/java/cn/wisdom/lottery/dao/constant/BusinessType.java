@@ -6,5 +6,9 @@ public enum BusinessType {
 	Private, 
 	
 	// by for sharing to others
-	RedPack
+	// 1. Mode[bonus]: people get part of bonus of the lottery redpack
+	RedPack_Bonus,
+	
+	// 2. Mode[Number]: people get a number of the lottery redpack
+	RedPack_Number
 }

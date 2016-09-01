@@ -49,7 +49,7 @@ public class LotteryController
     		throws ServiceException
     {
     	
-    	Lottery lottery = lotteryServiceFacade.getLottery(lotteryId);
+    	Lottery lottery = lotteryServiceFacade.getLottery(lotteryId, false, false, false);
     	
     	messageNotifier.notifyMerchantNewPayRequest(lottery);
     	

@@ -115,17 +115,20 @@ public class DaoHelper
         return id;
     }
 
-    public void update(String sql, String errMsg,
+    public int update(String sql, String errMsg,
             Object... args)
     {
+    	int affected = 0;
         try
         {
-            dataAccessorManager.getJdbcTemplate().update(sql, args);
+        	affected = dataAccessorManager.getJdbcTemplate().update(sql, args);
         }
         catch (DataAccessException e)
         {
             throw new DBException(DB_ERROR_CODE_UPDATE, errMsg, e);
         }
+        
+        return affected;
     }
     
     public void batchUpdate(String sql, List<Object[]> batchArgs, String errMsg) 

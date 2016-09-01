@@ -51,6 +51,24 @@ public class CookieUtil
         cookie.setSecure(false);
         response.addCookie(cookie);
     }
+    
+    /**
+     * Add a new cookie and sepcify the age.
+     * 
+     * @param response
+     * @param name
+     * @param value 10.0.2.15
+     * @param age
+     */
+    public static void removeCookie(HttpServletResponse response, String name)
+    {
+    	Cookie cookie = new Cookie(name, "");
+    	cookie.setPath("/");
+    	cookie.setMaxAge(0);
+    	cookie.setVersion(0);
+    	cookie.setSecure(false);
+    	response.addCookie(cookie);
+    }
 
     /**
      * Add a new cookie and will be deleted when browser exits.

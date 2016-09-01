@@ -36,6 +36,43 @@ public class CustomerRedpackController {
 	@Autowired
 	private LotteryServiceFacade lotteryServiceFacade;
 
+	@RequestMapping(method = RequestMethod.POST, value = "/send")
+	@ResponseBody
+	public JsonDocument shareLotteryAsRedpack(@RequestParam long lotteryId,
+			@RequestParam int count) throws ServiceException {
+
+		lotteryServiceFacade.shareLotteryAsRedpack(lotteryId, count);
+
+		return LotteryAPIResult.SUCCESS;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/q")
+	@ResponseBody
+	public JsonDocument snatchRedpack(@RequestParam long lotteryId)
+			throws ServiceException {
+		int rate = lotteryServiceFacade.snatchRedpack(lotteryId);
+
+		return new LotteryAPIResult(rate);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/send/list")
+	@ResponseBody
+	public JsonDocument getSendRedpackList(HttpServletRequest httpRequest)
+			throws ServiceException {
+		List<Lottery> lotteries = lotteryServiceFacade.getSentRedpackList();
+		
+		return new LotteryAPIResult(lotteries);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/q/list")
+	@ResponseBody
+	public JsonDocument getReceivedRedpackList(HttpServletRequest httpRequest)
+			throws ServiceException {
+		List<Lottery> lotteries = lotteryServiceFacade.getReceivedRedpackList();
+		
+		return new LotteryAPIResult(lotteries);
+	}
+
 	@RequestMapping(method = RequestMethod.POST, value = "/ssq/create")
 	@ResponseBody
 	public JsonDocument createSSQRedpackLottery(HttpServletRequest httpRequest,
@@ -47,7 +84,7 @@ public class CustomerRedpackController {
 		Lottery lottery = new Lottery();
 		lottery.setCreateBy(SessionContext.getCurrentUser().getId());
 		lottery.setOwner(lottery.getCreateBy());
-		lottery.setBusinessType(BusinessType.RedPack);
+		lottery.setBusinessType(BusinessType.RedPack_Bonus);
 		lottery.setLotteryType(LotteryType.SSQ);
 		lottery.setPayState(PayState.UnPaid);
 		lottery.setTimes(request.getTimes()); // 倍数
@@ -76,13 +113,5 @@ public class CustomerRedpackController {
 
 		return new LotteryAPIResult(wxPayInfoMap);
 	}
-	
-	@RequestMapping(method = RequestMethod.POST, value = "/q")
-	@ResponseBody
-	public JsonDocument snatchRedpack(@RequestParam long lotteryId)
-					throws ServiceException {
-		Lottery lottery = lotteryServiceFacade.snatchRedpack(lotteryId);
-		
-		return new LotteryAPIResult(lottery);
-	}
+
 }

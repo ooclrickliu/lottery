@@ -41,4 +41,7 @@ public class AppProperty
 	
 	@Value("${lottery.default.merchant}")
 	public long defaultMerchant;
+	
+	@Value("${lottery.redpack.limit.max}")
+	public long redpackLimitMax;
 }

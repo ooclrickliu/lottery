@@ -13,9 +13,15 @@ public interface LotteryDao {
 	
 	void saveLottery(Lottery lottery);
 
+	/**
+	 * Get lottery with all detail info [number, period, redpack].
+	 * 
+	 * @param lotteryId
+	 * @return
+	 */
 	Lottery getLottery(long lotteryId);
 	
-	Lottery getLottery(long lotteryId, boolean queryNumber, boolean queryPeriod);
+	Lottery getLottery(long lotteryId, boolean queryNumber, boolean queryPeriod, boolean queryRedpack);
 	
 	List<Lottery> getLottery(List<Long> lotteryIds, boolean queryNumber, boolean queryPeriod);
 	
@@ -54,5 +60,13 @@ public interface LotteryDao {
 	void deleteUnPaidLottery();
 
 	void deleteLottery(long owner, long lotteryId);
+
+	void updateAsRedpack(Lottery lottery);
+
+	int increaseSnatchNum(long lotteryId);
+
+	List<Lottery> getRedpacksBySender(long sender);
+
+	List<Lottery> getRedpacksByReceiver(long receiver);
 	
 }

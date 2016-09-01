@@ -351,6 +351,7 @@ CREATE TABLE IF NOT EXISTS `lottery_redpack` (
 alter table `lottery_period` add prize_open_time timestamp NULL after ticket_print_time;
 
 alter table `lottery` add redpack_count int NULL after owner;
+alter table `lottery` add snatched_num int NULL after redpack_count;
 
 alter table `lottery` add `pay_img_url` varchar(500) NULL;
 

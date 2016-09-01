@@ -65,6 +65,9 @@ public class Lottery extends BaseEntity
     
     @Column("redpack_count")
     private int redpackCount;
+    
+    @Column("snatched_num")
+    private int snatchedNum;
 
     @Column("merchant")
     private long merchant;
@@ -74,6 +77,8 @@ public class Lottery extends BaseEntity
 
     @Column("distribute_time")
     private Timestamp distributeTime;
+    
+    private boolean canSend;
 
     public static void main(String[] args) throws OVTException
     {
@@ -289,5 +294,21 @@ public class Lottery extends BaseEntity
 
 	public void setPeriodNum(int periodNum) {
 		this.periodNum = periodNum;
+	}
+
+	public int getSnatchedNum() {
+		return snatchedNum;
+	}
+
+	public void setSnatchedNum(int snatchedNum) {
+		this.snatchedNum = snatchedNum;
+	}
+
+	public boolean canSend()
+	{
+		return canSend;
+	}
+	public void setCanSend(boolean canSend) {
+		this.canSend = canSend;
 	}
 }

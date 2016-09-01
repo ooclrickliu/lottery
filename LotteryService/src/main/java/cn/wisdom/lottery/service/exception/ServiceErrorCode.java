@@ -37,6 +37,7 @@ public class ServiceErrorCode {
 	public static final String NO_PRIVILEGE = "NoPrivilege";
 	public static final String ERROR_BUSINESS_TYPE = "ErrorBusinessType";
 	public static final String REDPACK_EMPTY = "RedpackEmpty";
+	public static final String REDPACK_EXPIRED = "RedpackExpired";
 
 	// WX
 	public static final String OAUTH_FAIL = "OAuthFail";

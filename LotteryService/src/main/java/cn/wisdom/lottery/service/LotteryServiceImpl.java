@@ -2,6 +2,7 @@ package cn.wisdom.lottery.service;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.List;
 
 import me.chanjar.weixin.common.exception.WxErrorException;
@@ -32,6 +33,7 @@ import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.service.exception.ServiceException;
+import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 import cn.wisdom.lottery.service.wx.MessageNotifier;
 import cn.wisdom.lottery.service.wx.WXService;
 
@@ -102,7 +104,18 @@ public class LotteryServiceImpl implements LotteryService
     @Override
     public Lottery getLottery(long lotteryId) throws ServiceException
     {
-        return lotteryDao.getLottery(lotteryId);
+        Lottery lottery = lotteryDao.getLottery(lotteryId);
+        
+        updateCanSend(lottery);
+        
+		return lottery;
+    }
+    
+    @Override
+    public Lottery getLottery(long lotteryId, boolean queryNumber,
+    		boolean queryPeriod, boolean queryRedpack) {
+    	
+    	return lotteryDao.getLottery(lotteryId, queryNumber, queryPeriod, queryRedpack);
     }
     
     @Override
@@ -116,7 +129,7 @@ public class LotteryServiceImpl implements LotteryService
             throws ServiceException
     {
         // change lottery ticket_state to 'Distributed' and set merchant
-        Lottery lottery = lotteryDao.getLottery(lotteryId);
+        Lottery lottery = lotteryDao.getLottery(lotteryId, false, false, false);
 
         if (lottery.getPayState() != PayState.Paid)
         {
@@ -178,7 +191,7 @@ public class LotteryServiceImpl implements LotteryService
     	logger.info("Receive order pay request: lottery[{}]", lotteryId);
 
     	String returnUrl = "";
-        final Lottery lottery = lotteryDao.getLottery(lotteryId);
+        final Lottery lottery = lotteryDao.getLottery(lotteryId, false, false, false);
     	if (lottery != null && lottery.getPayState() == PayState.UnPaid) {
     		try {
     			File payImg = wxService.getWxMpService().mediaDownload(
@@ -219,7 +232,7 @@ public class LotteryServiceImpl implements LotteryService
     
     @Override
     public void confirmPayFail(long lotteryId) {
-    	final Lottery lottery = lotteryDao.getLottery(lotteryId);
+    	final Lottery lottery = lotteryDao.getLottery(lotteryId, false, false, false);
     	
     	if (lottery != null && lottery.getPayState() == PayState.PaidApproving) {
     		lottery.setPayState(PayState.PaidFail);
@@ -315,41 +328,125 @@ public class LotteryServiceImpl implements LotteryService
     @Override
     public List<Lottery> getLotteries(long owner, PageInfo pageInfo) {
     	
-    	return lotteryDao.getLotteries(owner, pageInfo);
+    	List<Lottery> lotteries = lotteryDao.getLotteries(owner, pageInfo);
+    	for (Lottery lottery : lotteries) {
+			updateCanSend(lottery);
+		}
+    	
+		return lotteries;
     }
+
+	private void updateCanSend(Lottery lottery) {
+		boolean canSend = true;
+		if (lottery.getPayState() != PayState.Paid) {
+			canSend = false;
+		}
+		//表明已经变成红包了，UI中再点应该直接进红包详情页面，可继续分享.
+		if (lottery.getBusinessType() == BusinessType.RedPack_Bonus || 
+				lottery.getBusinessType() == BusinessType.RedPack_Number) {
+			canSend = false;
+		}
+		if (lottery.getPeriodNum() > 1) {
+			canSend = false;
+		}
+		if (lottery.getPeriods().get(0).getPrizeState() != PrizeState.NotOpen) {
+			canSend = false;
+		}
+		
+		lottery.setCanSend(canSend);
+	}
     
     @Override
     public List<Lottery> getUnPaidLotteries(long owner) {
     	
     	return lotteryDao.getUnPaidLotteries(owner);
     }
+    
+    @Override
+    public void shareLotteryAsRedpack(long lotteryId, int count) throws ServiceException {
+    	
+    	if (count < 0 || count > appProperties.redpackLimitMax) {
+			throw new ServiceException(ServiceErrorCode.ERROR_BUSINESS_TYPE, 
+					MessageFormat.format("Redpack number must be (0-{0}): {1}", 
+							appProperties.redpackLimitMax, count));
+		}
+    	
+    	Lottery lottery = lotteryDao.getLottery(lotteryId, false, false, false);
+    	
+    	lottery.setBusinessType(BusinessType.RedPack_Bonus);
+    	lottery.setRedpackCount(count);
+    	
+    	lotteryDao.updateAsRedpack(lottery);
+    }
+    
+    @Override
+    public List<Lottery> getSentRedpackList(long sender) {
+    	
+    	List<Lottery> lotteries = lotteryDao.getRedpacksBySender(sender);
+    	
+    	return lotteries;
+    }
+    
+    @Override
+    public List<Lottery> getReceivedRedpackList(long receiver) {
+    	
+    	List<Lottery> lotteries = lotteryDao.getRedpacksByReceiver(receiver);
+    	
+    	return lotteries;
+    }
 
 	@Override
-	public Lottery snatchRedpack(long lotteryId) throws ServiceException {
-		User user = SessionContext.getCurrentUser();
+	public int snatchRedpack(long lotteryId) throws ServiceException {
+		int rate = 0;
 		
-		// 1. how to get outer user info
-		// A: customerOAuthAccessInterceptor
+		// 1. increase lottery's snatched_num, here rely db to handle the lock.
+		boolean success = lotteryDao.increaseSnatchNum(lotteryId) > 0;
 		
-		// 2. assert lottery is redpack type
-		Lottery lottery = this.getLottery(lotteryId);
-		if (lottery.getBusinessType() != BusinessType.RedPack) {
-			throw new ServiceException(ServiceErrorCode.ERROR_BUSINESS_TYPE, "Error lottery business type.");
+		if (success) {
+			Lottery lottery = lotteryDao.getLottery(lotteryId, false, true, true);
+			
+			checkExpire(lottery);
+			
+			if (lottery.getBusinessType() == BusinessType.RedPack_Bonus) {
+				rate = snatchBonusRedpack(lottery);
+			}
+			else if (lottery.getBusinessType() == BusinessType.RedPack_Number) {
+				rate = snatchNumberRedpack(lottery);
+			}
+			else {
+				throw new ServiceException(ServiceErrorCode.ERROR_BUSINESS_TYPE, "Error lottery business type.");
+			}
 		}
-		
-		// 3. check redpack remain count
-		if (lottery.getRedpacks().size() >= lottery.getRedpackCount())
-		{
+		else {
 			throw new ServiceException(ServiceErrorCode.REDPACK_EMPTY, "Redpack is empty.");
 		}
 		
-		// 4. get all redpack user info
+		return rate;
+	}
+
+	private void checkExpire(Lottery lottery) throws ServiceException {
+		int period = lottery.getPeriods().get(0).getPeriod();
+		LotteryOpenData openInfo = lotteryPublishService.getOpenInfo(LotteryType.SSQ, period);
+		Date openTime = DateTimeUtils.parseDate(openInfo.getExpect(), DateTimeUtils.PATTERN_SQL_DATETIME_FULL);
+		if (DateTimeUtils.getCurrentTimestamp().after(openTime)) {
+			throw new ServiceException(ServiceErrorCode.REDPACK_EXPIRED, "Redpack has expired.");
+		}
+	}
+
+	private int snatchNumberRedpack(Lottery lottery) {
 		
-		// 5. record snatched redpack info: rate, user
-		// TODO use reids and calculate it safely and quickly
+		return 0;
+		
+	}
+
+	private int snatchBonusRedpack(Lottery lottery)
+			throws ServiceException {
+		User user = SessionContext.getCurrentUser();
+		
+		// record snatched redpack info: rate, user
 		int rate = generateRedpackRate(lottery.getRedpackCount(), lottery.getRedpacks());
 		LotteryRedpack redpack = new LotteryRedpack();
-		redpack.setLotteryId(lotteryId);
+		redpack.setLotteryId(lottery.getId());
 		redpack.setUserId(user.getId());
 		redpack.setRate(rate);
 		redpack.setAcquireTime(DateTimeUtils.getCurrentTimestamp());
@@ -358,7 +455,7 @@ public class LotteryServiceImpl implements LotteryService
 		
 		lotteryDao.saveRedpack(redpack);
 		
-		return lottery;
+		return rate;
 	}
 
 	private int generateRedpackRate(int redpackCount,
