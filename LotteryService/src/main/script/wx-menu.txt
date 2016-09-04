@@ -10,14 +10,14 @@
                 },
                 {
                     "type": "click",
-                    "name": "开奖公告",
+                    "name": "揭晓公告",
                     "key": "draw_notice"
                 }
             ]
         },
         {
             "type": "view",
-            "name": "我的彩票",
+            "name": "我",
             "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=http%3A%2F%2Fcai.southwisdom.cn%2F#%2Flottery%2Flist&response_type=code&scope=snsapi_base&state=1#wechat_redirect"
         },
         {
