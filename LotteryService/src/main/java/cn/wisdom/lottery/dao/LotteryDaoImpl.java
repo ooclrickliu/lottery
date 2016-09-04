@@ -66,7 +66,7 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ " where lottery_id in({0}) and period = ? order by id";
 	
 	private static final String GET_REDPACK_BY_SENDER = GET_LOTTERY_PREFIX
-			+ " where (business_type = 'RedPack_Bonus' or business_type = 'RedPack_Number') and owner = ? and pay_state == 'Paid' order by id desc";
+			+ " where (business_type = 'RedPack_Bonus' or business_type = 'RedPack_Number') and owner = ? and pay_state = 'Paid' order by id desc";
 	
 	private static final String GET_REDPACK_BY_RECEIVER = "select * from lottery_redpack "
 			+ " where user_id = ? order by id desc";

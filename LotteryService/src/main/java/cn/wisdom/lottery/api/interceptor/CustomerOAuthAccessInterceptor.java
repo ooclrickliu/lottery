@@ -37,22 +37,23 @@ public class CustomerOAuthAccessInterceptor extends HandlerInterceptorAdapter {
 		super.preHandle(request, response, handler);
 
 		User user = null;
-		String code = HttpUtils.getParamValue(request, OAUTH_CODE);
-		if (StringUtils.isNotBlank(code)) {
-			user = userService.getUserByOauthCode(code);
-			
-        	CookieUtil.removeCookie(response, CookieUtil.OAUTH_CODE);
-        	CookieUtil.addCookie(response, CookieUtil.OPENID, user.getOpenid());
+        String openId = HttpUtils.getParamValue(request, CookieUtil.OPENID);
+        if (StringUtils.isNotBlank(openId)) {
+        	user = userService.getUserByOpenId(openId); 
+        	
 		}
-		if (user == null) {
-			String openId = HttpUtils.getParamValue(request, OPENID);
-			if (StringUtils.isNotBlank(openId)) {
-				user = userService.getUserByOpenId(openId);
+    	if (user == null) {
+    		String code = HttpUtils.getParamValue(request, CookieUtil.OAUTH_CODE);
+            if (StringUtils.isNotBlank(code)) {
+            	user = userService.getUserByOauthCode(code);
+            	
+            	CookieUtil.addCookie(response, CookieUtil.OAUTH_CODE, code, 0);
+            	CookieUtil.addCookie(response, CookieUtil.OPENID, user.getOpenid());
 			}
 		}
 
 		if (user == null) {
-			writeResponse(response, ServiceErrorCode.OAUTH_FAIL);
+			writeResponse(response, ServiceErrorCode.NOT_SUBSCRIBE);
 			return false;
 		} else {
 			initSessionContext(user);

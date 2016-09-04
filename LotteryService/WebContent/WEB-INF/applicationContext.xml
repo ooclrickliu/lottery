@@ -30,13 +30,11 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/lottery/customer/**" />
 			<mvc:mapping path="/customer/**" />
-			<mvc:mapping path="/redpack/customer/**" />
 			<mvc:exclude-mapping path="/lottery/customer/wxnotify" />
-			<mvc:exclude-mapping path="/redpack/customer/q" />
 			<bean class="cn.wisdom.lottery.api.interceptor.CustomerAccessInterceptor" />
 		</mvc:interceptor>
 		<mvc:interceptor>
-			<mvc:mapping path="/redpack/customer/q" />
+			<mvc:mapping path="/redpack/customer/**" />
 			<bean class="cn.wisdom.lottery.api.interceptor.CustomerOAuthAccessInterceptor" />
 		</mvc:interceptor>
 		<mvc:interceptor>

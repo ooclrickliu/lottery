@@ -1,5 +1,6 @@
 package cn.wisdom.lottery.api.controller.customer;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +62,10 @@ public class CustomerRedpackController {
 			throws ServiceException {
 		List<Lottery> lotteries = lotteryServiceFacade.getSentRedpackList();
 		
+		if (lotteries == null) {
+			lotteries = Collections.emptyList();
+		}
+		
 		return new LotteryAPIResult(lotteries);
 	}
 	
@@ -69,6 +74,10 @@ public class CustomerRedpackController {
 	public JsonDocument getReceivedRedpackList(HttpServletRequest httpRequest)
 			throws ServiceException {
 		List<Lottery> lotteries = lotteryServiceFacade.getReceivedRedpackList();
+
+		if (lotteries == null) {
+			lotteries = Collections.emptyList();
+		}
 		
 		return new LotteryAPIResult(lotteries);
 	}
