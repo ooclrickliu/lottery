@@ -55,4 +55,15 @@ public class LotteryController
     	
     	return LotteryAPIResult.SUCCESS;
     }
+
+	@RequestMapping(method = RequestMethod.GET, value = "/detail")
+	@ResponseBody
+	public JsonDocument viewLottery(@RequestParam long lotteryId)
+			throws ServiceException {
+		Lottery lottery = lotteryServiceFacade.getLottery(lotteryId);
+
+		// TODO: wrap lottery and add sender user info ....
+
+		return new LotteryAPIResult(lottery);
+	}
 }

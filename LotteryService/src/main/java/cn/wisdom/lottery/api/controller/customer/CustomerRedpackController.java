@@ -40,8 +40,9 @@ public class CustomerRedpackController {
 	@RequestMapping(method = RequestMethod.POST, value = "/send")
 	@ResponseBody
 	public JsonDocument shareLotteryAsRedpack(@RequestParam long lotteryId,
-			@RequestParam int count) throws ServiceException {
+			@RequestParam int count, @RequestParam String wish) throws ServiceException {
 
+		// TODO: add wish field
 		lotteryServiceFacade.shareLotteryAsRedpack(lotteryId, count);
 
 		return LotteryAPIResult.SUCCESS;
@@ -66,6 +67,8 @@ public class CustomerRedpackController {
 			lotteries = Collections.emptyList();
 		}
 		
+		// TODO: wrap the list and add summary info.
+		
 		return new LotteryAPIResult(lotteries);
 	}
 	
@@ -78,6 +81,8 @@ public class CustomerRedpackController {
 		if (lotteries == null) {
 			lotteries = Collections.emptyList();
 		}
+		
+		// TODO: wrap the list and add summary info.
 		
 		return new LotteryAPIResult(lotteries);
 	}

@@ -304,11 +304,12 @@ public class Lottery extends BaseEntity
 		this.snatchedNum = snatchedNum;
 	}
 
-	public boolean canSend()
-	{
+	public boolean isCanSend() {
 		return canSend;
 	}
+
 	public void setCanSend(boolean canSend) {
 		this.canSend = canSend;
 	}
+
 }
