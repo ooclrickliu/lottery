@@ -190,8 +190,8 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade {
 	}
 
 	@Override
-	public void shareLotteryAsRedpack(long lotteryId, int count) throws ServiceException {
-		lotteryService.shareLotteryAsRedpack(lotteryId, count);
+	public void shareLotteryAsRedpack(long lotteryId, int count, String wish) throws ServiceException {
+		lotteryService.shareLotteryAsRedpack(lotteryId, count, wish);
 	}
 
 	@Override

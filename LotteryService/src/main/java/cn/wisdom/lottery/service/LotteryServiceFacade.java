@@ -60,7 +60,7 @@ public interface LotteryServiceFacade {
 
 	void deleteLottery(long owner, long lotteryId);
 
-	void shareLotteryAsRedpack(long lotteryId, int count) throws ServiceException;
+	void shareLotteryAsRedpack(long lotteryId, int count, String wish) throws ServiceException;
 
 	List<Lottery> getSentRedpackList();
 

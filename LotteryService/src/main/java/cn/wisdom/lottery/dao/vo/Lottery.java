@@ -68,6 +68,9 @@ public class Lottery extends BaseEntity
     
     @Column("snatched_num")
     private int snatchedNum;
+    
+    @Column("wish")
+    private String wish;
 
     @Column("merchant")
     private long merchant;
@@ -310,6 +313,14 @@ public class Lottery extends BaseEntity
 
 	public void setCanSend(boolean canSend) {
 		this.canSend = canSend;
+	}
+
+	public String getWish() {
+		return wish;
+	}
+
+	public void setWish(String wish) {
+		this.wish = wish;
 	}
 
 }

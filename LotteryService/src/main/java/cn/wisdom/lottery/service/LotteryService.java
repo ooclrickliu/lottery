@@ -208,9 +208,10 @@ public interface LotteryService
 	 * 
 	 * @param lotteryId
 	 * @param count
+	 * @param wish 
 	 * @throws ServiceException 
 	 */
-	void shareLotteryAsRedpack(long lotteryId, int count) throws ServiceException;
+	void shareLotteryAsRedpack(long lotteryId, int count, String wish) throws ServiceException;
 
 	List<Lottery> getSentRedpackList(long sender);
 

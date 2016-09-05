@@ -10,5 +10,10 @@ public enum BusinessType {
 	RedPack_Bonus,
 	
 	// 2. Mode[Number]: people get a number of the lottery redpack
-	RedPack_Number
+	RedPack_Number;
+	
+	public static boolean isRedpack(BusinessType businessType)
+	{
+		return businessType == RedPack_Bonus || businessType == RedPack_Number;
+	}
 }

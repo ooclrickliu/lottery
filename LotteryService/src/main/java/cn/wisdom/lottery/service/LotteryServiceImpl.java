@@ -363,11 +363,11 @@ public class LotteryServiceImpl implements LotteryService
     }
     
     @Override
-    public void shareLotteryAsRedpack(long lotteryId, int count) throws ServiceException {
+    public void shareLotteryAsRedpack(long lotteryId, int count, String wish) throws ServiceException {
     	
     	if (count < 0 || count > appProperties.redpackLimitMax) {
 			throw new ServiceException(ServiceErrorCode.ERROR_BUSINESS_TYPE, 
-					MessageFormat.format("Redpack number must be (0-{0}): {1}", 
+					MessageFormat.format("Redpack number must be (1-{0}): {1}", 
 							appProperties.redpackLimitMax, count));
 		}
     	
@@ -375,6 +375,7 @@ public class LotteryServiceImpl implements LotteryService
     	
     	lottery.setBusinessType(BusinessType.RedPack_Bonus);
     	lottery.setRedpackCount(count);
+    	lottery.setWish(wish);
     	
     	lotteryDao.updateAsRedpack(lottery);
     }

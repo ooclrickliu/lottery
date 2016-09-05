@@ -35,7 +35,7 @@
 		</mvc:interceptor>
 		<mvc:interceptor>
 			<mvc:mapping path="/redpack/customer/**" />
-			<bean class="cn.wisdom.lottery.api.interceptor.CustomerOAuthAccessInterceptor" />
+			<bean class="cn.wisdom.lottery.api.interceptor.CustomerRedpackAccessInterceptor" />
 		</mvc:interceptor>
 		<mvc:interceptor>
 			<mvc:mapping path="/lottery/merchant/**" />
