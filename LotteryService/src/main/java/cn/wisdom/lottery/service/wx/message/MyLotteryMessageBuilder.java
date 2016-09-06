@@ -201,6 +201,6 @@ public class MyLotteryMessageBuilder implements MessageBuilder {
 
 	@Override
 	public String getMenuKey() {
-		return "draw_notice";
+		return "my_lottery";
 	}
 }

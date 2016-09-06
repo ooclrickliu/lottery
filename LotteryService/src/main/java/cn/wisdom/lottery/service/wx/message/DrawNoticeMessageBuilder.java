@@ -66,8 +66,7 @@ public class DrawNoticeMessageBuilder implements MessageBuilder {
 
 	@Override
 	public String getMenuKey() {
-		// TODO Auto-generated method stub
-		return null;
+		return "draw_notice";
 	}
 
 }
