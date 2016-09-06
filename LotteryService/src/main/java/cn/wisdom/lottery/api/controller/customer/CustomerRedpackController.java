@@ -23,6 +23,7 @@ import cn.wisdom.lottery.api.model.RedpackItemView;
 import cn.wisdom.lottery.api.model.SentRedpackItem;
 import cn.wisdom.lottery.api.model.SentRedpackList;
 import cn.wisdom.lottery.api.request.LotteryOrderRequest;
+import cn.wisdom.lottery.api.response.CheckRedpackStateResponse;
 import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.model.JsonDocument;
 import cn.wisdom.lottery.common.utils.CollectionUtils;
@@ -48,20 +49,21 @@ public class CustomerRedpackController {
 
 	@Autowired
 	private LotteryServiceFacade lotteryServiceFacade;
-	
+
 	@Autowired
 	private UserService userService;
 
 	@RequestMapping(method = RequestMethod.POST, value = "/send")
 	@ResponseBody
 	public JsonDocument shareLotteryAsRedpack(@RequestParam long lotteryId,
-			@RequestParam int count, @RequestParam String wish) throws ServiceException {
+			@RequestParam int count, @RequestParam String wish)
+			throws ServiceException {
 
 		lotteryServiceFacade.shareLotteryAsRedpack(lotteryId, count, wish);
 
 		return LotteryAPIResult.SUCCESS;
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, value = "/q")
 	@ResponseBody
 	public JsonDocument snatchRedpack(@RequestParam long lotteryId)
@@ -70,57 +72,57 @@ public class CustomerRedpackController {
 
 		return new LotteryAPIResult(rate);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/send/list")
 	@ResponseBody
 	public JsonDocument getSendRedpackList(HttpServletRequest httpRequest)
 			throws ServiceException {
 		List<Lottery> lotteries = lotteryServiceFacade.getSentRedpackList();
-		
+
 		if (lotteries == null) {
 			lotteries = Collections.emptyList();
 		}
-		
+
 		// wrap the list and add summary info.
 		SentRedpackList response = toSentRedpackList(lotteries);
-		
+
 		return new LotteryAPIResult(response);
 	}
-	
+
 	private SentRedpackList toSentRedpackList(List<Lottery> lotteries) {
 		SentRedpackList response = new SentRedpackList();
-		
+
 		User currentUser = SessionContext.getCurrentUser();
 		response.setNickName(currentUser.getNickName());
 		response.setHeadImgUrl(currentUser.getHeadImgUrl());
-		
+
 		if (CollectionUtils.isNotEmpty(lotteries)) {
 			response.setTotalNum(lotteries.size());
-			
+
 			int totalFee = 0;
 			for (Lottery lottery : lotteries) {
 				totalFee += lottery.getTotalFee();
-				
+
 				SentRedpackItem item = toSentRedpackItem(lottery);
 				response.getItems().add(item);
 			}
-			
+
 			response.setTotalFee(totalFee);
 		}
-		
+
 		return response;
 	}
 
 	private SentRedpackItem toSentRedpackItem(Lottery lottery) {
 		SentRedpackItem item = new SentRedpackItem();
- 		
+
 		item.setCount(lottery.getRedpackCount());
 		item.setqCount(lottery.getSnatchedNum());
 		item.setFee((int) lottery.getTotalFee());
 		item.setPrizeState(lottery.getPeriods().get(0).getPrizeState());
 		item.setType(lottery.getBusinessType().name());
 		item.setSendTime(lottery.getSendTime());
-		
+
 		return item;
 	}
 
@@ -133,9 +135,9 @@ public class CustomerRedpackController {
 		if (lotteries == null) {
 			lotteries = Collections.emptyList();
 		}
-		
+
 		ReceivedRedpackList response = toReceivedRedpackList(lotteries);
-		
+
 		return new LotteryAPIResult(response);
 	}
 
@@ -146,7 +148,7 @@ public class CustomerRedpackController {
 		response.setNickName(currentUser.getNickName());
 		response.setHeadImgUrl(currentUser.getHeadImgUrl());
 		response.setTotalNum(lotteries.size());
-		
+
 		if (CollectionUtils.isNotEmpty(lotteries)) {
 			// user map
 			List<Long> userIds = new ArrayList<Long>();
@@ -158,17 +160,19 @@ public class CustomerRedpackController {
 			for (User user : userList) {
 				userMap.put(user.getId(), user);
 			}
-			
+
 			// item
 			float totalBonus = 0;
 			for (Lottery lottery : lotteries) {
-				LotteryRedpack myRedpack = findMyRedpack(lottery.getRedpacks(), currentUser);
+				LotteryRedpack myRedpack = findMyRedpack(lottery.getRedpacks(),
+						currentUser);
 				totalBonus += myRedpack.getPrizeBonus();
-				
-				ReceivedRedpackItem item = toReceivedRedpackItem(lottery, myRedpack, userMap);
+
+				ReceivedRedpackItem item = toReceivedRedpackItem(lottery,
+						myRedpack, userMap);
 				response.getItems().add(item);
 			}
-			
+
 			response.setTotalBonus(totalBonus);
 		}
 		return response;
@@ -181,14 +185,15 @@ public class CustomerRedpackController {
 		item.setBonus(myRedpack.getPrizeBonus());
 		item.setPrizeState(lottery.getPeriods().get(0).getPrizeState());
 		item.setRate(myRedpack.getRate());
-		
+
 		User sender = userMap.get(lottery.getOwner());
 		item.setSenderName(sender.getNickName());
-		
+
 		return item;
 	}
 
-	private LotteryRedpack findMyRedpack(List<LotteryRedpack> redpacks, User user) {
+	private LotteryRedpack findMyRedpack(List<LotteryRedpack> redpacks,
+			User user) {
 		for (LotteryRedpack lotteryRedpack : redpacks) {
 			if (user.getId() == lotteryRedpack.getUserId()) {
 				return lotteryRedpack;
@@ -196,14 +201,29 @@ public class CustomerRedpackController {
 		}
 		return null;
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/state")
 	@ResponseBody
 	public JsonDocument checkRedpackState(@RequestParam long lotteryId)
 			throws ServiceException {
-		lotteryServiceFacade.checkRedpackState(lotteryId, SessionContext.getCurrentUser().getId());
+		CheckRedpackStateResponse response = new CheckRedpackStateResponse();
 		
-		return LotteryAPIResult.SUCCESS;
+		Lottery lottery = null;
+		try {
+			lottery = lotteryServiceFacade.checkRedpackState(lotteryId,
+					SessionContext.getCurrentUser().getId());
+			response.setStatus(JsonDocument.STATE_SUCCESS);
+		} catch (ServiceException e) {
+			response.setStatus(e.getErrorCode());
+		} finally {
+			if (lottery != null) {
+				User sender = userService.getUserById(lottery.getOwner());
+				response.setSenderName(sender.getNickName());
+				response.setHeadImgUrl(sender.getHeadImgUrl());
+			}
+		}
+
+		return new LotteryAPIResult(response);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/detail")
@@ -211,20 +231,21 @@ public class CustomerRedpackController {
 	public JsonDocument viewLottery(@RequestParam long lotteryId)
 			throws ServiceException {
 		RedpackDetailView response = new RedpackDetailView();
-		
+
 		Lottery lottery = lotteryServiceFacade.getLottery(lotteryId);
 		if (!BusinessType.isRedpack(lottery.getBusinessType())) {
-			throw new ServiceException(ServiceErrorCode.ERROR_BUSINESS_TYPE, "Not public lottery!");
+			throw new ServiceException(ServiceErrorCode.ERROR_BUSINESS_TYPE,
+					"Not public lottery!");
 		}
 
 		addSender(response, lottery);
-		
+
 		response.setWish(lottery.getWish());
 		response.setRedpackNum(lottery.getRedpackCount());
 		response.setTotalFee(lottery.getTotalFee());
 		response.setNumbers(lottery.getNumbers());
 		response.setPeriod(lottery.getPeriods().get(0));
-		
+
 		addRedpackItems(response, lottery);
 
 		return new LotteryAPIResult(response);
@@ -245,13 +266,13 @@ public class CustomerRedpackController {
 			for (User user : userList) {
 				userMap.put(user.getId(), user);
 			}
-			
+
 			User currentUser = SessionContext.getCurrentUser();
 			RedpackItemView redpackItemView;
 			User user;
 			for (LotteryRedpack redpack : lottery.getRedpacks()) {
 				user = userMap.get(redpack.getUserId());
-				
+
 				redpackItemView = new RedpackItemView();
 				redpackItemView.setRate(redpack.getRate());
 				redpackItemView.setAcquireTime(redpack.getAcquireTime());
@@ -261,11 +282,11 @@ public class CustomerRedpackController {
 				if (redpack.getRate() == maxRate) {
 					redpackItemView.setBest(true);
 				}
-				
+
 				if (currentUser.getId() == user.getId()) {
 					response.setCurrentUserRate(redpack.getRate());
 				}
-				
+
 				response.getItems().add(redpackItemView);
 			}
 		}
@@ -276,8 +297,7 @@ public class CustomerRedpackController {
 		User sender;
 		if (lottery.getOwner() == currentUser.getId()) {
 			sender = currentUser;
-		}
-		else {
+		} else {
 			sender = userService.getUserById(lottery.getOwner());
 		}
 		response.setSenderName(sender.getNickName());
