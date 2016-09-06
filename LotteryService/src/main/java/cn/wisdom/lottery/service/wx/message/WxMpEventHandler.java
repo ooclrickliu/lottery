@@ -15,6 +15,7 @@ import me.chanjar.weixin.mp.bean.outxmlbuilder.NewsBuilder;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import cn.wisdom.lottery.common.log.Logger;
@@ -22,7 +23,6 @@ import cn.wisdom.lottery.common.log.LoggerFactory;
 import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.common.utils.StringUtils;
-import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PayState;
 import cn.wisdom.lottery.dao.constant.RoleType;
 import cn.wisdom.lottery.dao.vo.Lottery;
@@ -49,6 +49,14 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 	
 	@Autowired
 	private MessageNotifier messageNotifyer;
+	
+	@Autowired
+	@Qualifier("help")
+	private MessageBuilder helpMessageBuilder;
+	
+	@Autowired
+	@Qualifier("draw_notice")
+	private MessageBuilder drawNoticeMessageBuilder;
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 	
@@ -101,16 +109,20 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 
 		// 开奖公告
 		if (StringUtils.equalsIgnoreCase(menuKey, "draw_notice")) {
-			response = getDrawNotice(wxMessage);
+			response = drawNoticeMessageBuilder.buildMessage(wxMessage);
+		}
+		// 帮助
+		else if (StringUtils.equalsIgnoreCase(menuKey, "help")) {
+			response = helpMessageBuilder.buildMessage(wxMessage);
 		}
 		// 我的彩票
-		else if (StringUtils.equalsIgnoreCase(menuKey, "my_lottery")) {
-			response = getMyLatestLottery(wxMessage);
-		}
+//		else if (StringUtils.equalsIgnoreCase(menuKey, "my_lottery")) {
+//			response = getMyLatestLottery(wxMessage);
+//		}
 
 		return response;
 	}
-	
+
 	private WxMpXmlOutMessage getMyLatestLottery(WxMpXmlMessage wxMessage) {
 		WxMpXmlOutMessage response = null;
 		
@@ -275,41 +287,6 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		news.setUrl(url);
 		
 		response = builder.addArticle(news).build();
-		return response;
-	}
-
-	private WxMpXmlOutMessage getDrawNotice(WxMpXmlMessage wxMessage) {
-		WxMpXmlOutMessage response = null;
-		try {
-			LotteryOpenData latestOpenInfo = lotteryServiceFacade
-					.getLatestOpenInfo(LotteryType.SSQ);
-			
-			LotteryOpenData currentPeriod = lotteryServiceFacade.getCurrentPeriod(LotteryType.SSQ);
-
-			WxMpXmlOutNewsMessage.Item article = new WxMpXmlOutNewsMessage.Item();
-			article = new WxMpXmlOutNewsMessage.Item();
-			article.setTitle("双色球" + latestOpenInfo.getExpect() + "期开奖公告");
-
-			String desc = latestOpenInfo.getOpencode().replaceAll("\\+", " \\+ ")
-					.replaceAll(",", " ");
-			if (StringUtils.isBlank(desc)) {
-				desc = "即将开奖, 先喝杯茶, 不要太激动...";
-			}
-			
-			desc += "\n\n";
-			desc += "开   奖   时  间: " + latestOpenInfo.getOpentime() + "\n\n";
-			desc += "下期开奖时间: " + currentPeriod.getOpentime();
-			article.setDescription(desc);
-			article.setPicUrl("");
-			article.setUrl("");
-
-			response = WxMpXmlOutMessage.NEWS().toUser(wxMessage.getFromUserName())
-					.fromUser(wxMessage.getToUserName()).addArticle(article)
-					.build();
-		} catch (ServiceException e) {
-			logger.error("Get draw notice failed!", e);
-		}
-
 		return response;
 	}
 
