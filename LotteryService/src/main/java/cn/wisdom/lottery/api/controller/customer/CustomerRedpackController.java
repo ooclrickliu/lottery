@@ -160,7 +160,7 @@ public class CustomerRedpackController {
 			}
 			
 			// item
-			int totalBonus = 0;
+			float totalBonus = 0;
 			for (Lottery lottery : lotteries) {
 				LotteryRedpack myRedpack = findMyRedpack(lottery.getRedpacks(), currentUser);
 				totalBonus += myRedpack.getPrizeBonus();
@@ -169,7 +169,7 @@ public class CustomerRedpackController {
 				response.getItems().add(item);
 			}
 			
-			response.setTotalBonus(totalBonus);;
+			response.setTotalBonus(totalBonus);
 		}
 		return response;
 	}

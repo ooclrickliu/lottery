@@ -368,8 +368,9 @@ public class LotteryServiceImpl implements LotteryService
 					MessageFormat.format("Redpack number must be (1-{0}): {1}", 
 							appProperties.redpackLimitMax, count));
 		}
+    	Lottery lottery = lotteryDao.getLottery(lotteryId, false, true, false);
     	
-    	Lottery lottery = lotteryDao.getLottery(lotteryId, false, false, false);
+    	checkIfCanShare(lottery);
     	
     	lottery.setBusinessType(BusinessType.RedPack_Bonus);
     	lottery.setRedpackCount(count);
@@ -378,7 +379,15 @@ public class LotteryServiceImpl implements LotteryService
     	lotteryDao.updateAsRedpack(lottery);
     }
     
-    @Override
+    private void checkIfCanShare(Lottery lottery) throws ServiceException {
+    	updateCanSend(lottery);
+		
+    	if (!lottery.isCanSend()) {
+			throw new ServiceException(ServiceErrorCode.CANNOT_SHARE, "This lottery can't be shared!");
+		}
+	}
+
+	@Override
     public List<Lottery> getSentRedpackList(long sender) {
     	
     	List<Lottery> lotteries = lotteryDao.getRedpacksBySender(sender);

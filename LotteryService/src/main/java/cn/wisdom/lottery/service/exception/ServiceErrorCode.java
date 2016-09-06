@@ -35,10 +35,12 @@ public class ServiceErrorCode {
 	public static final String MISSING_BALL = "MissingBall";
 	public static final String INVALID_STATE = "InvalidState";
 	public static final String NO_PRIVILEGE = "NoPrivilege";
+	public static final String INVALID_REDPACK_COUNT = "InvalidRedpackCount";
 	public static final String ERROR_BUSINESS_TYPE = "ErrorBusinessType";
 	public static final String REDPACK_EMPTY = "RedpackEmpty";
 	public static final String REDPACK_EXPIRED = "RedpackExpired";
 	public static final String SNATCHED = "Snatched";
+	public static final String CANNOT_SHARE = "CannotShare";
 
 	// WX
 	public static final String OAUTH_FAIL = "OAuthFail";
