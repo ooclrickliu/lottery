@@ -203,7 +203,7 @@ public class LotteryDaoImpl implements LotteryDao {
 	public void saveRedpack(LotteryRedpack redpack) {
 		Object[] args = new Object[4];
 		args[0] = redpack.getLotteryId();
-		args[1] = redpack.getUser();
+		args[1] = redpack.getUserId();
 		args[2] = redpack.getRate();
 		args[3] = redpack.getAcquireTime();
 

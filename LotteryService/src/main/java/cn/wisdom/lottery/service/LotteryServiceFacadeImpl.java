@@ -211,6 +211,12 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade {
 		
 		return lotteries;
 	}
+	
+	@Override
+	public void checkRedpackState(long lotteryId, long userId) throws ServiceException {
+		
+		lotteryService.checkRedpackState(lotteryId, userId);
+	}
 
 	@Override
 	public int snatchRedpack(long lotteryId) throws ServiceException {

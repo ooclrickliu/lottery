@@ -24,7 +24,7 @@ public class RedpackDetailView {
 	
 	private LotteryPeriod period;
 	
-	private List<RedpackItemView> redpackItems = new ArrayList<RedpackItemView>();
+	private List<RedpackItemView> items = new ArrayList<RedpackItemView>();
 
 	public String getSenderName() {
 		return senderName;
@@ -74,14 +74,6 @@ public class RedpackDetailView {
 		this.currentUserRate = currentUserRate;
 	}
 
-	public List<RedpackItemView> getRedpackItems() {
-		return redpackItems;
-	}
-
-	public void setRedpackItems(List<RedpackItemView> redpackItems) {
-		this.redpackItems = redpackItems;
-	}
-
 	public List<LotteryNumber> getNumbers() {
 		return numbers;
 	}
@@ -96,5 +88,13 @@ public class RedpackDetailView {
 
 	public void setPeriod(LotteryPeriod period) {
 		this.period = period;
+	}
+
+	public List<RedpackItemView> getItems() {
+		return items;
+	}
+
+	public void setItems(List<RedpackItemView> items) {
+		this.items = items;
 	}
 }

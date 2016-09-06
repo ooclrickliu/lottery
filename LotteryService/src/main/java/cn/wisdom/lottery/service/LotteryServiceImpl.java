@@ -2,7 +2,6 @@ package cn.wisdom.lottery.service;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.Date;
 import java.util.List;
 
 import me.chanjar.weixin.common.exception.WxErrorException;
@@ -33,7 +32,6 @@ import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.service.exception.ServiceException;
-import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 import cn.wisdom.lottery.service.wx.MessageNotifier;
 import cn.wisdom.lottery.service.wx.WXService;
 
@@ -395,19 +393,43 @@ public class LotteryServiceImpl implements LotteryService
     	
     	return lotteries;
     }
+    
+    @Override
+    public Lottery checkRedpackState(long lotteryId, long userId) throws ServiceException {
+    	Lottery lottery = this.getLottery(lotteryId, false, true, true);
+    	
+    	// snatched
+    	for (LotteryRedpack redpack : lottery.getRedpacks()) {
+			if (redpack.getUserId() == userId) {
+				throw new ServiceException(ServiceErrorCode.SNATCHED, "You have snatched this redpack!");
+			}
+		}
+    	
+    	// expired
+    	LotteryPeriod period = lottery.getPeriods().get(0);
+		if (DateTimeUtils.getCurrentTimestamp().after(period.getPrizeOpenTime())) {
+			throw new ServiceException(ServiceErrorCode.REDPACK_EXPIRED, "Redpack has expired.");
+		}
+    	
+    	// empty
+    	if (lottery.getRedpackCount() <= lottery.getSnatchedNum()) {
+			throw new ServiceException(ServiceErrorCode.REDPACK_EMPTY, "Redpack is empty!");
+		}
+    	
+    	return lottery;
+    }
 
 	@Override
 	public int snatchRedpack(long lotteryId) throws ServiceException {
+		// check state
+		User user = SessionContext.getCurrentUser();
+		Lottery lottery = checkRedpackState(lotteryId, user.getId());
+		
 		int rate = 0;
 		
-		// 1. increase lottery's snatched_num, here rely db to handle the lock.
+		// increase lottery's snatched_num, here rely db to handle the lock.
 		boolean success = lotteryDao.increaseSnatchNum(lotteryId) > 0;
-		
 		if (success) {
-			Lottery lottery = lotteryDao.getLottery(lotteryId, false, true, true);
-			
-			checkExpire(lottery);
-			
 			if (lottery.getBusinessType() == BusinessType.RedPack_Bonus) {
 				rate = snatchBonusRedpack(lottery);
 			}
@@ -425,19 +447,9 @@ public class LotteryServiceImpl implements LotteryService
 		return rate;
 	}
 
-	private void checkExpire(Lottery lottery) throws ServiceException {
-		int period = lottery.getPeriods().get(0).getPeriod();
-		LotteryOpenData openInfo = lotteryPublishService.getOpenInfo(LotteryType.SSQ, period);
-		Date openTime = DateTimeUtils.parseDate(openInfo.getExpect(), DateTimeUtils.PATTERN_SQL_DATETIME_FULL);
-		if (DateTimeUtils.getCurrentTimestamp().after(openTime)) {
-			throw new ServiceException(ServiceErrorCode.REDPACK_EXPIRED, "Redpack has expired.");
-		}
-	}
-
 	private int snatchNumberRedpack(Lottery lottery) {
 		
 		return 0;
-		
 	}
 
 	private int snatchBonusRedpack(Lottery lottery)
@@ -451,7 +463,6 @@ public class LotteryServiceImpl implements LotteryService
 		redpack.setUserId(user.getId());
 		redpack.setRate(rate);
 		redpack.setAcquireTime(DateTimeUtils.getCurrentTimestamp());
-		redpack.setUser(user);
 		lottery.getRedpacks().add(redpack);
 		
 		lotteryDao.saveRedpack(redpack);

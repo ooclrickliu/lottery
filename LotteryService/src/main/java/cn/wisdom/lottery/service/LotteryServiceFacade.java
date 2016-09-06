@@ -66,6 +66,8 @@ public interface LotteryServiceFacade {
 
 	List<Lottery> getReceivedRedpackList();
 
+	void checkRedpackState(long lotteryId, long userId) throws ServiceException;
+
 	// /////////Merchant///////////
 
 	void confirmPay(long lotteryId);
