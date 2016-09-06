@@ -19,7 +19,7 @@ public class LotteryRedpack extends BaseEntity {
     private Timestamp acquireTime;
 
     @Column("prize_bonus")
-    private int prizeBonus;
+    private float prizeBonus;
     
     private User user;
 
@@ -55,11 +55,11 @@ public class LotteryRedpack extends BaseEntity {
 		this.acquireTime = acquireTime;
 	}
 
-	public int getPrizeBonus() {
+	public float getPrizeBonus() {
 		return prizeBonus;
 	}
 
-	public void setPrizeBonus(int prizeBonus) {
+	public void setPrizeBonus(float prizeBonus) {
 		this.prizeBonus = prizeBonus;
 	}
 

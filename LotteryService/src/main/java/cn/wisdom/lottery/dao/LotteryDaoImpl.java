@@ -130,7 +130,7 @@ public class LotteryDaoImpl implements LotteryDao {
 	private static final String DELETE_LOTTERY = "delete from lottery where id = ?";
 	
 	private static final String UPDATE_LOTTERY_REDPACK_INFO = "update lottery set "
-			+ "business_type = ?, redpack_count = ?, wish = ?, update_time = current_timestamp "
+			+ "business_type = ?, redpack_count = ?, wish = ?, send_time = current_timestamp, update_time = current_timestamp "
 			+ "where id = ?";
 	
 	private static final String INCREASE_LOTTERY_SNATCH_NUM = "update lottery set "

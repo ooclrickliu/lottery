@@ -363,6 +363,12 @@ alter table `lottery` modify `business_type` varchar(20) NULL;
 
 alter table `lottery` add `wish` varchar(200) NULL after snatched_num;
 
+-- Apply here
+
+alter table `lottery_period` modify `prize_bonus` float NULL;
+
+alter table `lottery` add `send_time` timestamp NULL after wish;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

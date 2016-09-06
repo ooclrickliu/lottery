@@ -6,7 +6,7 @@ import java.util.List;
 import cn.wisdom.lottery.dao.vo.LotteryNumber;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 
-public class RedpackListView {
+public class RedpackDetailView {
 
 	private String senderName;
 	
@@ -20,7 +20,7 @@ public class RedpackListView {
 	
 	private int currentUserRate;
 	
-	private List<LotteryNumber> numbers;
+	private List<LotteryNumber> numbers = new ArrayList<LotteryNumber>();
 	
 	private LotteryPeriod period;
 	

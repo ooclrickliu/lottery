@@ -69,6 +69,9 @@ public class Lottery extends BaseEntity
     @Column("snatched_num")
     private int snatchedNum;
     
+    @Column("send_time")
+    private Timestamp sendTime;
+    
     @Column("wish")
     private String wish;
 
@@ -321,6 +324,14 @@ public class Lottery extends BaseEntity
 
 	public void setWish(String wish) {
 		this.wish = wish;
+	}
+
+	public Timestamp getSendTime() {
+		return sendTime;
+	}
+
+	public void setSendTime(Timestamp sendTime) {
+		this.sendTime = sendTime;
 	}
 
 }

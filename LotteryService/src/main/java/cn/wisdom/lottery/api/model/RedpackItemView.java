@@ -10,6 +10,8 @@ public class RedpackItemView {
 	
 	private int rate;
 	
+    private float bonus;
+	
 	private Timestamp acquireTime;
 	
 	private boolean best;
@@ -52,5 +54,13 @@ public class RedpackItemView {
 
 	public void setBest(boolean best) {
 		this.best = best;
+	}
+
+	public float getBonus() {
+		return bonus;
+	}
+
+	public void setBonus(float bonus) {
+		this.bonus = bonus;
 	}
 }
