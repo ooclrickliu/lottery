@@ -6,6 +6,8 @@ import cn.wisdom.lottery.dao.constant.PrizeState;
 
 public class SentRedpackItem {
 
+	private long lotteryId;
+	
 	private String type;
 	
 	private Timestamp sendTime;
@@ -64,5 +66,13 @@ public class SentRedpackItem {
 
 	public void setPrizeState(PrizeState prizeState) {
 		this.prizeState = prizeState;
+	}
+
+	public long getLotteryId() {
+		return lotteryId;
+	}
+
+	public void setLotteryId(long lotteryId) {
+		this.lotteryId = lotteryId;
 	}
 }

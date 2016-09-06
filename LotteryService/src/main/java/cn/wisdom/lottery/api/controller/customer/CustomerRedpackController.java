@@ -116,6 +116,7 @@ public class CustomerRedpackController {
 	private SentRedpackItem toSentRedpackItem(Lottery lottery) {
 		SentRedpackItem item = new SentRedpackItem();
 
+		item.setLotteryId(lottery.getId());
 		item.setCount(lottery.getRedpackCount());
 		item.setqCount(lottery.getSnatchedNum());
 		item.setFee((int) lottery.getTotalFee());
@@ -181,6 +182,8 @@ public class CustomerRedpackController {
 	private ReceivedRedpackItem toReceivedRedpackItem(Lottery lottery,
 			LotteryRedpack myRedpack, Map<Long, User> userMap) {
 		ReceivedRedpackItem item = new ReceivedRedpackItem();
+		
+		item.setLotteryId(lottery.getId());
 		item.setAcquireTime(myRedpack.getAcquireTime());
 		item.setBonus(myRedpack.getPrizeBonus());
 		item.setPrizeState(lottery.getPeriods().get(0).getPrizeState());
