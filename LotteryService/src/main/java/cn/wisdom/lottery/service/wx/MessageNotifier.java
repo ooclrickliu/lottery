@@ -23,6 +23,8 @@ public interface MessageNotifier {
 	void notifyMerchantNewPayRequest(Lottery lottery);
 
 	void notifyOperatorNewCustomerSubscribed(User customer);
+	
+	void notifyOperatorCustomerUnSubscribe(User customer);
 
 	void notifyMerchantPrintTickets(long merchant, QueryLotteryResponse response);
 

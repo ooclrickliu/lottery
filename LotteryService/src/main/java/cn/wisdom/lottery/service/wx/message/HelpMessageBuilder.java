@@ -7,10 +7,14 @@ import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
 import me.chanjar.weixin.mp.bean.outxmlbuilder.NewsBuilder;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("help")
+@Component
 public class HelpMessageBuilder implements MessageBuilder {
+	
+	@Autowired
+	private WxMpEventHandler wxMpEventHandler;
 	
 	// 平台介绍
 	private WxMpXmlOutNewsMessage.Item ptjsArticle;
@@ -30,6 +34,8 @@ public class HelpMessageBuilder implements MessageBuilder {
 		buildGMDJ();
 		buildRedpack();
 		buildOther();
+		
+		wxMpEventHandler.registerMessageBuilder(this);
 	}
 	
 	private void buildOther() {
@@ -83,5 +89,10 @@ public class HelpMessageBuilder implements MessageBuilder {
 		news.fromUser(wxMessage.getToUserName()).toUser(wxMessage.getFromUserName());
 		
 		return news.build();
+	}
+
+	@Override
+	public String getMenuKey() {
+		return "help";
 	}
 }

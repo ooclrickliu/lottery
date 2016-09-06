@@ -305,6 +305,12 @@ public class MessageNotifierImpl implements MessageNotifier {
 	}
 	
 	@Override
+	public void notifyOperatorCustomerUnSubscribe(User customer) {
+		
+		sendTextMessage("用户取消关注 - " + customer.getNickName() + "(" + customer.getId() + ")", appProperty.defaultOperator);
+	}
+	
+	@Override
 	public void notifyMerchantPrintTickets(long merchant, QueryLotteryResponse response) {
 		User merchantObj = userService.getUserById(merchant);
 		

@@ -1,5 +1,7 @@
 package cn.wisdom.lottery.service.wx.message;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +14,19 @@ import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
 
-@Component("draw_notice")
+@Component
 public class DrawNoticeMessageBuilder implements MessageBuilder {
+	
+	@Autowired
+	private WxMpEventHandler wxMpEventHandler;
 
 	@Autowired
 	private LotteryServiceFacade lotteryServiceFacade;
+	
+	@PostConstruct
+	private void init() {
+		wxMpEventHandler.registerMessageBuilder(this);
+	}
 
 	@Override
 	public WxMpXmlOutMessage buildMessage(WxMpXmlMessage wxMessage) {
@@ -52,6 +62,12 @@ public class DrawNoticeMessageBuilder implements MessageBuilder {
 		}
 
 		return response;
+	}
+
+	@Override
+	public String getMenuKey() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
