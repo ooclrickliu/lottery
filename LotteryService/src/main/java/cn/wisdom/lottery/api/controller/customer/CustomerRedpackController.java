@@ -68,9 +68,17 @@ public class CustomerRedpackController {
 	@ResponseBody
 	public JsonDocument snatchRedpack(@RequestParam long lotteryId)
 			throws ServiceException {
-		int rate = lotteryServiceFacade.snatchRedpack(lotteryId);
+		JsonDocument response = new JsonDocument();
+		
+		int rate;
+		try {
+			rate = lotteryServiceFacade.snatchRedpack(lotteryId);
+			response.setData(rate);
+		} catch (ServiceException e) {
+			response.setData(e.getErrorCode());
+		}
 
-		return new LotteryAPIResult(rate);
+		return response;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/send/list")

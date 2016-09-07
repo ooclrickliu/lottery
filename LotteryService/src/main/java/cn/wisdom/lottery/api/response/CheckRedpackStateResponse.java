@@ -8,6 +8,8 @@ public class CheckRedpackStateResponse {
 	
 	private String headImgUrl;
 	
+	private String wish;
+	
 	private String status;
 
 	public String getSenderName() {
@@ -40,5 +42,13 @@ public class CheckRedpackStateResponse {
 
 	public void setSender(long sender) {
 		this.sender = sender;
+	}
+
+	public String getWish() {
+		return wish;
+	}
+
+	public void setWish(String wish) {
+		this.wish = wish;
 	}
 }

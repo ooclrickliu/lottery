@@ -417,6 +417,7 @@ public class LotteryServiceImpl implements LotteryService
 			response.setStatus(e.getErrorCode());
 		} finally {
 			response.setSender(lottery.getOwner());
+			response.setWish(lottery.getWish());
 		}
     	
 		return response;

@@ -21,7 +21,7 @@ public class JsonDocument
 
     private String serviceCode = "";
 
-    private String stateCode = "";
+    private String stateCode = STATE_SUCCESS;
     
     public static final String STATE_SUCCESS = "SUCCESS";
 
