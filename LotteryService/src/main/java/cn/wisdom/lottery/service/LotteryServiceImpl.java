@@ -9,6 +9,7 @@ import me.chanjar.weixin.common.exception.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.wisdom.lottery.api.response.CheckRedpackStateResponse;
 import cn.wisdom.lottery.common.exception.OVTRuntimeException;
 import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
@@ -404,9 +405,25 @@ public class LotteryServiceImpl implements LotteryService
     }
     
     @Override
-    public Lottery checkRedpackState(long lotteryId, long userId) throws ServiceException {
-    	Lottery lottery = this.getLottery(lotteryId, false, true, true);
+    public CheckRedpackStateResponse checkRedpackState(long lotteryId, long userId) throws ServiceException {
     	
+    	CheckRedpackStateResponse response = new CheckRedpackStateResponse();
+    	
+		Lottery lottery = this.getLottery(lotteryId, false, true, true);
+    	
+    	try {
+			checkRedpack(lottery, userId);
+		} catch (ServiceException e) {
+			response.setStatus(e.getErrorCode());
+		} finally {
+			response.setSender(lottery.getOwner());
+		}
+    	
+		return response;
+    }
+
+	private void checkRedpack(Lottery lottery, long userId)
+			throws ServiceException {
     	// snatched
     	for (LotteryRedpack redpack : lottery.getRedpacks()) {
 			if (redpack.getUserId() == userId) {
@@ -424,15 +441,15 @@ public class LotteryServiceImpl implements LotteryService
     	if (lottery.getRedpackCount() <= lottery.getSnatchedNum()) {
 			throw new ServiceException(ServiceErrorCode.REDPACK_EMPTY, "Redpack is empty!");
 		}
-    	
-    	return lottery;
-    }
+	}
 
 	@Override
 	public int snatchRedpack(long lotteryId) throws ServiceException {
 		// check state
 		User user = SessionContext.getCurrentUser();
-		Lottery lottery = checkRedpackState(lotteryId, user.getId());
+    	
+		Lottery lottery = this.getLottery(lotteryId, false, true, true);
+		checkRedpack(lottery, user.getId());
 		
 		int rate = 0;
 		

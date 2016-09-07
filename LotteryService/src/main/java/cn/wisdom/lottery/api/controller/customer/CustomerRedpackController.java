@@ -209,22 +209,13 @@ public class CustomerRedpackController {
 	@ResponseBody
 	public JsonDocument checkRedpackState(@RequestParam long lotteryId)
 			throws ServiceException {
-		CheckRedpackStateResponse response = new CheckRedpackStateResponse();
 		
-		Lottery lottery = null;
-		try {
-			lottery = lotteryServiceFacade.checkRedpackState(lotteryId,
-					SessionContext.getCurrentUser().getId());
-			response.setStatus(JsonDocument.STATE_SUCCESS);
-		} catch (ServiceException e) {
-			response.setStatus(e.getErrorCode());
-		} finally {
-			if (lottery != null) {
-				User sender = userService.getUserById(lottery.getOwner());
-				response.setSenderName(sender.getNickName());
-				response.setHeadImgUrl(sender.getHeadImgUrl());
-			}
-		}
+		CheckRedpackStateResponse response = lotteryServiceFacade.checkRedpackState(lotteryId,
+				SessionContext.getCurrentUser().getId());
+		
+		User sender = userService.getUserById(response.getSender());
+		response.setSenderName(sender.getNickName());
+		response.setHeadImgUrl(sender.getHeadImgUrl());
 
 		return new LotteryAPIResult(response);
 	}

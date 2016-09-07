@@ -3,6 +3,7 @@ package cn.wisdom.lottery.service;
 import java.util.List;
 import java.util.Map;
 
+import cn.wisdom.lottery.api.response.CheckRedpackStateResponse;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
@@ -66,7 +67,7 @@ public interface LotteryServiceFacade {
 
 	List<Lottery> getReceivedRedpackList();
 
-	Lottery checkRedpackState(long lotteryId, long userId) throws ServiceException;
+	CheckRedpackStateResponse checkRedpackState(long lotteryId, long userId) throws ServiceException;
 
 	// /////////Merchant///////////
 

@@ -2,6 +2,8 @@ package cn.wisdom.lottery.api.response;
 
 public class CheckRedpackStateResponse {
 
+	private long sender;
+	
 	private String senderName;
 	
 	private String headImgUrl;
@@ -30,5 +32,13 @@ public class CheckRedpackStateResponse {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public long getSender() {
+		return sender;
+	}
+
+	public void setSender(long sender) {
+		this.sender = sender;
 	}
 }

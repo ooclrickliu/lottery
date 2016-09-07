@@ -9,6 +9,7 @@ package cn.wisdom.lottery.service;
 
 import java.util.List;
 
+import cn.wisdom.lottery.api.response.CheckRedpackStateResponse;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
@@ -236,6 +237,6 @@ public interface LotteryService
 	 * @param userId
 	 * @throws ServiceException 
 	 */
-	Lottery checkRedpackState(long lotteryId, long userId) throws ServiceException;
+	CheckRedpackStateResponse checkRedpackState(long lotteryId, long userId) throws ServiceException;
 	
 }
