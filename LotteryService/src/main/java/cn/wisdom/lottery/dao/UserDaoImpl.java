@@ -100,7 +100,7 @@ public class UserDaoImpl implements UserDao
     
     @Override
     public long saveWithWxInfo(User user) {
-    	Object[] params = new Object[20];
+    	Object[] params = new Object[11];
         params[0] = user.getOpenid();
         params[1] = user.getRole().toString();
         params[2] = user.getNickName();
