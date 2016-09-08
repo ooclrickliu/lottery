@@ -311,7 +311,9 @@ public class MessageNotifierImpl implements MessageNotifier {
 	@Override
 	public void notifyOperatorCustomerUnSubscribe(User customer) {
 		
-		sendTextMessage("用户取消关注 - " + customer.getNickName() + "(" + customer.getId() + ")", appProperty.defaultOperator);
+		if (!customer.getOpenid().equals(appProperty.defaultOperator)) {
+			sendTextMessage("用户取消关注 - " + customer.getNickName() + "(" + customer.getId() + ")", appProperty.defaultOperator);
+		}
 	}
 	
 	@Override

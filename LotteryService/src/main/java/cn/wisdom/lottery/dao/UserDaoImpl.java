@@ -36,9 +36,9 @@ public class UserDaoImpl implements UserDao
             + "create_time, update_time) "
             + "VALUES(?, ?, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
     
-    private static final String SQL_INSERT_USER2 = "INSERT IGNORE INTO user(openid, role, nick_name, head_img_url, country, province, city, sex, subscribe_time, unionid, "
+    private static final String SQL_INSERT_USER2 = "INSERT INTO user(openid, role, nick_name, head_img_url, country, province, city, sex, subscribe, subscribe_time, unionid, "
     		+ "create_time, update_time) "
-    		+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+    		+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
 
 	private static final String SQL_GET_USER_PREFIX = "select * from user ";
 
@@ -52,12 +52,14 @@ public class UserDaoImpl implements UserDao
     		+ "WHERE id in ({0})";
 
     private static final String SQL_UPDATE_WX_INFO = "UPDATE user SET country = ?, province = ?, city = ?, nick_name = ?, head_img_url = ?, sex = ?, subscribe_time = ?, unionid = ?, update_time = CURRENT_TIMESTAMP "
-            + "WHERE id = ?";
+            + "WHERE openid = ?";
     
     private static final String SQL_GET_USER_BY_PHONE = SQL_GET_USER_PREFIX
     		+ "where phone = ?";
     
 	private static final String SQL_UPDATE_USER_PASSWORD = "update user set password = ?, update_time = current_timestamp where id = ?";
+	
+	private static final String SQL_UPDATE_USER_SUBSCRIBE = "update user set subscribe = ?, update_time = current_timestamp where id = ?";
     
     private static final DaoRowMapper<User> userMapper = new DaoRowMapper<User>(User.class);
 
@@ -98,7 +100,7 @@ public class UserDaoImpl implements UserDao
     
     @Override
     public long saveWithWxInfo(User user) {
-    	Object[] params = new Object[10];
+    	Object[] params = new Object[20];
         params[0] = user.getOpenid();
         params[1] = user.getRole().toString();
         params[2] = user.getNickName();
@@ -107,14 +109,14 @@ public class UserDaoImpl implements UserDao
         params[5] = user.getProvince();
         params[6] = user.getCity();
         params[7] = user.getSex();
-        params[8] = user.getSubscribeTime();
-        params[9] = user.getUnionid();
+        params[8] = user.isSubscribe();
+        params[9] = user.getSubscribeTime();
+        params[10] = user.getUnionid();
         
         String errMsg = MessageFormat.format("Failed insert user with wx info, openid={0}!",
                 user.getOpenid());
 
         long id = daoHelper.save(SQL_INSERT_USER2, errMsg, true, params);
-
         user.setId(id);
         
         return id;
@@ -149,7 +151,7 @@ public class UserDaoImpl implements UserDao
         		user.getSex(), 
         		user.getSubscribeTime(), 
         		user.getUnionid(), 
-        		user.getId());
+        		user.getOpenid());
 	}
 	
 	@Override
@@ -165,10 +167,19 @@ public class UserDaoImpl implements UserDao
 	@Override
 	public void updatePassword(long userId, String newPassword) {
 
-		String errMsg = "Failed to update user stuff info step1, openid: "
+		String errMsg = "Failed to update user password, id: "
 				+ userId;
 		daoHelper.update(SQL_UPDATE_USER_PASSWORD, errMsg,
 				newPassword, userId);
+	}
+	
+	@Override
+	public void updateSubscribeState(User user) {
+
+		String errMsg = "Failed to update user subscribe state, openid: "
+				+ user.getOpenid();
+		daoHelper.update(SQL_UPDATE_USER_SUBSCRIBE, errMsg,
+				user.isSubscribe(), user.getId());
 	}
 
 	@Override

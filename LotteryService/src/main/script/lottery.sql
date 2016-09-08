@@ -367,9 +367,11 @@ alter table `lottery_redpack` modify `prize_bonus` float NULL;
 
 alter table `lottery` add `send_time` timestamp NULL after wish;
 
--- Apply here
-
 alter table `lottery` modify snatched_num int NOT NULL default 0;
+
+alter table `user` add `subscribe` int NOT NULL default 0 after unionid;
+
+-- Apply here
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

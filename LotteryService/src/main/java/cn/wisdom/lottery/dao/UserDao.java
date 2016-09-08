@@ -58,6 +58,8 @@ public interface UserDao
 
 	void updatePassword(long userId, String encrypt);
 
+	void updateSubscribeState(User user);
+
 	List<User> getUserByIdList(List<Long> userIds);
      
 }

@@ -60,6 +60,9 @@ public class User extends BaseEntity
 	
 	@Column("unionid")
     private String unionid;
+	
+	@Column("unionid")
+	private boolean subscribe;
 
 	@Column("subscribe_time")
     private long subscribeTime;
@@ -75,6 +78,7 @@ public class User extends BaseEntity
 		this.sex = wxMpUser.getSex();
 		this.headImgUrl = wxMpUser.getHeadImgUrl();
 		this.unionid = wxMpUser.getUnionId();
+		this.subscribe = wxMpUser.getSubscribe();
 		this.subscribeTime = wxMpUser.getSubscribeTime();
 	}
 
@@ -189,6 +193,14 @@ public class User extends BaseEntity
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public boolean isSubscribe() {
+		return subscribe;
+	}
+
+	public void setSubscribe(boolean subscribe) {
+		this.subscribe = subscribe;
 	}
     
 }

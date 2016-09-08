@@ -111,9 +111,15 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		try {
 			WxMpUser wxMpUser = wxService.getWxMpService().userInfo(wxMessage.getFromUserName(), null);
 			
-			User user  = new User(wxMpUser);
-			user.setRole(RoleType.CUSTOMER);
-			userService.createUser(user);
+			User user = userService.getUserByOpenId(wxMpUser.getOpenId());
+			if (user == null) {
+				user  = new User(wxMpUser);
+				user.setRole(RoleType.CUSTOMER);
+				userService.createUser(user);
+			}
+			else {
+				userService.updateUserWxInfo(wxMpUser);
+			}
 			
 			messageNotifyer.notifyOperatorNewCustomerSubscribed(user);
 		} 
@@ -127,9 +133,9 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 	}
 
 	private WxMpXmlOutMessage handleUnSubscribe(WxMpXmlMessage wxMessage) {
-		logger.info(MessageFormat.format("New user subscribe: {0}", wxMessage.getFromUserName()));
+		logger.info(MessageFormat.format("User unsubscribe: {0}", wxMessage.getFromUserName()));
 		
-		User user = userService.getUserByOpenId(wxMessage.getFromUserName());
+		User user = userService.unsubscribe(wxMessage.getFromUserName());
 		
 		// 保存用户
 		try {

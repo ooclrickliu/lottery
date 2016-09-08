@@ -184,12 +184,18 @@ public class UserServiceImpl implements UserService
 
 	@Override
 	public void updateUserWxInfo(WxMpUser wxMpUser) throws ServiceException {
-		User user = new User();
-		user.setOpenid(wxMpUser.getOpenId());
-		user.setNickName(wxMpUser.getNickname());
-		user.setHeadImgUrl(wxMpUser.getHeadImgUrl());
-
+		User user = new User(wxMpUser);
 		userDao.updateUserWxInfo(user);
+	}
+	
+	@Override
+	public User unsubscribe(String openid) {
+		User user = userDao.getUserByOpenid(openid);
+		user.setSubscribe(false);
+		
+		userDao.updateSubscribeState(user);
+		
+		return user;
 	}
 
 	@Override
@@ -197,32 +203,14 @@ public class UserServiceImpl implements UserService
 		User user = null;
 		try {
 			WxMpOAuth2AccessToken oauth2getAccessToken = wxService.getWxMpService().oauth2getAccessToken(oauthCode);
+			WxMpUser wxMpUser = wxService.getWxMpService().userInfo(oauth2getAccessToken.getOpenId(), null);
 			
 			user = userDao.getUserByOpenid(oauth2getAccessToken.getOpenId());
-			if (user != null) {
-				//  调用这步主要为了更新用户微信信息
-				WxMpUser wxMpUser = wxService.getWxMpService().userInfo(oauth2getAccessToken.getOpenId(), null);
-				if (!(StringUtils.equals(user.getNickName(), wxMpUser.getNickname()) &&
-						StringUtils.equals(user.getHeadImgUrl(), wxMpUser.getHeadImgUrl()))) {
-					user.setNickName(wxMpUser.getNickname());
-					user.setHeadImgUrl(wxMpUser.getHeadImgUrl());
-					user.setCountry(wxMpUser.getCountry());
-					user.setProvince(wxMpUser.getProvince());
-					user.setCity(wxMpUser.getCity());
-					user.setSex(wxMpUser.getSex());
-					user.setSubscribeTime(wxMpUser.getSubscribeTime());
-					user.setUnionid(wxMpUser.getUnionId());
-					
-					userDao.updateUserWxInfo(user);
-				}
-			}
-			else 
-			{
-				WxMpUser wxMpUser = wxService.getWxMpService().oauth2getUserInfo(oauth2getAccessToken, null);
-				
-				// 非关注用户
+			if (!wxMpUser.isSubscribe() && user == null) {
+				// 从未关注过的用户
+				wxMpUser = wxService.getWxMpService().oauth2getUserInfo(oauth2getAccessToken, null);
 				user = new User(wxMpUser);
-				userDao.saveWithWxInfo(user);
+				this.createUser(user);
 			}
 		} catch (WxErrorException e) {
 			String errMsg = MessageFormat.format("failed pass wx oauth and get user info, code: [{0}]", oauthCode);

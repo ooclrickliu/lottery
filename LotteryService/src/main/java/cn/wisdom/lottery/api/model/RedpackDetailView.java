@@ -12,6 +12,8 @@ public class RedpackDetailView {
 	
 	private String headImgUrl;
 	
+	private boolean subscribe;
+	
 	private String wish;
 	
 	private int redpackNum;
@@ -96,5 +98,13 @@ public class RedpackDetailView {
 
 	public void setItems(List<RedpackItemView> items) {
 		this.items = items;
+	}
+
+	public boolean isSubscribe() {
+		return subscribe;
+	}
+
+	public void setSubscribe(boolean subscribe) {
+		this.subscribe = subscribe;
 	}
 }

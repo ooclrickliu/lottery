@@ -303,6 +303,8 @@ public class CustomerRedpackController {
 		}
 		response.setSenderName(sender.getNickName());
 		response.setHeadImgUrl(sender.getHeadImgUrl());
+		
+		response.setSubscribe(currentUser.isSubscribe());
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/ssq/create")

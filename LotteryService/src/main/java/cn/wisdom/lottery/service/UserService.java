@@ -106,5 +106,13 @@ public interface UserService
     String changePassword(String oldPassword, String newPassword)
             throws ServiceException;
 
+    /**
+     * User unsubscribe.
+     * 
+     * @param openid
+     * @return
+     */
+	User unsubscribe(String openid);
+
     
 }
