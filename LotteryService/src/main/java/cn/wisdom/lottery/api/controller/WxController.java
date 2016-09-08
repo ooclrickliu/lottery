@@ -1,5 +1,6 @@
 package cn.wisdom.lottery.api.controller;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.model.JsonDocument;
 import cn.wisdom.lottery.service.wx.WXService;
+import cn.wisdom.lottery.service.wx.message.WxMpVideoHandler;
 
 @RequestMapping("/wx")
 @Controller
@@ -27,6 +29,9 @@ public class WxController {
 
 	@Autowired
 	private WXService wxService;
+	
+	@Autowired
+	private WxMpVideoHandler videoHandler;
 
 	@RequestMapping("/message")
 	public void service(HttpServletRequest request, HttpServletResponse response)
@@ -101,5 +106,15 @@ public class WxController {
 		}
 		
 		return new LotteryAPIResult(jsapiSignature);
+	}
+	
+	@RequestMapping("/video")
+	@ResponseBody
+	public JsonDocument video2Images()
+	{
+		File videoFile = new File("/home/lottery/upload/cai/1.mp4");
+		videoHandler.video2Images(videoFile);
+		
+		return LotteryAPIResult.SUCCESS;
 	}
 }

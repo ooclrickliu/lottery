@@ -67,20 +67,23 @@ public class WxMpVideoHandler extends AbstractWxMpHandler {
 			WxMpService wxMpService, WxSessionManager sessionManager) {
 		try {
 			// download the video
+			logger.debug("Start to download vedio...");
 			File video = wxService.getWxMpService().mediaDownload(
 					wxMessage.getMediaId());
 
+			logger.debug("Download vedio done!");
+			
 			// convert to images
 			if (video != null) {
 				long start = System.currentTimeMillis();
-				logger.info("Start converting vedio to images...");
-				// frameNum = vedio2Images(video);
-				logger.info("Complete converting vedio to images.");
+				logger.debug("Start converting vedio to images...");
+				int frameNum = video2Images(video);
+				logger.debug("Complete converting vedio to images.");
 				long end = System.currentTimeMillis();
 
-				System.out.println("Extract Images Cost : " + (end - start));
+				logger.debug("Extract Images Cost : " + (end - start));
 
-				video.delete();
+//				video.delete();
 			}
 
 		} catch (WxErrorException e) {
@@ -89,26 +92,13 @@ public class WxMpVideoHandler extends AbstractWxMpHandler {
 		}
 	}
 
-	private int vedio2Images(File vedioFile) {
+	public int video2Images(File vedioFile) {
 		int frameNum = 0;
 		File outFile = null;
 		FileOutputStream fos = null;
 
-		// String frameDir = getFrameDir("");
-		File frames = new File("");
+		String framesDir = mkFrameDir(vedioFile);
 
-		if ((frames.exists()) && (frames.isDirectory())) {
-			File[] arrayOfFile1;
-			File[] subFiles = frames.listFiles();
-			int j = (arrayOfFile1 = subFiles).length;
-			for (int i = 0; i < j; ++i) {
-				File subFile = arrayOfFile1[i];
-
-				subFile.delete();
-			}
-			frames.delete();
-		}
-		frames.mkdir();
 		try {
 			FFmpegFrameGrabber ocg = FFmpegFrameGrabber
 					.createDefault(vedioFile);
@@ -126,7 +116,7 @@ public class WxMpVideoHandler extends AbstractWxMpHandler {
 				}
 
 				++frameNum;
-				outFile = new File("" + frameNum + ".jpg"); // TODO
+				outFile = new File(framesDir + File.pathSeparator + frameNum + ".jpg");
 				fos = new FileOutputStream(outFile);
 				ImageIO.write(bufferedImage, "jpg", fos);
 			}
@@ -142,6 +132,14 @@ public class WxMpVideoHandler extends AbstractWxMpHandler {
 		return frameNum;
 	}
 
+	public static String mkFrameDir(File vedioFile) {
+		String dirName = vedioFile.getAbsolutePath().substring(0, vedioFile.getAbsolutePath().lastIndexOf(".mp4"));
+		System.out.println(dirName);
+		File frameDir = new File(dirName);
+		frameDir.mkdir();
+		return dirName;
+	}
+
 	private void close(Closeable obj) {
 		if (obj != null) {
 			try {
@@ -150,34 +148,10 @@ public class WxMpVideoHandler extends AbstractWxMpHandler {
 			}
 		}
 	}
-
-	private void redirectMessage2Kf(WxMpXmlMessage wxMessage,
-			WxMpService wxMpService, WxSessionManager sessionManager)
-			throws WxErrorException {
-		WxSession session = sessionManager.getSession(wxMessage
-				.getFromUserName());
-		User user = (User) session.getAttribute(PARAM_USER);
-		if (user == null) {
-			user = userService.getUserByOpenId(wxMessage.getFromUserName());
-			session.setAttribute(wxMessage.getFromUserName(), user);
-
-			// reverse session, key = userId
-			WxSession reverseSession = sessionManager
-					.getSession(DataConvertUtils.toString(user.getId()));
-			if (reverseSession.getAttribute(PARAM_USER) == null) {
-				reverseSession.setAttribute(PARAM_USER, user);
-			}
-		}
-
-		String content = user.getNickName() + "[" + user.getId() + "] 发的语音:";
-		WxMpCustomMessage customTextMessage = WxMpCustomMessage.TEXT()
-				.toUser(appProperty.defaultKf).content(content).build();
-		wxMpService.customMessageSend(customTextMessage);
-
-		WxMpCustomMessage customImageMessage = WxMpCustomMessage.VOICE()
-				.toUser(appProperty.defaultKf).mediaId(wxMessage.getMediaId())
-				.build();
-		wxMpService.customMessageSend(customImageMessage);
+	
+	public static void main(String[] args) {
+		File video = new File("C:\\Users\\zhi.liu\\Desktop\\Lottery\\vedio\\60_15paNjlOWFoOWe_iDE4z55cXYsXvwZ_f35TsIZ8nykwWuJJG75PEscENl2TMP4565491582740427244.mp4");
+		mkFrameDir(video);
 	}
 
 }

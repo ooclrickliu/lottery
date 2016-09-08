@@ -70,10 +70,9 @@ public class CustomerRedpackController {
 			throws ServiceException {
 		JsonDocument response = new JsonDocument();
 		
-		int rate;
 		try {
-			rate = lotteryServiceFacade.snatchRedpack(lotteryId);
-			response.setData(rate);
+			lotteryServiceFacade.snatchRedpack(lotteryId);
+			response.setData(JsonDocument.STATE_SUCCESS);
 		} catch (ServiceException e) {
 			response.setData(e.getErrorCode());
 		}

@@ -369,6 +369,8 @@ alter table `lottery` add `send_time` timestamp NULL after wish;
 
 -- Apply here
 
+alter table `lottery` modify snatched_num int NOT NULL default 0;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -65,6 +65,7 @@ public class WXServiceImpl implements WXService {
 				.rule().msgType(WxConsts.XML_MSG_IMAGE).async(false).handler(imageHandler).end()
 				.rule().msgType(WxConsts.XML_MSG_VOICE).async(false).handler(voiceHandler).end()
 				.rule().msgType(WxConsts.XML_MSG_VIDEO).async(false).handler(videoHandler).end()
+				.rule().msgType("shortvideo").async(false).handler(videoHandler).end()
 		// .rule().async(false).content("oauth").handler(oauth2handler).end()
 		;
 

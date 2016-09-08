@@ -13,6 +13,7 @@ import cn.wisdom.lottery.api.response.CheckRedpackStateResponse;
 import cn.wisdom.lottery.common.exception.OVTRuntimeException;
 import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
+import cn.wisdom.lottery.common.model.JsonDocument;
 import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.common.utils.DateTimeUtils;
 import cn.wisdom.lottery.common.utils.MathUtils;
@@ -413,6 +414,7 @@ public class LotteryServiceImpl implements LotteryService
     	
     	try {
 			checkRedpack(lottery, userId);
+			response.setStatus(JsonDocument.STATE_SUCCESS);
 		} catch (ServiceException e) {
 			response.setStatus(e.getErrorCode());
 		} finally {
