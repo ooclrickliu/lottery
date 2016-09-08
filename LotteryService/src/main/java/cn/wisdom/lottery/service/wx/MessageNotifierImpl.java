@@ -23,6 +23,7 @@ import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.dao.vo.User;
+import cn.wisdom.lottery.service.LotteryServiceFacade;
 import cn.wisdom.lottery.service.UserService;
 
 @Service
@@ -30,6 +31,9 @@ public class MessageNotifierImpl implements MessageNotifier {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private LotteryServiceFacade lotteryServiceFacade;
 	
 	@Autowired
 	private WXService wxService;
@@ -333,6 +337,38 @@ public class MessageNotifierImpl implements MessageNotifier {
 //		sendNewsMessage(news, merchantObj.getOpenid());
 		sendNewsMessage(news, appProperty.defaultOperator);
 //		sendNewsMessage(news, "olz_hvsELAlrfI_0715gnh8un04Q");
+	}
+	
+	@Override
+	public void notifyCustomerTicketPrinted(long periodId) {
+		Lottery lottery = lotteryServiceFacade.getLotteryByPeriod(periodId);
+		LotteryPeriod period = lottery.getPeriods().get(0);
+		
+		WxArticle news = new WxArticle();
+		news.setTitle("您的彩票已出票");
+		news.setPicUrl(appProperty.imgServerUrl + period.getTicketImgUrl());
+
+		String descStr = lottery.getLotteryType().getTypeName() + " - " + period.getPeriod() + " 期                倍数: " + lottery.getTimes();
+		descStr += "\n投注号码:\n";
+		
+		int num = lottery.getNumbers().size();
+		for (int i = 0; i < num && i < 5; i++) { // 最多显示5组号码
+			descStr += "    "
+					+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
+					.replaceAll("\\+", " \\+ ") + "\n";
+		}
+		if (num > 5) {
+			descStr += "    ...";
+		}
+		User user = userService.getUserById(lottery.getOwner());
+		
+		String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
+		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+		news.setUrl(url);
+		
+		news.setDescription(descStr);
+		
+		sendNewsMessage(news, user.getOpenid());
 	}
 
 }

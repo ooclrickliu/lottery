@@ -254,6 +254,8 @@ public class LotteryServiceImpl implements LotteryService
 
 			returUrl = ticketImg.getName();
 			lotteryDao.updateTicketImage(periodId, ticketImg.getName());
+			
+			messageNotifier.notifyCustomerTicketPrinted(periodId);
 		} catch (WxErrorException e) {
 			logger.error("failed to upload ticketImg", e);
 		}

@@ -28,4 +28,6 @@ public interface MessageNotifier {
 
 	void notifyMerchantPrintTickets(long merchant, QueryLotteryResponse response);
 
+	void notifyCustomerTicketPrinted(long periodId);
+
 }
