@@ -3,6 +3,10 @@ package cn.wisdom.lottery.service;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import me.chanjar.weixin.common.exception.WxErrorException;
 
@@ -64,6 +68,8 @@ public class LotteryServiceImpl implements LotteryService
     
     @Autowired
     private OVThreadPoolExecutor executor;
+    
+    private ConcurrentHashMap<Long, ReadWriteLock> lockMap = new ConcurrentHashMap<Long, ReadWriteLock>();
 
     private Logger logger = LoggerFactory.getLogger(LotteryService.class
             .getName());
@@ -452,15 +458,23 @@ public class LotteryServiceImpl implements LotteryService
 	public int snatchRedpack(long lotteryId) throws ServiceException {
 		// check state
 		User user = SessionContext.getCurrentUser();
-    	
-		Lottery lottery = this.getLottery(lotteryId, false, true, true);
-		checkRedpack(lottery, user.getId());
 		
 		int rate = 0;
 		
-		// increase lottery's snatched_num, here rely db to handle the lock.
-		boolean success = lotteryDao.increaseSnatchNum(lotteryId) > 0;
-		if (success) {
+		ReadWriteLock readWriteLock = lockMap.get(lotteryId);
+		if (readWriteLock == null) {
+			readWriteLock = new ReentrantReadWriteLock();
+			lockMap.putIfAbsent(lotteryId, readWriteLock);
+		}
+		Lock writeLock = readWriteLock.writeLock();
+		writeLock.lock();
+		
+		Lottery lottery = null;
+		try {
+			lottery = this.getLottery(lotteryId, false, true, true);
+			
+			checkRedpack(lottery, user.getId());
+			
 			if (lottery.getBusinessType() == BusinessType.RedPack_Bonus) {
 				rate = snatchBonusRedpack(lottery);
 			}
@@ -470,9 +484,11 @@ public class LotteryServiceImpl implements LotteryService
 			else {
 				throw new ServiceException(ServiceErrorCode.ERROR_BUSINESS_TYPE, "Error lottery business type.");
 			}
-		}
-		else {
-			throw new ServiceException(ServiceErrorCode.REDPACK_EMPTY, "Redpack is empty.");
+			
+			lotteryDao.increaseSnatchNum(lotteryId);
+		} finally
+		{
+			writeLock.unlock();
 		}
 		
 		return rate;
@@ -512,15 +528,26 @@ public class LotteryServiceImpl implements LotteryService
 			remainRate -= lotteryRedpack.getRate();
 		}
 		
+		rate = randomRate(remainCount, remainRate);
+		
+		return rate;
+	}
+
+	private int randomRate(int remainCount, int remainRate) {
+		int rate = 0;
 		if (remainCount > 1) {
-			rate = MathUtils.rand(remainRate);
+			int min = 1;
+			int max = remainRate / remainCount * 2;
+			rate = MathUtils.rand(max);
+			rate = rate <= min ? min : rate;
 		}
 		else if (remainCount == 1) {
 			rate = remainRate;
 		}
-		
 		return rate;
 	}
+	
+	
 	
 	@Override
 	public void clearUnpaidLottery() {
