@@ -373,4 +373,10 @@ public class MessageNotifierImpl implements MessageNotifier {
 		sendNewsMessage(news, user.getOpenid());
 	}
 
+	@Override
+	public void notifySenderRedpackSnatched(long sender, String snatcher) {
+		User senderObj = userService.getUserById(sender);
+		
+		sendTextMessage(snatcher + " 领取了你的红包", senderObj.getOpenid());
+	}
 }

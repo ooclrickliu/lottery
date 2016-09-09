@@ -478,14 +478,16 @@ public class LotteryServiceImpl implements LotteryService
 			if (lottery.getBusinessType() == BusinessType.RedPack_Bonus) {
 				rate = snatchBonusRedpack(lottery);
 			}
-			else if (lottery.getBusinessType() == BusinessType.RedPack_Number) {
+			else {  // (lottery.getBusinessType() == BusinessType.RedPack_Number) 
 				rate = snatchNumberRedpack(lottery);
 			}
-			else {
-				throw new ServiceException(ServiceErrorCode.ERROR_BUSINESS_TYPE, "Error lottery business type.");
-			}
+//			else {
+//				throw new ServiceException(ServiceErrorCode.ERROR_BUSINESS_TYPE, "Error lottery business type.");
+//			}
 			
 			lotteryDao.increaseSnatchNum(lotteryId);
+			
+			messageNotifier.notifySenderRedpackSnatched(lottery.getOwner(), user.getNickName());
 		} finally
 		{
 			writeLock.unlock();
