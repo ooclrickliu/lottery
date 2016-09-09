@@ -117,12 +117,12 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ "prize_bonus = ?, prize_state = 'Win' "
 			+ "where lottery_id = ? and period= ?";
 	
-	private static final String GET_UNPAID_LOTTERY = "select id from lottery where pay_state = 'UnPaid'";
+	private static final String GET_UNPAID_LOTTERY = "select id from lottery where pay_state = 'UnPaid' or pay_state = 'PaidFail'";
 	private static final String DELETE_UNPAID_PERIOD = "delete from lottery_period "
 			+ "where lottery_id in (" + GET_UNPAID_LOTTERY + ")";
 	private static final String DELETE_UNPAID_NUMBER = "delete from lottery_number "
 			+ "where lottery_id in (" + GET_UNPAID_LOTTERY + ")";
-	private static final String DELETE_UNPAID_LOTTERY = "delete from lottery where pay_state = 'UnPaid'";
+	private static final String DELETE_UNPAID_LOTTERY = "delete from lottery where pay_state = 'UnPaid' or pay_state = 'PaidFail'";
 	
 	private static final String DELETE_LOTTERY_PERIOD = "delete from lottery_period where lottery_id = ?";
 	private static final String DELETE_LOTTERY_NUMBER = "delete from lottery_number where lottery_id = ?";
