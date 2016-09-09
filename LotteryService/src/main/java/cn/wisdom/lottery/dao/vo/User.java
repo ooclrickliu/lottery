@@ -78,8 +78,8 @@ public class User extends BaseEntity
 		this.sex = wxMpUser.getSex();
 		this.headImgUrl = wxMpUser.getHeadImgUrl();
 		this.unionid = wxMpUser.getUnionId();
-		this.subscribe = wxMpUser.getSubscribe();
-		this.subscribeTime = wxMpUser.getSubscribeTime();
+		this.subscribe = wxMpUser.getSubscribe() == null ? false : wxMpUser.getSubscribe();
+		this.subscribeTime = wxMpUser.getSubscribeTime() == null ? 0 : wxMpUser.getSubscribeTime();
 	}
 
 	public String getNickName() {
