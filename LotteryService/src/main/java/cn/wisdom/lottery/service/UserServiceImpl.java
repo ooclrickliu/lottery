@@ -210,6 +210,7 @@ public class UserServiceImpl implements UserService
 				// 从未关注过的用户
 				wxMpUser = wxService.getWxMpService().oauth2getUserInfo(oauth2getAccessToken, null);
 				user = new User(wxMpUser);
+				user.setRole(RoleType.CUSTOMER);
 				this.createUser(user);
 			}
 		} catch (WxErrorException e) {
