@@ -15,6 +15,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 
 import me.chanjar.weixin.common.util.crypto.SHA1;
 import me.chanjar.weixin.common.util.http.URIUtil;
+import cn.wisdom.lottery.common.utils.MathUtils;
 import cn.wisdom.lottery.dao.mapper.UserMapper;
 
 
@@ -171,9 +172,40 @@ public class TestMain
 //			e.printStackTrace();
 //		}
     	
-    	String input = "http://www.southwisdom.cn/#/select";
-		System.out.println(URIUtil.encodeURIComponent(input));
+//    	String input = "http://www.southwisdom.cn/#/select";
+//		System.out.println(URIUtil.encodeURIComponent(input));
+
+    	int times = 5;
+    	for (int i = 0; i < times; i++) {
+    		System.out.println("remainRate       remainCount         rate");
+    		System.out.println("------------------------------------------");
+    		int remainCount = 10;
+    		int remainRate = 100;
+    		
+    		while(remainCount > 0)
+    		{
+    			int rate = randomRate(remainCount, remainRate);
+    			System.out.println(remainCount + "      " + remainRate + "       " + rate);
+    			
+    			remainCount--;
+    			remainRate -= rate;
+    		}
+		}
     }
+    
+    public static int randomRate(int remainCount, int remainRate) {
+		int rate = 0;
+		if (remainCount > 1) {
+			int min = 1;
+			int max = remainRate / remainCount * 2;
+			rate = MathUtils.rand(max);
+			rate = rate <= min ? min : rate;
+		}
+		else if (remainCount == 1) {
+			rate = remainRate;
+		}
+		return rate;
+	}
     
     public static String formatNumber(double num,int maxFractionDigits) {
         NumberFormat nf = NumberFormat.getInstance(Locale.US);
