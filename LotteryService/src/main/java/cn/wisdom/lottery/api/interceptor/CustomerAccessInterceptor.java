@@ -52,12 +52,14 @@ public class CustomerAccessInterceptor extends HandlerInterceptorAdapter
         
         User user = null;
         String openId = HttpUtils.getParamValue(request, CookieUtil.OPENID);
+        System.out.println("-------openid:" + openId);
         if (StringUtils.isNotBlank(openId)) {
         	user = userService.getUserByOpenId(openId); 
         	
 		}
     	if (user == null) {
     		String code = HttpUtils.getParamValue(request, CookieUtil.OAUTH_CODE);
+            System.out.println("-------code:" + code);
             if (StringUtils.isNotBlank(code)) {
             	user = userService.getUserByOauthCode(code);
             	
@@ -67,6 +69,7 @@ public class CustomerAccessInterceptor extends HandlerInterceptorAdapter
 		}
         
         if (user == null) {
+            System.out.println("-------Not subscribe!");
         	writeResponse(response, ServiceErrorCode.NOT_SUBSCRIBE);
         	return false;
 		}
