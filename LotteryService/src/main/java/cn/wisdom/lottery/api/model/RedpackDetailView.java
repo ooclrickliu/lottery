@@ -18,7 +18,7 @@ public class RedpackDetailView {
 	
 	private int redpackNum;
 	
-	private float totalFee;
+	private int totalFee;
 	
 	private int currentUserRate;
 	
@@ -60,11 +60,11 @@ public class RedpackDetailView {
 		this.redpackNum = redpackNum;
 	}
 
-	public float getTotalFee() {
+	public int getTotalFee() {
 		return totalFee;
 	}
 
-	public void setTotalFee(float totalFee) {
+	public void setTotalFee(int totalFee) {
 		this.totalFee = totalFee;
 	}
 

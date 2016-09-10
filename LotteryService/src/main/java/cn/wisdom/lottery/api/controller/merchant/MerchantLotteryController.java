@@ -130,7 +130,7 @@ public class MerchantLotteryController {
 
 	private void summarize(List<Lottery> lotteries,
 			QueryLotteryResponse response) {
-		float totalFee = 0;
+		int totalFee = 0;
 		float totalPrize = 0;
 		Map<String, Integer> prizeMap = new HashMap<String, Integer>();
 		for (Lottery lottery : lotteries) {

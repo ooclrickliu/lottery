@@ -371,6 +371,10 @@ alter table `lottery` modify snatched_num int NOT NULL default 0;
 
 alter table `user` add `subscribe` int NOT NULL default 0 after unionid;
 
+alter table `lottery_number` modify `number` varchar(200) NULL;
+
+alter table `lottery` modify `total_fee` int NOT NULL;
+
 -- Apply here
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
