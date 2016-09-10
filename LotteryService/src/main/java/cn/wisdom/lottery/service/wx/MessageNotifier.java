@@ -30,4 +30,6 @@ public interface MessageNotifier {
 
 	void notifyCustomerTicketPrinted(long periodId);
 
+	void notifySenderRedpackSnatched(long owner, String nickName);
+
 }

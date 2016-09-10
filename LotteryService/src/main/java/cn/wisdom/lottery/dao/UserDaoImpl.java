@@ -51,7 +51,7 @@ public class UserDaoImpl implements UserDao
     private static final String SQL_GET_USER_BY_IDS = SQL_GET_USER_PREFIX
     		+ "WHERE id in ({0})";
 
-    private static final String SQL_UPDATE_WX_INFO = "UPDATE user SET country = ?, province = ?, city = ?, nick_name = ?, head_img_url = ?, sex = ?, subscribe_time = ?, unionid = ?, update_time = CURRENT_TIMESTAMP "
+    private static final String SQL_UPDATE_WX_INFO = "UPDATE user SET country = ?, province = ?, city = ?, nick_name = ?, head_img_url = ?, sex = ?, subscribe = ?, subscribe_time = ?, unionid = ?, update_time = CURRENT_TIMESTAMP "
             + "WHERE openid = ?";
     
     private static final String SQL_GET_USER_BY_PHONE = SQL_GET_USER_PREFIX
@@ -149,6 +149,7 @@ public class UserDaoImpl implements UserDao
         		user.getNickName(), 
         		user.getHeadImgUrl(), 
         		user.getSex(), 
+        		user.isSubscribe(), 
         		user.getSubscribeTime(), 
         		user.getUnionid(), 
         		user.getOpenid());

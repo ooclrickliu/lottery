@@ -209,7 +209,14 @@ public class UserServiceImpl implements UserService
 			if (!wxMpUser.isSubscribe() && user == null) {
 				// 从未关注过的用户
 				wxMpUser = wxService.getWxMpService().oauth2getUserInfo(oauth2getAccessToken, null);
+				
 				user = new User(wxMpUser);
+				user.setRole(RoleType.CUSTOMER);
+				this.createUser(user);
+			}
+			else if (wxMpUser.isSubscribe() && user == null) { // 老关注用户可能没存
+				user = new User(wxMpUser);
+				user.setRole(RoleType.CUSTOMER);
 				this.createUser(user);
 			}
 		} catch (WxErrorException e) {
