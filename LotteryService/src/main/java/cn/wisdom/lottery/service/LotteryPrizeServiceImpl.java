@@ -127,8 +127,8 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 	@Override
 	public int getPrizeBonus(Map<String, Map<String, Integer>> prizeInfo) {
 		for (Map<String, Integer> singlePrizeInfo : prizeInfo.values()) {
-			if (singlePrizeInfo.keySet().contains(1) ||
-					singlePrizeInfo.keySet().contains(2)) {
+			if (singlePrizeInfo.keySet().contains("1") ||
+					singlePrizeInfo.keySet().contains("2")) {
 				return BONUS_NOT_SURE;
 			}
 		}
@@ -150,7 +150,7 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 	public void calculateRedpacksPrize(Lottery lottery) {
 		if (CollectionUtils.isNotEmpty(lottery.getRedpacks())) {
 			int totalBonus = lottery.getPeriods().get(0).getPrizeBonus();
-			int bonus = 0;
+			float bonus = 0;
 			for (LotteryRedpack lotteryRedpack : lottery.getRedpacks()) {
 				bonus = totalBonus * lotteryRedpack.getRate() / 100;
 				lotteryRedpack.setPrizeBonus(bonus);
