@@ -87,6 +87,9 @@ public class LotteryDaoImpl implements LotteryDao {
 	
 	private static final String GET_PERIOD_BY_ID = "select * from lottery_period "
 			+ " where id = ? limit 1";
+	
+	private static final String GET_VALID_REDPACK_LOTTERY = "select l.* from lottery l join lottery_period p on l.id = p.lottery_id "
+			+ "where owner = ? and pay_state = 'Paid' and business_type = 'Private' and period_num = 1 and p.period = ?";
 
 	private static final String UPDATE_LOTTERY_PAY_IMG = "update lottery set pay_img_url = ?, pay_state = ?, update_time = current_timestamp "
 			+ "where id = ?";
@@ -668,6 +671,20 @@ public class LotteryDaoImpl implements LotteryDao {
 			lotteries = this.sortByReceiveTime(redpacks, lotteries);
 		}
 
+		return lotteries;
+	}
+	
+	@Override
+	public List<Lottery> getValidRedpackLotteries(long userId, int period) {
+		String errMsg = MessageFormat.format(
+				"Failed to get valid redpack lotteries of user [{0}], period = [{1}]", "" + userId, "" + period);
+		List<Lottery> lotteries = daoHelper.queryForList(
+				GET_VALID_REDPACK_LOTTERY, lotteryMapper, errMsg, userId, period);
+		
+		if (CollectionUtils.isNotEmpty(lotteries)) {
+			getLotteryNumbers(lotteries);
+		}
+		
 		return lotteries;
 	}
 

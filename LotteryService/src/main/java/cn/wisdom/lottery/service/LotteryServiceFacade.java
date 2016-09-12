@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.wisdom.lottery.api.response.CheckRedpackStateResponse;
+import cn.wisdom.lottery.api.response.ValidRedpackLottery;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
@@ -69,6 +70,8 @@ public interface LotteryServiceFacade {
 	List<Lottery> getReceivedRedpackList();
 
 	CheckRedpackStateResponse checkRedpackState(long lotteryId, long userId) throws ServiceException;
+
+	List<ValidRedpackLottery> getValidRedpackLotteries(long id) throws ServiceException;
 
 	// /////////Merchant///////////
 

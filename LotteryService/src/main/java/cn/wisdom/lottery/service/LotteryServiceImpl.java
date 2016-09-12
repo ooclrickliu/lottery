@@ -2,6 +2,7 @@ package cn.wisdom.lottery.service;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.wisdom.lottery.api.response.CheckRedpackStateResponse;
+import cn.wisdom.lottery.api.response.ValidRedpackLottery;
 import cn.wisdom.lottery.common.exception.OVTRuntimeException;
 import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
@@ -38,6 +40,7 @@ import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceErrorCode;
 import cn.wisdom.lottery.service.exception.ServiceException;
+import cn.wisdom.lottery.service.remote.response.LotteryOpenData;
 import cn.wisdom.lottery.service.wx.MessageNotifier;
 import cn.wisdom.lottery.service.wx.WXService;
 
@@ -431,6 +434,21 @@ public class LotteryServiceImpl implements LotteryService
 		}
     	
 		return response;
+    }
+    
+    @Override
+    public List<ValidRedpackLottery> getValidRedpackLotteries(long userId) throws ServiceException {
+    	
+    	LotteryOpenData currentPeriod = lotteryPublishService.getCurrentPeriod(LotteryType.SSQ);
+    	
+    	List<Lottery> lotteries = lotteryDao.getValidRedpackLotteries(userId, DataConvertUtils.toInt(currentPeriod.getExpect()));
+    	
+    	List<ValidRedpackLottery> list = new ArrayList<ValidRedpackLottery>();
+    	for (Lottery lottery : lotteries) {
+    		ValidRedpackLottery validRedpackLottery = new ValidRedpackLottery(lottery, currentPeriod);
+    		list.add(validRedpackLottery);
+		}
+		return list;
     }
 
 	private void checkRedpack(Lottery lottery, long userId)

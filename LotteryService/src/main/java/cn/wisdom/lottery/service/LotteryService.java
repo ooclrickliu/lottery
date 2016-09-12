@@ -10,6 +10,7 @@ package cn.wisdom.lottery.service;
 import java.util.List;
 
 import cn.wisdom.lottery.api.response.CheckRedpackStateResponse;
+import cn.wisdom.lottery.api.response.ValidRedpackLottery;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
@@ -240,5 +241,14 @@ public interface LotteryService
 	 * @throws ServiceException 
 	 */
 	CheckRedpackStateResponse checkRedpackState(long lotteryId, long userId) throws ServiceException;
+
+	/**
+	 * Get lotteries that can be shared as redpack.
+	 * 
+	 * @param userId
+	 * @return
+	 * @throws ServiceException 
+	 */
+	List<ValidRedpackLottery> getValidRedpackLotteries(long userId) throws ServiceException;
 	
 }

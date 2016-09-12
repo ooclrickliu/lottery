@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.wisdom.lottery.api.response.CheckRedpackStateResponse;
+import cn.wisdom.lottery.api.response.ValidRedpackLottery;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
@@ -218,6 +219,11 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade {
 	public CheckRedpackStateResponse checkRedpackState(long lotteryId, long userId) throws ServiceException {
 		
 		return lotteryService.checkRedpackState(lotteryId, userId);
+	}
+	
+	@Override
+	public List<ValidRedpackLottery> getValidRedpackLotteries(long userId) throws ServiceException {
+		return lotteryService.getValidRedpackLotteries(userId);
 	}
 
 	@Override

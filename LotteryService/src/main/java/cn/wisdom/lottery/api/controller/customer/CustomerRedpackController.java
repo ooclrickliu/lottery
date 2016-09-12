@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,20 +21,14 @@ import cn.wisdom.lottery.api.model.RedpackDetailView;
 import cn.wisdom.lottery.api.model.RedpackItemView;
 import cn.wisdom.lottery.api.model.SentRedpackItem;
 import cn.wisdom.lottery.api.model.SentRedpackList;
-import cn.wisdom.lottery.api.request.LotteryOrderRequest;
 import cn.wisdom.lottery.api.response.CheckRedpackStateResponse;
 import cn.wisdom.lottery.api.response.LotteryAPIResult;
+import cn.wisdom.lottery.api.response.ValidRedpackLottery;
 import cn.wisdom.lottery.common.model.JsonDocument;
 import cn.wisdom.lottery.common.utils.CollectionUtils;
 import cn.wisdom.lottery.dao.constant.BusinessType;
-import cn.wisdom.lottery.dao.constant.LotteryType;
-import cn.wisdom.lottery.dao.constant.PayState;
-import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
-import cn.wisdom.lottery.dao.vo.LotteryNumber;
-import cn.wisdom.lottery.dao.vo.LotteryPeriod;
 import cn.wisdom.lottery.dao.vo.LotteryRedpack;
-import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
 import cn.wisdom.lottery.service.UserService;
@@ -307,45 +300,13 @@ public class CustomerRedpackController {
 		response.setSubscribe(currentUser.isSubscribe());
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/ssq/create")
+	@RequestMapping(method = RequestMethod.GET, value = "/valid/lotteries")
 	@ResponseBody
-	public JsonDocument createSSQRedpackLottery(HttpServletRequest httpRequest,
-			@RequestBody LotteryOrderRequest request,
-			@RequestParam String tradeType, @RequestParam String body)
-			throws ServiceException {
+	public JsonDocument getValidLotteries() throws ServiceException {
 		User user = SessionContext.getCurrentUser();
-
-		Lottery lottery = new Lottery();
-		lottery.setCreateBy(SessionContext.getCurrentUser().getId());
-		lottery.setOwner(lottery.getCreateBy());
-		lottery.setBusinessType(BusinessType.RedPack_Bonus);
-		lottery.setLotteryType(LotteryType.SSQ);
-		lottery.setPayState(PayState.UnPaid);
-		lottery.setTimes(request.getTimes()); // 倍数
-		lottery.setRedpackCount(request.getRedpackCount());
-
-		for (String number : request.getNumbers()) {
-			lottery.getNumbers().add(new LotteryNumber(number));
-		}
-
-		//
-		lottery.setPeriodNum(1);
-		List<PrizeLotterySSQ> period = lotteryServiceFacade.getNextNPeriods(
-				LotteryType.SSQ, 1);
-		LotteryPeriod lotteryPeriod = new LotteryPeriod();
-		lotteryPeriod.setPeriod(period.get(0).getPeriod());
-		lotteryPeriod.setPrizeState(PrizeState.NotOpen);
-		lotteryPeriod.setPrizeOpenTime(period.get(0).getOpenTime());
-
-		lottery.getPeriods().add(lotteryPeriod);
-
-		lottery = lotteryServiceFacade.createLottery(LotteryType.SSQ, lottery);
-
-		Map<String, String> wxPayInfoMap = lotteryServiceFacade.unifiedOrder(
-				lottery, user.getOpenid(), httpRequest.getHeader("X-Real-IP"),
-				tradeType, body);
-
-		return new LotteryAPIResult(wxPayInfoMap);
+		List<ValidRedpackLottery> validRedpackLotteries = lotteryServiceFacade.getValidRedpackLotteries(user.getId());
+		
+		return new LotteryAPIResult(validRedpackLotteries);
 	}
 
 }
