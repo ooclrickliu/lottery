@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.util.http.URIUtil;
@@ -205,7 +206,8 @@ public class MessageNotifierImpl implements MessageNotifier {
 		news.setTitle(title);
 		news.setPicUrl("");
 		
-		String descStr = "开奖号码: " + openInfo.getNumber() + "\n\n";
+		String number = openInfo.getNumber().replaceAll(",", " ").replaceAll("\\+", " \\+ ") + "\n";
+		String descStr = "开奖号码: " + number + "\n\n";
 		descStr += "中奖结果: ";
 		for (String rank : prizeInfoSummary.keySet()) {
 			descStr += "\n      " + rank + "等奖: " + prizeInfoSummary.get(rank) + " 注";
@@ -233,6 +235,9 @@ public class MessageNotifierImpl implements MessageNotifier {
 				}
 			}
 		}
+		
+		sumPrizeInfoMap = new TreeMap<String, Integer>(sumPrizeInfoMap);
+		
 		return sumPrizeInfoMap;
 	}
 
@@ -275,8 +280,10 @@ public class MessageNotifierImpl implements MessageNotifier {
 		String title = "恭喜中奖!" + lotteryType.getTypeName() + openInfo.getPeriod() + "期中奖结果";
 		news.setTitle(title);
 		news.setPicUrl("");
-		
-		String descStr = "开奖号码: " + openInfo.getNumber() + "\n\n";
+
+		String number = openInfo.getNumber().replaceAll(",", " ").replaceAll("\\+", " \\+ ") + "\n";
+		String descStr = lotteryType.getTypeName() + " - " + openInfo.getPeriod() + "期\n";
+		descStr = "开奖号码: " + number + "\n\n";
 		descStr += "中奖结果: ";
 		for (String rank : prizeInfoSummary.keySet()) {
 			descStr += "\n      " + rank + "等奖: " + prizeInfoSummary.get(rank) + " 注";
