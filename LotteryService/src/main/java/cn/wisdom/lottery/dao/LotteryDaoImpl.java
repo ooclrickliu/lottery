@@ -117,6 +117,8 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ "prize_bonus = ?, prize_state = 'Win' "
 			+ "where lottery_id = ? and period= ?";
 	
+	private static final String UPDATE_REDPACK_PRIZE_INFO = "update lottery_redpack set prize_bonus = ? where id = ?";
+	
 	private static final String GET_UNPAID_LOTTERY = "select id from lottery where pay_state = 'UnPaid' or pay_state = 'PaidFail'";
 	private static final String DELETE_UNPAID_PERIOD = "delete from lottery_period "
 			+ "where lottery_id in (" + GET_UNPAID_LOTTERY + ")";
@@ -542,7 +544,31 @@ public class LotteryDaoImpl implements LotteryDao {
 	}
 
 	@Override
-	public void updatePrizeInfo(List<LotteryPeriod> prizeLotteries) {
+	public void updatePrizeInfo(List<LotteryPeriod> prizeLotteries, List<LotteryRedpack> prizeLotteryRedpacks) {
+		updatePeriodPrizeInfo(prizeLotteries);
+		
+		updateRedpackPrizeInfo(prizeLotteryRedpacks);
+	}
+
+	private void updateRedpackPrizeInfo(
+			List<LotteryRedpack> prizeLotteryRedpacks) {
+		if (CollectionUtils.isNotEmpty(prizeLotteryRedpacks)) {
+			List<Object[]> batchArgs = new ArrayList<Object[]>();
+			for (LotteryRedpack lotteryRedpack : prizeLotteryRedpacks) {
+				Object[] args = new Object[2];
+				args[0] = lotteryRedpack.getPrizeBonus();
+				args[1] = lotteryRedpack.getId();
+
+				batchArgs.add(args);
+			}
+			
+			String errMsg = "Failed to update redpack prize info.";
+
+			daoHelper.batchUpdate(UPDATE_REDPACK_PRIZE_INFO, batchArgs, errMsg);
+		}
+	}
+
+	private void updatePeriodPrizeInfo(List<LotteryPeriod> prizeLotteries) {
 		List<Object[]> batchArgs = new ArrayList<Object[]>();
 		for (LotteryPeriod lotteryPeriod : prizeLotteries) {
 			Object[] args = new Object[4];
@@ -638,9 +664,24 @@ public class LotteryDaoImpl implements LotteryDao {
 			for (Lottery lottery : lotteries) {
 				lottery.getRedpacks().add(redpackMap.get(lottery.getId()));
 			}
+			
+			lotteries = this.sortByReceiveTime(redpacks, lotteries);
 		}
-		
 
 		return lotteries;
+	}
+
+	private List<Lottery> sortByReceiveTime(List<LotteryRedpack> redpacks,
+			List<Lottery> lotteries) {
+		List<Lottery> retList = new ArrayList<Lottery>();
+		for (LotteryRedpack redpack : redpacks) {
+			for (Lottery lottery : lotteries) {
+				if (lottery.getRedpacks().get(0) == redpack) {
+					retList.add(lottery);
+					break;
+				}
+			}
+		}
+		return retList;
 	}
 }

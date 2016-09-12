@@ -8,6 +8,7 @@ import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.LotteryRedpack;
 import cn.wisdom.lottery.dao.vo.PageInfo;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.service.exception.ServiceException;
@@ -96,7 +97,7 @@ public interface LotteryServiceFacade {
 
 	int getPrizeBonus(Map<String, Map<String, Integer>> prizeInfo);
 
-	void updatePrizeInfo(List<LotteryPeriod> prizeLotteries);
+	void updatePrizeInfo(List<LotteryPeriod> prizeLotteries, List<LotteryRedpack> prizeLotteryRedpacks);
 
 	// /////////WxPay////////////////
 	Map<String, String> unifiedOrder(Lottery lottery, String openId,

@@ -47,7 +47,7 @@ public interface LotteryDao {
 
 	List<Lottery> getPaidLotteries(LotteryType lotteryType, int period);
 
-	void updatePrizeInfo(List<LotteryPeriod> prizeLotteries);
+	void updatePrizeInfo(List<LotteryPeriod> prizeLotteries, List<LotteryRedpack> prizeLotteryRedpacks);
 
 	void updatePrizeState(int period, PrizeState prizeState);
 

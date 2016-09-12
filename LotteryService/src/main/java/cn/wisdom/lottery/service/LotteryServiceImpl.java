@@ -322,9 +322,9 @@ public class LotteryServiceImpl implements LotteryService
 	}
 
     @Override
-    public void updatePrizeInfo(List<LotteryPeriod> prizeLotteries)
+    public void updatePrizeInfo(List<LotteryPeriod> prizeLotteries, List<LotteryRedpack> prizeLotteryRedpacks)
     {
-        lotteryDao.updatePrizeInfo(prizeLotteries);
+        lotteryDao.updatePrizeInfo(prizeLotteries, prizeLotteryRedpacks);
     }
 
     @Override

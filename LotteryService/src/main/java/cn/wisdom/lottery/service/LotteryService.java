@@ -14,6 +14,7 @@ import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.LotteryRedpack;
 import cn.wisdom.lottery.dao.vo.PageInfo;
 import cn.wisdom.lottery.service.exception.ServiceException;
 
@@ -119,8 +120,9 @@ public interface LotteryService
 	 * Update lottery prize info.
 	 * 
 	 * @param prizeLotteries
+	 * @param prizeLotteryRedpacks 
 	 */
-	void updatePrizeInfo(List<LotteryPeriod> prizeLotteries);
+	void updatePrizeInfo(List<LotteryPeriod> prizeLotteries, List<LotteryRedpack> prizeLotteryRedpacks);
 
 	/**
 	 * Get customer's latest lottery.

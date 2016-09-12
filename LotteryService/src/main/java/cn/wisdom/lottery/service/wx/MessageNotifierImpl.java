@@ -207,7 +207,7 @@ public class MessageNotifierImpl implements MessageNotifier {
 		news.setPicUrl("");
 		
 		String number = openInfo.getNumber().replaceAll(",", " ").replaceAll("\\+", " \\+ ") + "\n";
-		String descStr = "开奖号码: " + number + "\n\n";
+		String descStr = "开奖号码: " + number + "\n";
 		descStr += "中奖结果: ";
 		for (String rank : prizeInfoSummary.keySet()) {
 			descStr += "\n      " + rank + "等奖: " + prizeInfoSummary.get(rank) + " 注";
@@ -277,13 +277,13 @@ public class MessageNotifierImpl implements MessageNotifier {
 	private WxArticle buildCustomerPrizeNotifyMessage(LotteryType lotteryType,
 			PrizeLotterySSQ openInfo, Map<String, Integer> prizeInfoSummary) {
 		WxArticle news = new WxArticle();
-		String title = "恭喜中奖!" + lotteryType.getTypeName() + openInfo.getPeriod() + "期中奖结果";
+		String title = "恭喜中奖!";
 		news.setTitle(title);
 		news.setPicUrl("");
 
 		String number = openInfo.getNumber().replaceAll(",", " ").replaceAll("\\+", " \\+ ") + "\n";
 		String descStr = lotteryType.getTypeName() + " - " + openInfo.getPeriod() + "期\n";
-		descStr = "开奖号码: " + number + "\n\n";
+		descStr += "开奖号码: " + number + "\n";
 		descStr += "中奖结果: ";
 		for (String rank : prizeInfoSummary.keySet()) {
 			descStr += "\n      " + rank + "等奖: " + prizeInfoSummary.get(rank) + " 注";

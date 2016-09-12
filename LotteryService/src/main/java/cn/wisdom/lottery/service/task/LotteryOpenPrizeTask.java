@@ -16,6 +16,7 @@ import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PrizeState;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
+import cn.wisdom.lottery.dao.vo.LotteryRedpack;
 import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
 import cn.wisdom.lottery.service.exception.ServiceException;
@@ -109,6 +110,7 @@ public class LotteryOpenPrizeTask {
 			// 4. calculate and update prize info.
 			List<Lottery> prizeLotteries = new ArrayList<Lottery>();
 			List<LotteryPeriod> prizeLotteryPeriods = new ArrayList<LotteryPeriod>();
+			List<LotteryRedpack> prizeLotteryRedpacks = new ArrayList<LotteryRedpack>();
 			for (Lottery lottery : paidLotteries) {
 				Map<String, Map<String, Integer>> prizeInfo = lotteryServiceFacade.getPrizeInfo(lottery, openInfo);
 				
@@ -127,11 +129,12 @@ public class LotteryOpenPrizeTask {
 					
 					// redpack
 					lotteryServiceFacade.calculateRedpacksPrize(lottery);
+					prizeLotteryRedpacks.addAll(lottery.getRedpacks());
 				}
 			}
 			
 			if (CollectionUtils.isNotEmpty(prizeLotteryPeriods)) {
-				lotteryServiceFacade.updatePrizeInfo(prizeLotteryPeriods);
+				lotteryServiceFacade.updatePrizeInfo(prizeLotteryPeriods, prizeLotteryRedpacks);
 			}
 			
 			// 5. notify owner & merchant

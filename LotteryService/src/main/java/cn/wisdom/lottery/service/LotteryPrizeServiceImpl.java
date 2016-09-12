@@ -152,7 +152,13 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 			int totalBonus = lottery.getPeriods().get(0).getPrizeBonus();
 			float bonus = 0;
 			for (LotteryRedpack lotteryRedpack : lottery.getRedpacks()) {
-				bonus = totalBonus * lotteryRedpack.getRate() / 100;
+				if (totalBonus == BONUS_NOT_SURE) {
+					bonus = BONUS_NOT_SURE;
+				}
+				else 
+				{
+					bonus = totalBonus * lotteryRedpack.getRate() / 100;
+				}
 				lotteryRedpack.setPrizeBonus(bonus);
 			}
 		}
