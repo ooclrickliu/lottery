@@ -26,7 +26,7 @@ public class LotteryWxPayServiceImpl implements LotteryWxPayService
             throws ServiceException
     {
         Map<String, String> params = new HashMap<String, String>();
-        String totalFee =  "" + (int)(lottery.getTotalFee() * 100);
+        String totalFee =  "" + (lottery.getTotalFee() * 100);
         
         params.put("out_trade_no", lottery.getOrderNo());
         params.put("total_fee", totalFee);

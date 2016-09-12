@@ -86,7 +86,7 @@ public class LotteryServiceImpl implements LotteryService
         }
         else
         {
-            lottery.setTotalFee(0.01f);
+            lottery.setTotalFee(1);
         }
 
         lottery.setOrderNo(NumberGeneratorUtil

@@ -75,7 +75,7 @@ public class LotteryPrintNotifyTask {
 				response.setLotteries(merchantLotteryMap.get(merchant));
 				
 				// 4. sum fee
-				float totalFee = 0;
+				int totalFee = 0;
 				for (Lottery lottery : response.getLotteries()) {
 					totalFee += (lottery.getTotalFee() / lottery.getPeriodNum());
 				}

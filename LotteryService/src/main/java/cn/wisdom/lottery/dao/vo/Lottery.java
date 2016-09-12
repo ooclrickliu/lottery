@@ -28,7 +28,7 @@ public class Lottery extends BaseEntity
     private String orderNo;
 
     @Column("total_fee")
-    private float totalFee;
+    private int totalFee;
 
     @Column("remark")
     private String remark;
@@ -141,12 +141,12 @@ public class Lottery extends BaseEntity
         this.orderNo = orderNo;
     }
 
-    public float getTotalFee()
+    public int getTotalFee()
     {
         return totalFee;
     }
 
-    public void setTotalFee(float totalFee)
+    public void setTotalFee(int totalFee)
     {
         this.totalFee = totalFee;
     }

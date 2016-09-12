@@ -34,7 +34,8 @@ public class PrizeLotterySSQ extends PrizeLottery {
 	}
 	
 	public static void main(String[] args) {
-		PrizeLotterySSQ ssq = new PrizeLotterySSQ(0, "06,10,11,12,20,25,32+12,13");
+//		PrizeLotterySSQ ssq = new PrizeLotterySSQ(0, "06,10,11,12,20,25,32+12,13");
+		PrizeLotterySSQ ssq = new PrizeLotterySSQ(0, "01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,18,20,21,22,23,24,25,26,27,28,29,30,31,32+01,02,03,04,05,06,07,08,09,10,12,13,14,15,16");
 		System.out.println(ssq.getRed());
 		System.out.println(ssq.getBlue());
 	}

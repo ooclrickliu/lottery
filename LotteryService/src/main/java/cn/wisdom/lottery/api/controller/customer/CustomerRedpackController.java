@@ -126,7 +126,7 @@ public class CustomerRedpackController {
 		item.setLotteryId(lottery.getId());
 		item.setCount(lottery.getRedpackCount());
 		item.setqCount(lottery.getSnatchedNum());
-		item.setFee((int) lottery.getTotalFee());
+		item.setFee(lottery.getTotalFee());
 		item.setPrizeState(lottery.getPeriods().get(0).getPrizeState());
 		item.setType(lottery.getBusinessType().name());
 		item.setSendTime(lottery.getSendTime());
