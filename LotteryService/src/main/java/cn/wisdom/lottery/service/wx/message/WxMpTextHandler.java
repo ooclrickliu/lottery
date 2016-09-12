@@ -1,6 +1,9 @@
 package cn.wisdom.lottery.service.wx.message;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSession;
@@ -30,11 +33,20 @@ public class WxMpTextHandler extends AbstractWxMpHandler {
 	private static final char CHAR_AT = '@';
 
 	private static final String PARAM_USER = "user";
+	
+	@Autowired
+	private HelpMessageBuilder helpMessageBuilder;
 
 	@Autowired
 	private AppProperty appProperty;
 	
 	private static final String menu = "请输入任意有效的双色球期数查询开奖信息，如：2016091";
+	
+	private static final Set<Integer> HELP_CODES = new HashSet<Integer>();
+	static {
+		Integer[] codes = {1, 2, 3, 4, 5, 21, 22, 23, 24, 31, 32, 41, 42, 43, 44};
+		HELP_CODES.addAll(Arrays.asList(codes));
+	}
 	
 	@Autowired
 	private LotteryServiceFacade lotteryServiceFacade;
@@ -48,13 +60,23 @@ public class WxMpTextHandler extends AbstractWxMpHandler {
 			WxSessionManager sessionManager) throws WxErrorException {
 		WxMpXmlOutMessage response = null;
 		
-//		response = buildOpenInfoResponse(wxMessage);
-		
-		buildKfResponse(wxMessage, wxMpService, sessionManager);
+		if (isHelpCode(wxMessage.getContent())) {
+			response = helpMessageBuilder.buildHelpMessage(wxMessage);
+		}
+		else if (isValidPeriod(wxMessage.getContent())) {
+			response = buildOpenInfoResponse(wxMessage);
+		}
+		else {
+			buildKfResponse(wxMessage, wxMpService, sessionManager);
+		}
 		
 		return response;
 	}
-	
+
+	private boolean isHelpCode(String content) {
+		return HELP_CODES.contains(DataConvertUtils.toInt(content));
+	}
+
 	private void buildKfResponse(WxMpXmlMessage wxMessage, WxMpService wxMpService, WxSessionManager sessionManager) {
 		try {
 			if (isCustomer(wxMessage.getFromUserName())) {
@@ -171,8 +193,12 @@ public class WxMpTextHandler extends AbstractWxMpHandler {
 		
 		int period = DataConvertUtils.toInt(keyword);
 		int year = period / 1000;
+		int no = period - year * 100;
 		
-		if (year < 2015 || year > 2016) {
+		if (year < 2016) {
+			return false;
+		}
+		if (no < 1 || no > 160) {
 			return false;
 		}
 		

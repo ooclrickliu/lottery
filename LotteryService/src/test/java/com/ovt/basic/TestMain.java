@@ -10,6 +10,7 @@ package com.ovt.basic;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.apache.http.client.utils.URLEncodedUtils;
 
@@ -157,7 +158,7 @@ public class TestMain
 //    	UserMapper userMapper = new UserMapper();
 //    	
 //    	System.out.println("Done");
-    	System.out.println(System.currentTimeMillis());
+//    	System.out.println(System.currentTimeMillis());
     	
     	
 //    	try {
@@ -175,22 +176,25 @@ public class TestMain
 //    	String input = "http://www.southwisdom.cn/#/select";
 //		System.out.println(URIUtil.encodeURIComponent(input));
 
-    	int times = 5;
-    	for (int i = 0; i < times; i++) {
-    		System.out.println("remainRate       remainCount         rate");
-    		System.out.println("------------------------------------------");
-    		int remainCount = 10;
-    		int remainRate = 100;
-    		
-    		while(remainCount > 0)
-    		{
-    			int rate = randomRate(remainCount, remainRate);
-    			System.out.println(remainCount + "      " + remainRate + "       " + rate);
-    			
-    			remainCount--;
-    			remainRate -= rate;
-    		}
-		}
+//    	int times = 5;
+//    	for (int i = 0; i < times; i++) {
+//    		System.out.println("remainRate       remainCount         rate");
+//    		System.out.println("------------------------------------------");
+//    		int remainCount = 10;
+//    		int remainRate = 100;
+//    		
+//    		while(remainCount > 0)
+//    		{
+//    			int rate = randomRate(remainCount, remainRate);
+//    			System.out.println(remainCount + "      " + remainRate + "       " + rate);
+//    			
+//    			remainCount--;
+//    			remainRate -= rate;
+//    		}
+//		}
+    	
+    	Pattern HELP_CODE_PATTERN = Pattern.compile("[\\d]{1,2}$");
+    	System.out.println(HELP_CODE_PATTERN.matcher("2a").matches());
     }
     
     public static int randomRate(int remainCount, int remainRate) {
