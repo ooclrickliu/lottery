@@ -112,7 +112,7 @@ public class HelpMessageBuilder implements MessageBuilder {
 		title.setTitle("兑奖");
 		menu = new WxMpXmlOutNewsMessage.Item();
 		content = "31. 如何兑奖\n";
-		content += "32. 兑奖是否收费\n";
+		content += "32. 兑奖是否收费";
 		menu.setTitle(content);
 		dj.addArticle(title);
 		dj.addArticle(menu);
@@ -122,7 +122,7 @@ public class HelpMessageBuilder implements MessageBuilder {
 		// 4
 		NewsBuilder hb = WxMpXmlOutMessage.NEWS();
 		title = new WxMpXmlOutNewsMessage.Item();
-		title.setTitle("兑奖");
+		title.setTitle("红包");
 		menu = new WxMpXmlOutNewsMessage.Item();
 		content = "41. 什么是奖金红包\n";
 		content += "42. 什么是单注红包\n";

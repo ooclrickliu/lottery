@@ -193,7 +193,7 @@ public class WxMpTextHandler extends AbstractWxMpHandler {
 		
 		int period = DataConvertUtils.toInt(keyword);
 		int year = period / 1000;
-		int no = period - year * 100;
+		int no = period - year * 1000;
 		
 		if (year < 2016) {
 			return false;

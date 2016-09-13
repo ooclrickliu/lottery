@@ -2,7 +2,9 @@ package cn.wisdom.lottery.api.response;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
@@ -18,19 +20,28 @@ public class ValidRedpackLottery {
 	
 	private int period;
 	
+	private int times;
+	
 	private Timestamp openTime;
 	
-	private List<String> numbers;
+	private List<Map<String, String>> numbers;
+	
+	private static final String NUMBER = "number";
 	
 	public ValidRedpackLottery(Lottery lottery, LotteryOpenData periodInfo)
 	{
 		this.id = lottery.getId();
 		this.lotteryType = lottery.getLotteryType();
 		this.period = DataConvertUtils.toInt(periodInfo.getExpect());
+		this.times = lottery.getTimes();
 		this.openTime = new Timestamp(DataConvertUtils.toLong(periodInfo.getOpentimestamp()));
-		this.numbers = new ArrayList<String>();
+		this.numbers = new ArrayList<Map<String, String>>();
+		
+		Map<String, String> number;
 		for (LotteryNumber lotteryNumber : lottery.getNumbers()) {
-			this.numbers.add(lotteryNumber.getNumber());
+			number = new HashMap<String, String>();
+			number.put(NUMBER, lotteryNumber.getNumber());
+			this.numbers.add(number);
 		}
 	}
 
@@ -66,12 +77,20 @@ public class ValidRedpackLottery {
 		this.openTime = openTime;
 	}
 
-	public List<String> getNumbers() {
+	public List<Map<String, String>> getNumbers() {
 		return numbers;
 	}
 
-	public void setNumbers(List<String> numbers) {
+	public void setNumbers(List<Map<String, String>> numbers) {
 		this.numbers = numbers;
+	}
+
+	public int getTimes() {
+		return times;
+	}
+
+	public void setTimes(int times) {
+		this.times = times;
 	}
 
 	
