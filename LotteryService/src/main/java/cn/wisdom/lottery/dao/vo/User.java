@@ -61,7 +61,7 @@ public class User extends BaseEntity
 	@Column("unionid")
     private String unionid;
 	
-	@Column("unionid")
+	@Column("subscribe")
 	private boolean subscribe;
 
 	@Column("subscribe_time")
