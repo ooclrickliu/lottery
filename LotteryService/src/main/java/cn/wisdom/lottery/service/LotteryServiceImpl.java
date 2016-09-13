@@ -29,8 +29,8 @@ import cn.wisdom.lottery.dao.constant.BusinessType;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.constant.PayState;
 import cn.wisdom.lottery.dao.constant.PrizeState;
-import cn.wisdom.lottery.dao.threadpool.OVTask;
-import cn.wisdom.lottery.dao.threadpool.OVThreadPoolExecutor;
+import cn.wisdom.lottery.dao.threadpool.Task;
+import cn.wisdom.lottery.dao.threadpool.TaskExecutor;
 import cn.wisdom.lottery.dao.vo.AppProperty;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
@@ -70,7 +70,7 @@ public class LotteryServiceImpl implements LotteryService
 	private WXService wxService;
     
     @Autowired
-    private OVThreadPoolExecutor executor;
+    private TaskExecutor executor;
     
     private ConcurrentHashMap<Long, ReadWriteLock> lockMap = new ConcurrentHashMap<Long, ReadWriteLock>();
 
@@ -294,10 +294,10 @@ public class LotteryServiceImpl implements LotteryService
 
 	private void distribute(final Lottery lottery) {
 		// distribute to merchant.
-		executor.submitTask(new OVTask() {
+		executor.submitTask(new Task() {
 			
 			@Override
-			public void run() {
+			public void execute() {
 		        try {
 					lotteryDistributeService.distribute(lottery);
 				} catch (ServiceException e) {
@@ -306,7 +306,7 @@ public class LotteryServiceImpl implements LotteryService
 			}
 			
 			@Override
-			public String getDescption() {
+			public String getName() {
 				return "LotteryDistribute";
 			}
 		});

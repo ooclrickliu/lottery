@@ -30,7 +30,7 @@ import cn.wisdom.lottery.dao.constant.LoggerConstants;
  * @Since [OVT Cloud Platform]/[Common] 1.0
  */
 @Service
-public class OVThreadPoolExecutor
+public class TaskExecutor
 {
     private ExecutorService executorService;
 
@@ -74,13 +74,13 @@ public class OVThreadPoolExecutor
         logger.info("Shut down thread pool complete.");
     }
 
-    public Future<?> submitTask(OVTask task)
+    public Future<?> submitTask(Task task)
     {
         if (executorService.isShutdown())
         {
             logger.info(
                     "The global thread pool has been shut down, the task [{}] will be ignored!",
-                    task.getDescption());
+                    task.getName());
             return null;
         }
 

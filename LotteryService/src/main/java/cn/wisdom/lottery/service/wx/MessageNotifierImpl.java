@@ -19,6 +19,8 @@ import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
 import cn.wisdom.lottery.common.utils.CollectionUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
+import cn.wisdom.lottery.dao.threadpool.Task;
+import cn.wisdom.lottery.dao.threadpool.TaskExecutor;
 import cn.wisdom.lottery.dao.vo.AppProperty;
 import cn.wisdom.lottery.dao.vo.Lottery;
 import cn.wisdom.lottery.dao.vo.LotteryPeriod;
@@ -41,6 +43,9 @@ public class MessageNotifierImpl implements MessageNotifier {
 
 	@Autowired
 	private AppProperty appProperty;
+	
+	@Autowired
+	private TaskExecutor taskExecutor;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageNotifierImpl.class.getName());
 
@@ -67,136 +72,196 @@ public class MessageNotifierImpl implements MessageNotifier {
 	}
 	
 	@Override
-	public void notifyMerchantNewPayRequest(Lottery lottery) {
-		WxArticle news = new WxArticle();
-		news.setTitle("新支付确认");
-		news.setPicUrl(appProperty.imgServerUrl + lottery.getPayImgUrl());
-
-		User customer = userService.getUserById(lottery.getOwner());
-		String descStr = "购买人: " + customer.getNickName();
-		descStr += "\n应付金额: " + lottery.getTotalFee() + "元";
+	public void notifyMerchantNewPayRequest(final Lottery lottery) {
 		
-		String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
-		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
-		news.setUrl(url);
+		taskExecutor.submitTask(new Task() {
+			
+			@Override
+			public void execute() {
+				WxArticle news = new WxArticle();
+				news.setTitle("新支付确认");
+				news.setPicUrl(appProperty.imgServerUrl + lottery.getPayImgUrl());
 
-		news.setDescription(descStr);
+				User customer = userService.getUserById(lottery.getOwner());
+				String descStr = "购买人: " + customer.getNickName();
+				descStr += "\n应付金额: " + lottery.getTotalFee() + "元";
+				
+				String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
+				String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+				news.setUrl(url);
+
+				news.setDescription(descStr);
+				
+				sendNewsMessage(news, appProperty.defaultOperator);
+			}
+			
+			@Override
+			public String getName() {
+				return "notifyMerchantNewPayRequest";
+			}
+		});
 		
-		sendNewsMessage(news, appProperty.defaultOperator);
 		
 	}
 	
 	@Override
-	public void notifyCustomerPaidSuccess(Lottery lottery)
+	public void notifyCustomerPaidSuccess(final Lottery lottery)
 	{
-		WxArticle news = new WxArticle();
-		news.setTitle("投注成功");
-		news.setPicUrl("");
+		taskExecutor.submitTask(new Task() {
 
-		LotteryPeriod period = lottery.getPeriods().get(0);
-		String descStr = lottery.getLotteryType().getTypeName() + " - " + period.getPeriod() + " 期\n";
-		descStr += "倍数: " + lottery.getTimes();
-		if (lottery.getPeriods().size() > 1) {
-			descStr += "        追号: " + lottery.getPeriods().size() + "期";
-		}
-		descStr += "\n投注号码:\n";
-		
-		int num = lottery.getNumbers().size();
-		for (int i = 0; i < num && i < 5; i++) { // 最多显示5组号码
-			descStr += "    "
-					+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
-					.replaceAll("\\+", " \\+ ") + "\n";
-		}
-		if (num > 5) {
-			descStr += "    ...";
-		}
-		User user = userService.getUserById(lottery.getOwner());
-		
-		String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
-		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
-		news.setUrl(url);
-		
-//		descStr += news.getUrl();
-		news.setDescription(descStr);
-		
-		sendNewsMessage(news, user.getOpenid());
+			@Override
+			public void execute() {
+				WxArticle news = new WxArticle();
+				news.setTitle("投注成功");
+				news.setPicUrl("");
+
+				LotteryPeriod period = lottery.getPeriods().get(0);
+				String descStr = lottery.getLotteryType().getTypeName() + " - " + period.getPeriod() + " 期\n";
+				descStr += "倍数: " + lottery.getTimes();
+				if (lottery.getPeriods().size() > 1) {
+					descStr += "        追号: " + lottery.getPeriods().size() + "期";
+				}
+				descStr += "\n投注号码:\n";
+				
+				int num = lottery.getNumbers().size();
+				for (int i = 0; i < num && i < 5; i++) { // 最多显示5组号码
+					descStr += "    "
+							+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
+							.replaceAll("\\+", " \\+ ") + "\n";
+				}
+				if (num > 5) {
+					descStr += "    ...";
+				}
+				User user = userService.getUserById(lottery.getOwner());
+				
+				String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
+				String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+				news.setUrl(url);
+				
+//				descStr += news.getUrl();
+				news.setDescription(descStr);
+				
+				sendNewsMessage(news, user.getOpenid());
+			}
+
+			@Override
+			public String getName() {
+				return "notifyCustomerPaidSuccess";
+			}
+		});
 	}
 
 	@Override
-	public void notifyCustomerPaidFail(Lottery lottery) {
-		WxArticle news = new WxArticle();
-		news.setTitle("支付失败");
-		news.setPicUrl("");
+	public void notifyCustomerPaidFail(final Lottery lottery) {
+		taskExecutor.submitTask(new Task() {
 
-		String descStr = "失败原因可能是: \n";
-//		String descStr = lottery.getLotteryType().getTypeName() + " - " + period.getPeriod() + " 期\n";
-		descStr += "     1.上传的支付凭证无效\n";
-		descStr += "     2.支付金额有误";
+			@Override
+			public void execute() {
+				WxArticle news = new WxArticle();
+				news.setTitle("支付失败");
+				news.setPicUrl("");
+
+				String descStr = "失败原因可能是: \n";
+//				String descStr = lottery.getLotteryType().getTypeName() + " - " + period.getPeriod() + " 期\n";
+				descStr += "     1.上传的支付凭证无效\n";
+				descStr += "     2.支付金额有误";
+				
+				User user = userService.getUserById(lottery.getOwner());
+				
+				String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
+				String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+				news.setUrl(url);
+				
+				news.setDescription(descStr);
+				
+				sendNewsMessage(news, user.getOpenid());
+			}
+
+			@Override
+			public String getName() {
+				return "notifyCustomerPaidFail";
+			}
+			
+		});
 		
-		User user = userService.getUserById(lottery.getOwner());
-		
-		String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
-		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
-		news.setUrl(url);
-		
-		news.setDescription(descStr);
-		
-		sendNewsMessage(news, user.getOpenid());
 	}
 
 	@Override
-	public void notifyMerchantDistributed(Lottery lottery, String openid)
+	public void notifyMerchantDistributed(final Lottery lottery, final String openid)
 	{
-		WxArticle news = new WxArticle();
-		news.setTitle("新投注通知");
-		news.setPicUrl("");
-		
-		LotteryPeriod period = lottery.getPeriods().get(0);
-		String descStr = lottery.getLotteryType().getTypeName() + " - " + period.getPeriod() + "期\n";
-		descStr += "倍数: " + lottery.getTimes();
-		if (lottery.getPeriods().size() > 1) {
-			descStr += "        追号: " + lottery.getPeriods().size() + "期";
-		}
-		descStr += "\n投注号码:\n";
-		
-		for (int i = 0; i < lottery.getNumbers().size(); i++) {
-			descStr += "    "
-					+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
-					.replaceAll("\\+", " \\+ ") + "\n";
-		}
-		descStr += "\n金额: " + lottery.getTotalFee() + "元";
-		
-		String redirectUrl = "http://cai.southwisdom.cn/#/mclottery/" + lottery.getPeriods().get(0).getId() + "/";
-		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
-		news.setUrl(url);
+		taskExecutor.submitTask(new Task() {
 
-		news.setDescription(descStr);
+			@Override
+			public void execute() {
+				WxArticle news = new WxArticle();
+				news.setTitle("新投注通知");
+				news.setPicUrl("");
+				
+				LotteryPeriod period = lottery.getPeriods().get(0);
+				String descStr = lottery.getLotteryType().getTypeName() + " - " + period.getPeriod() + "期\n";
+				descStr += "倍数: " + lottery.getTimes();
+				if (lottery.getPeriods().size() > 1) {
+					descStr += "        追号: " + lottery.getPeriods().size() + "期";
+				}
+				descStr += "\n投注号码:\n";
+				
+				for (int i = 0; i < lottery.getNumbers().size(); i++) {
+					descStr += "    "
+							+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
+							.replaceAll("\\+", " \\+ ") + "\n";
+				}
+				descStr += "\n金额: " + lottery.getTotalFee() + "元";
+				
+				String redirectUrl = "http://cai.southwisdom.cn/#/mclottery/" + lottery.getPeriods().get(0).getId() + "/";
+				String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+				news.setUrl(url);
+
+				news.setDescription(descStr);
+				
+				sendNewsMessage(news, openid);
+			}
+
+			@Override
+			public String getName() {
+				return "notifyMerchantDistributed";
+			}
+			
+		});
 		
-		sendNewsMessage(news, openid);
 	}
 
 	@Override
-	public void notifyMerchantPrizeInfo(LotteryType lotteryType, PrizeLotterySSQ openInfo, List<Lottery> prizeLotteries) {
-		
-		if (CollectionUtils.isNotEmpty(prizeLotteries)) {
-			Map<Long, List<Lottery>> prizeLotteryMap = this.groupByMerchant(prizeLotteries);
-			for (long merchantId : prizeLotteryMap.keySet()) {
-				
-				Map<String, Integer> prizeInfoSummary = this.sumPrizeInfo(prizeLotteryMap.get(merchantId));
-				
-				WxArticle news = this.buildMerchantPrizeNotifyMessage(lotteryType, openInfo, prizeInfoSummary);
-				
-				User merchant = userService.getUserById(merchantId);
-				
-				if (merchant != null) {
-					sendNewsMessage(news, merchant.getOpenid());
+	public void notifyMerchantPrizeInfo(final LotteryType lotteryType, final PrizeLotterySSQ openInfo, final List<Lottery> prizeLotteries) {
+		taskExecutor.submitTask(new Task() {
+
+			@Override
+			public void execute() {
+				if (CollectionUtils.isNotEmpty(prizeLotteries)) {
+					Map<Long, List<Lottery>> prizeLotteryMap = groupByMerchant(prizeLotteries);
+					for (long merchantId : prizeLotteryMap.keySet()) {
+						
+						Map<String, Integer> prizeInfoSummary = sumPrizeInfo(prizeLotteryMap.get(merchantId));
+						
+						WxArticle news = buildMerchantPrizeNotifyMessage(lotteryType, openInfo, prizeInfoSummary);
+						
+						User merchant = userService.getUserById(merchantId);
+						
+						if (merchant != null) {
+							sendNewsMessage(news, merchant.getOpenid());
+						}
+					}
+				}
+				else {
+					sendTextMessage("本期(" + openInfo.getPeriod() + ")无中奖！", appProperty.defaultOperator);
 				}
 			}
-		}
-		else {
-			sendTextMessage("本期(" + openInfo.getPeriod() + ")无中奖！", appProperty.defaultOperator);
-		}
 
+			@Override
+			public String getName() {
+				return "notifyMerchantPrizeInfo";
+			}
+			
+		});
 	}
 
 	private WxArticle buildMerchantPrizeNotifyMessage(LotteryType lotteryType, PrizeLotterySSQ openInfo, 
@@ -256,21 +321,33 @@ public class MessageNotifierImpl implements MessageNotifier {
 	}
 
 	@Override
-	public void notifyCustomerPrizeInfo(LotteryType lotteryType, PrizeLotterySSQ openInfo, List<Lottery> prizeLotteries) {
+	public void notifyCustomerPrizeInfo(final LotteryType lotteryType, final PrizeLotterySSQ openInfo, final List<Lottery> prizeLotteries) {
 		if (CollectionUtils.isNotEmpty(prizeLotteries)) {
-			Map<Long, List<Lottery>> prizeLotteryMap = this.groupByOwner(prizeLotteries);
-			for (long owner : prizeLotteryMap.keySet()) {
+			taskExecutor.submitTask(new Task() {
 				
-				Map<String, Integer> prizeInfoSummary = this.sumPrizeInfo(prizeLotteryMap.get(owner));
-				
-				WxArticle news = this.buildCustomerPrizeNotifyMessage(lotteryType, openInfo, prizeInfoSummary);
-				
-				User ownerObj = userService.getUserById(owner);
-				
-				if (ownerObj != null) {
-					sendNewsMessage(news, ownerObj.getOpenid());
+				@Override
+				public void execute() {
+					Map<Long, List<Lottery>> prizeLotteryMap = groupByOwner(prizeLotteries);
+					for (long owner : prizeLotteryMap.keySet()) {
+						
+						Map<String, Integer> prizeInfoSummary = sumPrizeInfo(prizeLotteryMap.get(owner));
+						
+						WxArticle news = buildCustomerPrizeNotifyMessage(lotteryType, openInfo, prizeInfoSummary);
+						
+						User ownerObj = userService.getUserById(owner);
+						
+						if (ownerObj != null) {
+							sendNewsMessage(news, ownerObj.getOpenid());
+						}
+					}
 				}
-			}
+				
+				@Override
+				public String getName() {
+					return "notifyCustomerPrizeInfo";
+				}
+				
+			});
 		}
 	}
 
@@ -310,80 +387,142 @@ public class MessageNotifierImpl implements MessageNotifier {
 	}
 
 	@Override
-	public void notifyOperatorNewCustomerSubscribed(User customer) {
-		
-		sendTextMessage("新用户关注 - " + customer.getNickName() + "(" + customer.getId() + ")", appProperty.defaultOperator);
-	}
-	
-	@Override
-	public void notifyOperatorCustomerUnSubscribe(User customer) {
-		
-		if (!customer.getOpenid().equals(appProperty.defaultOperator)) {
-			sendTextMessage("用户取消关注 - " + customer.getNickName() + "(" + customer.getId() + ")", appProperty.defaultOperator);
-		}
-	}
-	
-	@Override
-	public void notifyMerchantPrintTickets(long merchant, QueryLotteryResponse response) {
-		User merchantObj = userService.getUserById(merchant);
-		
-		WxArticle news = new WxArticle();
-		String title = LotteryType.SSQ.getTypeName() + response.getOpenInfo().getExpect() + "期销售统计";
-		news.setTitle(title);
-		news.setPicUrl("");
-		
-		String descStr = "彩票站: 【" + merchantObj.getNickName() + "】 的彩票店\n";
-		descStr += "销售量: " + response.getLotteries().size() + " 张\n";
-		descStr += "销售额: " + response.getTotalFee() + " 元\n\n";
-		descStr += "请点击查看彩票清单，及时打印并上传彩票！";
-		
-		news.setDescription(descStr);
-		
-		String redirectUrl = "http://cai.southwisdom.cn/#/mclottery/list/SSQ/" + response.getOpenInfo().getExpect() + "/";
-		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
-		news.setUrl(url);
-		
-//		sendNewsMessage(news, merchantObj.getOpenid());
-		sendNewsMessage(news, appProperty.defaultOperator);
-//		sendNewsMessage(news, "olz_hvsELAlrfI_0715gnh8un04Q");
-	}
-	
-	@Override
-	public void notifyCustomerTicketPrinted(long periodId) {
-		Lottery lottery = lotteryServiceFacade.getLotteryByPeriod(periodId);
-		LotteryPeriod period = lottery.getPeriods().get(0);
-		
-		WxArticle news = new WxArticle();
-		news.setTitle("您的彩票已出票");
-		news.setPicUrl(appProperty.imgServerUrl + period.getTicketImgUrl());
+	public void notifyOperatorNewCustomerSubscribed(final User customer) {
+		taskExecutor.submitTask(new Task() {
 
-		String descStr = lottery.getLotteryType().getTypeName() + " - " + period.getPeriod() + " 期                倍数: " + lottery.getTimes();
-		descStr += "\n投注号码:\n";
+			@Override
+			public void execute() {
+				sendTextMessage("新用户关注 - " + customer.getNickName() + "(" + customer.getId() + ")", appProperty.defaultOperator);
+			}
+
+			@Override
+			public String getName() {
+				return "notifyOperatorNewCustomerSubscribed";
+			}
+			
+		});
 		
-		int num = lottery.getNumbers().size();
-		for (int i = 0; i < num && i < 5; i++) { // 最多显示5组号码
-			descStr += "    "
-					+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
-					.replaceAll("\\+", " \\+ ") + "\n";
-		}
-		if (num > 5) {
-			descStr += "    ...";
-		}
-		User user = userService.getUserById(lottery.getOwner());
+	}
+	
+	@Override
+	public void notifyOperatorCustomerUnSubscribe(final User customer) {
+		taskExecutor.submitTask(new Task() {
+
+			@Override
+			public void execute() {
+				if (!customer.getOpenid().equals(appProperty.defaultOperator)) {
+					sendTextMessage("用户取消关注 - " + customer.getNickName() + "(" + customer.getId() + ")", appProperty.defaultOperator);
+				}
+			}
+
+			@Override
+			public String getName() {
+				return "notifyOperatorCustomerUnSubscribe";
+			}
+			
+		});
+	}
+	
+	@Override
+	public void notifyMerchantPrintTickets(final long merchant, final QueryLotteryResponse response) {
+		taskExecutor.submitTask(new Task() {
+
+			@Override
+			public void execute() {
+				User merchantObj = userService.getUserById(merchant);
+				
+				WxArticle news = new WxArticle();
+				String title = LotteryType.SSQ.getTypeName() + response.getOpenInfo().getExpect() + "期销售统计";
+				news.setTitle(title);
+				news.setPicUrl("");
+				
+				String descStr = "彩票站: 【" + merchantObj.getNickName() + "】 的彩票店\n";
+				descStr += "销售量: " + response.getLotteries().size() + " 张\n";
+				descStr += "销售额: " + response.getTotalFee() + " 元\n\n";
+				descStr += "请点击查看彩票清单，及时打印并上传彩票！";
+				
+				news.setDescription(descStr);
+				
+				String redirectUrl = "http://cai.southwisdom.cn/#/mclottery/list/SSQ/" + response.getOpenInfo().getExpect() + "/";
+				String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+				news.setUrl(url);
+				
+//				sendNewsMessage(news, merchantObj.getOpenid());
+				sendNewsMessage(news, appProperty.defaultOperator);
+//				sendNewsMessage(news, "olz_hvsELAlrfI_0715gnh8un04Q");
+			}
+
+			@Override
+			public String getName() {
+				return "notifyOperatorCustomerUnSubscribe";
+			}
+			
+		});
 		
-		String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
-		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
-		news.setUrl(url);
+	}
+	
+	@Override
+	public void notifyCustomerTicketPrinted(final long periodId) {
+		taskExecutor.submitTask(new Task() {
+
+			@Override
+			public void execute() {
+				Lottery lottery = lotteryServiceFacade.getLotteryByPeriod(periodId);
+				LotteryPeriod period = lottery.getPeriods().get(0);
+				
+				WxArticle news = new WxArticle();
+				news.setTitle("您的彩票已出票");
+				news.setPicUrl(appProperty.imgServerUrl + period.getTicketImgUrl());
+
+				String descStr = lottery.getLotteryType().getTypeName() + " - " + period.getPeriod() + " 期                倍数: " + lottery.getTimes();
+				descStr += "\n投注号码:\n";
+				
+				int num = lottery.getNumbers().size();
+				for (int i = 0; i < num && i < 5; i++) { // 最多显示5组号码
+					descStr += "    "
+							+ lottery.getNumbers().get(i).getNumber().replaceAll(",", " ")
+							.replaceAll("\\+", " \\+ ") + "\n";
+				}
+				if (num > 5) {
+					descStr += "    ...";
+				}
+				User user = userService.getUserById(lottery.getOwner());
+				
+				String redirectUrl = "http://cai.southwisdom.cn/#/lottery/" + lottery.getId() + "/";
+				String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=" + URIUtil.encodeURIComponent(redirectUrl) + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+				news.setUrl(url);
+				
+				news.setDescription(descStr);
+				
+				sendNewsMessage(news, user.getOpenid());
+			}
+
+			@Override
+			public String getName() {
+				return "notifyOperatorCustomerUnSubscribe";
+			}
+			
+		});
 		
-		news.setDescription(descStr);
-		
-		sendNewsMessage(news, user.getOpenid());
 	}
 
 	@Override
-	public void notifySenderRedpackSnatched(long sender, String snatcher) {
-		User senderObj = userService.getUserById(sender);
+	public void notifySenderRedpackSnatched(final long sender, final String snatcher) {
+		taskExecutor.submitTask(new Task() {
+
+			@Override
+			public void execute() {
+				User senderObj = userService.getUserById(sender);
+				
+				sendTextMessage(snatcher + " 领取了你的红包", senderObj.getOpenid());
+			}
+
+			@Override
+			public String getName() {
+				return "notifySenderRedpackSnatched";
+			}
+			
+		});
 		
-		sendTextMessage(snatcher + " 领取了你的红包", senderObj.getOpenid());
 	}
 }
