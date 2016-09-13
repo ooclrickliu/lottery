@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cn.wisdom.lottery.common.utils.DataConvertUtils;
+import cn.wisdom.lottery.dao.vo.AppProperty;
 
 @Component
 public class HelpMessageBuilder implements MessageBuilder {
@@ -26,6 +27,9 @@ public class HelpMessageBuilder implements MessageBuilder {
 	private WxMpXmlOutNewsMessage.Item menu;
 	
 	private WxMpXmlOutNewsMessage.Item note;
+
+	@Autowired
+	private AppProperty appProperty;
 	
 	@PostConstruct
 	private void init() {
@@ -39,7 +43,7 @@ public class HelpMessageBuilder implements MessageBuilder {
 
 	private void initArticle() {
 		title = new WxMpXmlOutNewsMessage.Item();
-		title.setTitle("欢迎关注千彩慧友公众平台");
+		title.setTitle("欢迎光临千彩慧友");
 		
 		menu = new WxMpXmlOutNewsMessage.Item();
 		String content = "1. 平台简介\n";
@@ -48,6 +52,7 @@ public class HelpMessageBuilder implements MessageBuilder {
 		content += "4. 红包\n";
 		content += "5. 开奖查询";
 		menu.setTitle(content);
+		menu.setPicUrl(appProperty.imgServerUrl + "img/help.png");
 
 		note = new WxMpXmlOutNewsMessage.Item();
 		content = "回复对应数字查看使用说明";
@@ -74,7 +79,7 @@ public class HelpMessageBuilder implements MessageBuilder {
 		helpMenu.put(1, "本公众号是与线下实体彩票站合作运营，我们承诺通过本公众号购买的每一注彩票都会及时出票并上传实体彩票照片，您可以通过\"我的-购买记录\"查看彩票照片。");
 		helpMenu.put(21, "双色球每期投注截止时间为每周二、周四、周日晚上7:00，7:00以后投注的为下一期的彩票。");
 		helpMenu.put(22, "目前支持通过识别二维码支付，支付完成后需要您截取并上传支付成功界面。");
-		helpMenu.put(23, "第一步：在微信\"我\" -> \"钱包\" -> 右上角子菜单\"交易记录\"中找到支付记录并截图;\n第二步：回到\"千彩慧友\"公众号，在\"我的彩票\" -> \"待支付\"中找到对应彩票，点击\"上传支付凭证\"选择第一步中的截图，完成即可。");
+		helpMenu.put(23, "第一步：在微信\"我\" -> \"钱包\" -> 右上角子菜单\"交易记录\"中找到支付记录并截图;\n第二步：回到\"千彩慧友\"公众号，在\"我的\" -> \"购买记录\" -> \"待支付\"中找到对应彩票，点击\"上传支付凭证\"选择第一步中的截图，完成即可。");
 		helpMenu.put(24, "公众号在彩票出票后会给您发通知，您可点击出票通知或我的-购买记录-彩票详情中查看实体彩票照片；由于每天我们需要打印的彩票非常多，我们会在每天12点和19点对所有的彩票集中出票，请您耐心等待。");
 		helpMenu.put(31, "当您的彩票中奖时，我们的客服会及时联系您\n(1) 1万元以下的奖金：支持通过微信/支付宝/银行卡红包/转账方式兑奖；\n(2) 1万元以上的奖金：可选择我们帮您代领，再通过微信/支付宝/银行卡转账给您；也可选择邮寄彩票(邮费到付，保费协商)，您自行兑奖。");
 		helpMenu.put(32, "我们不收费。当然，您的打赏会让小二更加有激情。");
@@ -98,6 +103,7 @@ public class HelpMessageBuilder implements MessageBuilder {
 		content += "23. 忘记上传支付截图\n";
 		content += "24. 出票";
 		menu.setTitle(content);
+		menu.setPicUrl(appProperty.imgServerUrl + "img/pay.png");
 		WxMpXmlOutNewsMessage.Item note = new WxMpXmlOutNewsMessage.Item();
 		content = "回复对应数字查看使用说明";
 		note.setTitle(content);
@@ -114,6 +120,7 @@ public class HelpMessageBuilder implements MessageBuilder {
 		content = "31. 如何兑奖\n";
 		content += "32. 兑奖是否收费";
 		menu.setTitle(content);
+		menu.setPicUrl(appProperty.imgServerUrl + "img/bonus.png");
 		dj.addArticle(title);
 		dj.addArticle(menu);
 		dj.addArticle(note);
@@ -125,10 +132,11 @@ public class HelpMessageBuilder implements MessageBuilder {
 		title.setTitle("红包");
 		menu = new WxMpXmlOutNewsMessage.Item();
 		content = "41. 什么是奖金红包\n";
-		content += "42. 什么是单注红包\n";
+		content += "42. 什么是数字红包\n";
 		content += "43. 如何领红包\n";
 		content += "44. 如何发红包";
 		menu.setTitle(content);
+		menu.setPicUrl(appProperty.imgServerUrl + "img/redpack.png");
 		hb.addArticle(title);
 		hb.addArticle(menu);
 		hb.addArticle(note);
