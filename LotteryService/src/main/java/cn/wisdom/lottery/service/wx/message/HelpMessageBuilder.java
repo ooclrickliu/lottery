@@ -86,7 +86,7 @@ public class HelpMessageBuilder implements MessageBuilder {
 		helpMenu.put(41, "奖金红包指发送者发送的红包中包含一组或多组数字，抢红包者每人抢到的是中奖金额的份额，例如A抢到了10%，B抢到了6%，若中奖则奖金按比例分配。");
 		helpMenu.put(42, "数字红包指发送者发送的红包中包含一组或多组数字，红包数量为数字组数，抢红包者每人可以抢一组数字，每组数字的中奖金额为抢到者所得。");
 		helpMenu.put(43, "为了保证我们的客服能联系到红包中奖者，领红包需先关注公众号，奖金发放方式同兑奖方式(请输入31了解如何兑奖)");
-		helpMenu.put(44, "方法1：在\"我的\" -> \"红包\"页面选择不同的红包类型可发送红包\n方法2：在\"我的\" -> \"购买记录\"页面，\"已支付\"列表中可用作红包的彩票右上角会出现红包图标，点击该图标即可发红包");
+		helpMenu.put(44, "在\"我的\" -> \"红包\"页面选择不同的红包类型可发送和查看红包");
 		helpMenu.put(5, "请输入期数查询开奖号码，例如：2016099");
 	}
 	private static Map<Integer, NewsBuilder> subMenu = new HashMap<Integer, NewsBuilder>();
