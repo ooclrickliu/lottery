@@ -242,4 +242,9 @@ public class UserServiceImpl implements UserService
 		return userDao.getUserByIdList(userIds);
 	}
 
+	@Override
+	public void changeUserName(long userId, String name) {
+		userDao.changeUserName(userId, name);
+	}
+	
 }

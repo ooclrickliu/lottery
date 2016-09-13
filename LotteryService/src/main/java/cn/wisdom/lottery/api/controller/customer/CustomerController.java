@@ -7,14 +7,17 @@
  */
 package cn.wisdom.lottery.api.controller.customer;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.wisdom.lottery.api.response.LotteryAPIResult;
 import cn.wisdom.lottery.common.model.JsonDocument;
 import cn.wisdom.lottery.dao.vo.User;
+import cn.wisdom.lottery.service.UserService;
 import cn.wisdom.lottery.service.context.SessionContext;
 import cn.wisdom.lottery.service.exception.ServiceException;
 
@@ -31,6 +34,9 @@ import cn.wisdom.lottery.service.exception.ServiceException;
 @RequestMapping("/customer")
 public class CustomerController
 {
+	@Autowired
+	private UserService userService;
+	
     /**
      * Get current User.
      * 
@@ -44,4 +50,14 @@ public class CustomerController
     	User currentUser = SessionContext.getCurrentUser();
         return new LotteryAPIResult(currentUser);
     }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/change/name")
+    @ResponseBody
+    public JsonDocument changeCustomerName(@RequestParam long userId, @RequestParam String name) throws ServiceException
+    {
+    	userService.changeUserName(userId, name);
+    	return LotteryAPIResult.SUCCESS;
+    }
+    
+    
 }

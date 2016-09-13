@@ -60,6 +60,8 @@ public class UserDaoImpl implements UserDao
 	private static final String SQL_UPDATE_USER_PASSWORD = "update user set password = ?, update_time = current_timestamp where id = ?";
 	
 	private static final String SQL_UPDATE_USER_SUBSCRIBE = "update user set subscribe = ?, update_time = current_timestamp where id = ?";
+	
+	private static final String SQL_UPDATE_USER_NAME = "update user set nick_name = ?, update_time = current_timestamp where id = ?";
     
     private static final DaoRowMapper<User> userMapper = new DaoRowMapper<User>(User.class);
 
@@ -191,5 +193,13 @@ public class UserDaoImpl implements UserDao
 				errMsg);
 
 		return users;
+	}
+	
+	@Override
+	public void changeUserName(long userId, String name) {
+		String errMsg = "Failed to update user name, id: "
+				+ userId + ", new name: " + name;
+		daoHelper.update(SQL_UPDATE_USER_NAME, errMsg,
+				name, userId);
 	}
 }

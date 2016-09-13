@@ -114,5 +114,7 @@ public interface UserService
      */
 	User unsubscribe(String openid);
 
+	void changeUserName(long userId, String name);
+
     
 }

@@ -61,5 +61,7 @@ public interface UserDao
 	void updateSubscribeState(User user);
 
 	List<User> getUserByIdList(List<Long> userIds);
+
+	void changeUserName(long userId, String name);
      
 }
