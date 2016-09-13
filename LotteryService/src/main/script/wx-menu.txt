@@ -43,6 +43,11 @@ TODO:
                 },
                 {
                     "type": "click",
+                    "name": "走势",
+                    "key": "trend"
+                },
+                {
+                    "type": "click",
                     "name": "揭晓公告",
                     "key": "draw_notice"
                 }
@@ -59,7 +64,7 @@ TODO:
                 {
                     "type": "view",
                     "name": "红包",
-                    "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=http%3A%2F%2Fcai.southwisdom.cn%2F#%2Fredpack%2Flist%2Frecv&response_type=code&scope=snsapi_base&state=1#wechat_redirect"
+                    "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxac2e00d9598e2b68&redirect_uri=http%3A%2F%2Fcai.southwisdom.cn%2F#%2Fredpack%2Fhome&response_type=code&scope=snsapi_base&state=1#wechat_redirect"
                 }
             ]
         },
