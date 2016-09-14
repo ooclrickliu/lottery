@@ -32,4 +32,6 @@ public interface MessageNotifier {
 
 	void notifySenderRedpackSnatched(long owner, String nickName);
 
+	void notifyCustomerHelpOfForgetSubmitPayImg(String openId);
+
 }

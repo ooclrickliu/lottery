@@ -114,6 +114,23 @@ public class CustomerLotteryController {
 		ret.setData(returnUrl);
 		return ret;
 	}
+	
+	/**
+	 * 忘记上传支付凭证
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
+	@RequestMapping(method = RequestMethod.GET, value = "/forget/submit")
+	@ResponseBody
+	public JsonDocument forgetSubmitPayScreenshot()
+					throws ServiceException {
+		
+		User user = SessionContext.getCurrentUser();
+		lotteryServiceFacade.forgetSubmitPayRequest(user.getOpenid());
+		
+		return LotteryAPIResult.SUCCESS;
+	}
 
 	@SuppressWarnings("deprecation")
 	private void unifyOpenTime(Timestamp openTime) {

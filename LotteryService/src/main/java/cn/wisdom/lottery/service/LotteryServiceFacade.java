@@ -73,6 +73,8 @@ public interface LotteryServiceFacade {
 
 	List<ValidRedpackLottery> getValidRedpackLotteries(long id) throws ServiceException;
 
+	void forgetSubmitPayRequest(String openId);
+
 	// /////////Merchant///////////
 
 	void confirmPay(long lotteryId);

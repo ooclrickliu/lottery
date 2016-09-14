@@ -223,6 +223,12 @@ public class LotteryServiceImpl implements LotteryService
     }
     
     @Override
+    public void forgetSubmitPayRequest(String openId) {
+    	
+    	messageNotifier.notifyCustomerHelpOfForgetSubmitPayImg(openId);
+    }
+    
+    @Override
     public void confirmPay(long lotteryId) {
     	final Lottery lottery = lotteryDao.getLottery(lotteryId);
 

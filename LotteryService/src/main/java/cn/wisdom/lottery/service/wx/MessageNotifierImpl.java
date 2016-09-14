@@ -18,6 +18,7 @@ import cn.wisdom.lottery.api.response.QueryLotteryResponse;
 import cn.wisdom.lottery.common.log.Logger;
 import cn.wisdom.lottery.common.log.LoggerFactory;
 import cn.wisdom.lottery.common.utils.CollectionUtils;
+import cn.wisdom.lottery.common.utils.StringUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
 import cn.wisdom.lottery.dao.threadpool.Task;
 import cn.wisdom.lottery.dao.threadpool.TaskExecutor;
@@ -28,6 +29,7 @@ import cn.wisdom.lottery.dao.vo.PrizeLotterySSQ;
 import cn.wisdom.lottery.dao.vo.User;
 import cn.wisdom.lottery.service.LotteryServiceFacade;
 import cn.wisdom.lottery.service.UserService;
+import cn.wisdom.lottery.service.wx.message.HelpMessageBuilder;
 
 @Service
 public class MessageNotifierImpl implements MessageNotifier {
@@ -46,6 +48,9 @@ public class MessageNotifierImpl implements MessageNotifier {
 	
 	@Autowired
 	private TaskExecutor taskExecutor;
+
+	@Autowired
+	private HelpMessageBuilder helpMessageBuilder;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageNotifierImpl.class.getName());
 
@@ -520,6 +525,27 @@ public class MessageNotifierImpl implements MessageNotifier {
 			@Override
 			public String getName() {
 				return "notifySenderRedpackSnatched";
+			}
+			
+		});
+		
+	}
+	
+	@Override
+	public void notifyCustomerHelpOfForgetSubmitPayImg(final String openId) {
+		taskExecutor.submitTask(new Task() {
+
+			@Override
+			public void execute() {
+				String helpMessage = helpMessageBuilder.getHelpMessage(23);
+				if (StringUtils.isNotBlank(helpMessage)) {
+					sendTextMessage(helpMessage, openId);
+				}
+			}
+
+			@Override
+			public String getName() {
+				return "notifyCustomerHelpOfForgetSubmitPayImg";
 			}
 			
 		});

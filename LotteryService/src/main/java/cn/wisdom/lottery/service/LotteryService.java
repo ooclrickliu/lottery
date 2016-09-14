@@ -250,5 +250,7 @@ public interface LotteryService
 	 * @throws ServiceException 
 	 */
 	List<ValidRedpackLottery> getValidRedpackLotteries(long userId) throws ServiceException;
+
+	void forgetSubmitPayRequest(String openId);
 	
 }
