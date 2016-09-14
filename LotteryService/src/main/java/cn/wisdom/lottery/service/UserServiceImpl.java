@@ -206,15 +206,17 @@ public class UserServiceImpl implements UserService
 			WxMpUser wxMpUser = wxService.getWxMpService().userInfo(oauth2getAccessToken.getOpenId(), null);
 			
 			user = userDao.getUserByOpenid(oauth2getAccessToken.getOpenId());
-			if (!wxMpUser.isSubscribe() && user == null) {
+//			if (!wxMpUser.isSubscribe() && user == null) {
 				// 从未关注过的用户
-				wxMpUser = wxService.getWxMpService().oauth2getUserInfo(oauth2getAccessToken, null);
-				
-				user = new User(wxMpUser);
-				user.setRole(RoleType.CUSTOMER);
-				this.createUser(user);
-			}
-			else if (wxMpUser.isSubscribe() && user == null) { // 老关注用户可能没存
+//				logger.info("openid = [" + oauth2getAccessToken.getOpenId() + "]          token = [" + oauth2getAccessToken.getAccessToken() + "]");
+//				wxMpUser = wxService.getWxMpService().oauth2getUserInfo(oauth2getAccessToken, null);
+//				
+//				user = new User(wxMpUser);
+//				user.setRole(RoleType.CUSTOMER);
+//				this.createUser(user);
+//			}
+//			else 
+			if (wxMpUser.isSubscribe() && user == null) { // 老关注用户可能没存
 				user = new User(wxMpUser);
 				user.setRole(RoleType.CUSTOMER);
 				this.createUser(user);
