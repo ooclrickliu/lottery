@@ -48,7 +48,7 @@ public class LotteryDaoImpl implements LotteryDao {
 	private static final String GET_LOTTERY_JOIN_PREFIX = "select l.* from lottery l join lottery_period p on l.id = p.lottery_id ";
 	
 	private static final String GET_PAID_LOTTERY_OF_PERIOD = GET_LOTTERY_JOIN_PREFIX
-			+ " where lottery_type = ? and pay_state = 'Paid' and period = ?";
+			+ " where lottery_type = ? and pay_state = 'Paid' and period = ? order by l.id desc";
 
 	private static final String GET_LOTTERY_BY_ID = GET_LOTTERY_PREFIX
 			+ " where id in( {0})";
