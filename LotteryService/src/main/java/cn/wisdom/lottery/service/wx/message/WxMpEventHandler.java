@@ -42,6 +42,9 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 	@Autowired
 	private MessageNotifier messageNotifyer;
 	
+	@Autowired
+	private HelpMessageBuilder subscribeMessageBuilder;
+	
 	private  Map<String, MessageBuilder> messageBuilderMap = new HashMap<String, MessageBuilder>();
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -129,7 +132,8 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 			logger.error("failed save new user.", e);
 		}
 		
-		return buildOutMessage(wxMessage, "欢迎来到千彩慧友公众平台!");
+//		return buildOutMessage(wxMessage, "欢迎来到千彩慧友公众平台!");
+		return subscribeMessageBuilder.buildMessage(wxMessage);
 	}
 
 	private WxMpXmlOutMessage handleUnSubscribe(WxMpXmlMessage wxMessage) {
