@@ -90,6 +90,8 @@ public interface LotteryServiceFacade {
 
 	String uploadTicket(long periodId, String ticketImgUrl);
 
+	void transferMerchant(int period, long fromMerchant, long toMerchant);
+
 	// /////////Other////////////////
 	void savePrizeLottery(PrizeLotterySSQ prizeLotterySSQ,
 			LotteryType lotteryType) throws ServiceException;

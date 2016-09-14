@@ -229,6 +229,12 @@ public class LotteryServiceImpl implements LotteryService
     }
     
     @Override
+    public void transferMerchant(int period, long fromMerchant, long toMerchant) {
+    	
+    	lotteryDao.updateMerchant(period, fromMerchant, toMerchant);
+    }
+    
+    @Override
     public void confirmPay(long lotteryId) {
     	final Lottery lottery = lotteryDao.getLottery(lotteryId);
 

@@ -127,6 +127,15 @@ public class MerchantLotteryController {
 
 		return LotteryAPIResult.SUCCESS;
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/transfer")
+	@ResponseBody
+	public JsonDocument transferMerchant(@RequestParam int period, @RequestParam long fromMerchant, @RequestParam long toMerchant)
+			throws ServiceException {
+		lotteryServiceFacade.transferMerchant(period, fromMerchant, toMerchant);
+		
+		return LotteryAPIResult.SUCCESS;
+	}
 
 	private void summarize(List<Lottery> lotteries,
 			QueryLotteryResponse response) {

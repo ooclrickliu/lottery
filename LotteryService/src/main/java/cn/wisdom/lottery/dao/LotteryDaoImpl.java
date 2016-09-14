@@ -138,6 +138,10 @@ public class LotteryDaoImpl implements LotteryDao {
 			+ "business_type = ?, redpack_count = ?, wish = ?, send_time = current_timestamp, update_time = current_timestamp "
 			+ "where id = ?";
 	
+	private static final String UPDATE_LOTTERY_MERCHANT = "update lottery set "
+			+ "merchant = ?, update_time = current_timestamp "
+			+ "where id in (select lottery_id from lottery_period where period = ?) and pay_state = 'Paid' and merchant = ?";
+	
 	private static final String INCREASE_LOTTERY_SNATCH_NUM = "update lottery set "
 			+ "snatched_num = snatched_num + 1, update_time = current_timestamp "
 			+ "where id = ? and snatched_num < redpack_count";
@@ -686,6 +690,13 @@ public class LotteryDaoImpl implements LotteryDao {
 		}
 		
 		return lotteries;
+	}
+	
+	@Override
+	public void updateMerchant(int period, long fromMerchant, long toMerchant) {
+		
+		String errMsg = "Failed update lottery merchant, period = " + period + " , fromMerchant = " + fromMerchant + " , toMerchant = " + toMerchant;
+		daoHelper.update(UPDATE_LOTTERY_MERCHANT, errMsg, toMerchant, period, fromMerchant);
 	}
 
 	private List<Lottery> sortByReceiveTime(List<LotteryRedpack> redpacks,

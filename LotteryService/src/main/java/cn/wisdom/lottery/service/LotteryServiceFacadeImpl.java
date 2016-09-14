@@ -263,4 +263,10 @@ public class LotteryServiceFacadeImpl implements LotteryServiceFacade {
 	public void clearUnpaidLottery() {
 		lotteryService.clearUnpaidLottery();
 	}
+	
+	@Override
+	public void transferMerchant(int period, long fromMerchant, long toMerchant) {
+		
+		lotteryService.transferMerchant(period, fromMerchant, toMerchant);
+	}
 }

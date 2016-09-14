@@ -251,6 +251,20 @@ public interface LotteryService
 	 */
 	List<ValidRedpackLottery> getValidRedpackLotteries(long userId) throws ServiceException;
 
+	/**
+	 * Notify user help info once he/she forgot upload pay img.
+	 * 
+	 * @param openId
+	 */
 	void forgetSubmitPayRequest(String openId);
+
+	/**
+	 * Transfer lottery from one merchant to another.
+	 * 
+	 * @param period
+	 * @param fromMerchant
+	 * @param toMerchant
+	 */
+	void transferMerchant(int period, long fromMerchant, long toMerchant);
 	
 }

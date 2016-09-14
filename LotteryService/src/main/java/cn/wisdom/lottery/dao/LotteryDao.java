@@ -70,5 +70,7 @@ public interface LotteryDao {
 	List<Lottery> getRedpacksByReceiver(long receiver);
 
 	List<Lottery> getValidRedpackLotteries(long userId, int period);
+
+	void updateMerchant(int period, long fromMerchant, long toMerchant);
 	
 }
