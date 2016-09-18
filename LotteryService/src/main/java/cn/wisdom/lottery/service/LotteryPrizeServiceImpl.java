@@ -157,7 +157,7 @@ public class LotteryPrizeServiceImpl implements LotteryPrizeService {
 				}
 				else 
 				{
-					bonus = totalBonus * lotteryRedpack.getRate() / 100;
+					bonus = (float) (totalBonus * lotteryRedpack.getRate()) / 100;
 				}
 				lotteryRedpack.setPrizeBonus(bonus);
 			}
