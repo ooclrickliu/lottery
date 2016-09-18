@@ -192,9 +192,14 @@ public class TestMain
 //    			remainRate -= rate;
 //    		}
 //		}
+//    	
+//    	Pattern HELP_CODE_PATTERN = Pattern.compile("[\\d]{1,2}$");
+//    	System.out.println(HELP_CODE_PATTERN.matcher("2a").matches());
     	
-    	Pattern HELP_CODE_PATTERN = Pattern.compile("[\\d]{1,2}$");
-    	System.out.println(HELP_CODE_PATTERN.matcher("2a").matches());
+    	int rate = 3;
+    	int total = 5;
+    	float bonus = (float) (total * rate) / 100;
+    	System.out.println(bonus);
     }
     
     public static int randomRate(int remainCount, int remainRate) {
