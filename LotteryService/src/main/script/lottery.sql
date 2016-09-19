@@ -49,14 +49,6 @@ CREATE TABLE IF NOT EXISTS `user` (
   UNIQUE KEY `openid` (`openid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
---
--- 转存表中的数据 `user`
---
-
-INSERT INTO `user` (`id`, `openid`, `role`, `real_name`, `phone`, `card_no`, `create_time`, `update_time`) VALUES
-(1, 'test', 'CUSTOMER', '刘志', '15629913656', '422301198239289909', '2016-07-12 12:50:07', '2016-07-12 12:50:07');
-
-
 -- --------------------------------------------------------
 
 --
@@ -376,6 +368,35 @@ alter table `lottery_number` modify `number` varchar(200) NULL;
 alter table `lottery` modify `total_fee` int NOT NULL;
 
 -- Apply here
+
+alter table `lottery` add `pay_way` varchar(20) NOT NULL DEFAULT 'WX_QR_PAY' after create_by;
+
+CREATE TABLE IF NOT EXISTS `account` (
+  `user_id` bigint(20) NOT NULL,
+  `balance` float NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `transaction` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
+  `amount` float NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `remark` varchar(100) NULL,
+  `time` timestamp NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS `withdraw_apply` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
+  `apply_time` timestamp NOT NULL,
+  `amount` float NOT NULL,
+  `state` varchar(20) NOT NULL,
+  `process_time` timestamp NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
