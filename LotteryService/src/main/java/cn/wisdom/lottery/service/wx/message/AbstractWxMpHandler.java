@@ -25,5 +25,12 @@ public abstract class AbstractWxMpHandler implements WxMpMessageHandler {
 				.toUser(wxMessage.getFromUserName())
 				.fromUser(wxMessage.getToUserName()).build();
 	}
+	
+	protected WxMpXmlOutMessage buildSuccessOutMessage(WxMpXmlMessage wxMessage)
+	{
+		return WxMpXmlOutMessage.TEXT().content("success")
+		.toUser(wxMessage.getFromUserName())
+		.fromUser(wxMessage.getToUserName()).build();
+	}
 
 }

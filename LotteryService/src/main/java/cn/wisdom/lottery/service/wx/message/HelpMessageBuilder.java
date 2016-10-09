@@ -141,6 +141,20 @@ public class HelpMessageBuilder implements MessageBuilder {
 		hb.addArticle(menu);
 		hb.addArticle(note);
 		subMenu.put(4, hb);
+		
+		// 99
+		NewsBuilder adminTool = WxMpXmlOutMessage.NEWS();
+		title = new WxMpXmlOutNewsMessage.Item();
+		title.setTitle("管理工具");
+		menu = new WxMpXmlOutNewsMessage.Item();
+		content = "991. 切换商户(2->19)\n";
+		content = "992. 切换商户(19->2)\n";
+		menu.setTitle(content);
+		menu.setPicUrl(appProperty.imgServerUrl + "img/setting.png");
+		hb.addArticle(title);
+		hb.addArticle(menu);
+		hb.addArticle(note);
+		subMenu.put(99, adminTool);
 	}
 	
 	public WxMpXmlOutMessage buildHelpMessage(WxMpXmlMessage wxMessage) {

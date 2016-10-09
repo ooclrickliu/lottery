@@ -54,13 +54,6 @@ public class WxMpEventHandler implements WxMpMessageHandler {
 		messageBuilderMap.put(builder.getMenuKey(), builder);
 	}
 	
-	private static WxMpXmlOutMessage buildSuccessOutMessage(WxMpXmlMessage wxMessage)
-	{
-		return WxMpXmlOutMessage.TEXT().content("success")
-		.toUser(wxMessage.getFromUserName())
-		.fromUser(wxMessage.getToUserName()).build();
-	}
-	
 	private static WxMpXmlOutMessage buildOutMessage(WxMpXmlMessage wxMessage, String content)
 	{
 		return WxMpXmlOutMessage.TEXT().content(content)

@@ -44,8 +44,14 @@ public class WxMpTextHandler extends AbstractWxMpHandler {
 	
 	private static final Set<Integer> HELP_CODES = new HashSet<Integer>();
 	static {
-		Integer[] codes = {1, 2, 3, 4, 5, 21, 22, 23, 24, 31, 32, 41, 42, 43, 44};
+		Integer[] codes = {1, 2, 3, 4, 5, 21, 22, 23, 24, 31, 32, 41, 42, 43, 44, 99};
 		HELP_CODES.addAll(Arrays.asList(codes));
+	}
+	
+	private static final Set<Integer> CMD_CODES = new HashSet<Integer>();
+	static {
+		Integer[] codes = {991, 992};
+		CMD_CODES.addAll(Arrays.asList(codes));
 	}
 	
 	@Autowired
@@ -53,6 +59,9 @@ public class WxMpTextHandler extends AbstractWxMpHandler {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private CommandHandler commandHandler;
 
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
@@ -62,6 +71,9 @@ public class WxMpTextHandler extends AbstractWxMpHandler {
 		
 		if (isHelpCode(wxMessage.getContent())) {
 			response = helpMessageBuilder.buildHelpMessage(wxMessage);
+		}
+		else if (isCommandCode(wxMessage.getContent())) {
+			response = commandHandler.handle(wxMessage, context, wxMpService, sessionManager);
 		}
 		else if (isValidPeriod(wxMessage.getContent())) {
 			response = buildOpenInfoResponse(wxMessage);
@@ -75,6 +87,10 @@ public class WxMpTextHandler extends AbstractWxMpHandler {
 
 	private boolean isHelpCode(String content) {
 		return HELP_CODES.contains(DataConvertUtils.toInt(content));
+	}
+	
+	private boolean isCommandCode(String content) {
+		return CMD_CODES.contains(DataConvertUtils.toInt(content));
 	}
 
 	private void buildKfResponse(WxMpXmlMessage wxMessage, WxMpService wxMpService, WxSessionManager sessionManager) {
