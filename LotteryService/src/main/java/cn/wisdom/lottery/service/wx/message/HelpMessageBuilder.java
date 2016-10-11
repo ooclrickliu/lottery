@@ -148,12 +148,12 @@ public class HelpMessageBuilder implements MessageBuilder {
 		title.setTitle("管理工具");
 		menu = new WxMpXmlOutNewsMessage.Item();
 		content = "991. 切换商户(2->19)\n";
-		content = "992. 切换商户(19->2)\n";
+		content += "992. 切换商户(19->2)\n";
 		menu.setTitle(content);
 		menu.setPicUrl(appProperty.imgServerUrl + "img/setting.png");
-		hb.addArticle(title);
-		hb.addArticle(menu);
-		hb.addArticle(note);
+		adminTool.addArticle(title);
+		adminTool.addArticle(menu);
+		adminTool.addArticle(note);
 		subMenu.put(99, adminTool);
 	}
 	

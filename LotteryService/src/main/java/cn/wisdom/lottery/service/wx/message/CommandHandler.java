@@ -3,6 +3,7 @@ package cn.wisdom.lottery.service.wx.message;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import cn.wisdom.lottery.common.utils.DataConvertUtils;
 import cn.wisdom.lottery.dao.constant.LotteryType;
@@ -15,6 +16,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 
+@Service
 public class CommandHandler extends AbstractWxMpHandler {
 	
 	@Autowired
